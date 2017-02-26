@@ -1,0 +1,221 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Hieu Do - Resume
+% 7/26/2016
+%
+% Reference:
+% Debarghya Das (http://debarghyadas.com)
+
+\documentclass[]{hieudo-build}
+
+\usepackage{fontspec}
+\defaultfontfeatures{
+    Path = /usr/local/texlive/2016/texmf-dist/fonts/opentype/public/fontawesome/ }
+\usepackage{fontawesome}
+
+\usepackage{hyperref}
+
+
+
+
+
+
+\hypersetup{colorlinks=true,urlcolor=blue,linkcolor=blue,pdfborderstyle={/S/U/W 1}}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%     TITLE NAME
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\namesection{Jason Yao}
+{\urlstyle{same}
+	\faEnvelope  \href{mailto:JasonYao@nyu.edu}{JasonYao@nyu.edu}\\
+	\faGithub  \href{https://github.com/JasonYao}{github.com/JasonYao}\\
+	\faLinkedinSquare   \href{https://www.linkedin.com/in/jasonyaonyu/}{ln.com/in/jasonyaonyu}\\
+    \faPhone \href{tel:19493352639}{+1 (949) 335-2639}
+}
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%     COLUMN ONE
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{minipage}[t]{0.34\textwidth} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     EDUCATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Education} 
+
+\subsection{New York University}
+\descript{College of Arts \& Science}
+BA in Computer Science (CS) \\
+Expected Grad. May 2017 \\
+\sectionsep
+
+\subsection{Hong Kong International School}
+Grad. May 2013 \\
+\sectionsep
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     SKILLS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Skills}
+% \subsection{Programming}
+\location{Programming Languages:}
+Java, Python, C, JavaScript\\
+Bash
+\newline
+
+\location{Frameworks:}
+Django, NodeJS, Express
+\newline
+
+
+\location{Databases:}
+SQL: PostgreSQL, MySQL\\
+noSQL: MongoDB
+\newline
+
+\location{Tools:}
+Git, Vim, npm,\\
+travisCI, AWS-cli
+
+\sectionsep
+\subsection{Languages}
+\location{Native fluency:} English, Mandarin\\
+\sectionsep
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     COURSEWORK
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Coursework}
+\href{https://github.com/JasonYao/Fall2014NYU-DataStructures}{Data Structures}\\
+\href{https://github.com/JasonYao/Algorithmic-Problem-Solving}{Algorithms}\\
+
+\href{https://github.com/JasonYao?utf8=\%E2\%9C\%93\&tab=repositories\&q=parallel\&type=\&language=}{Parallel Computing}\\
+Object-Oriented Programming *
+Applied Internet Tech *
+\newline
+
+\sectionsep
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     ADDITIONAL INFORMATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Activities}
+Tech@NYU\\
+Varsity Fencing (Men's Foil)\\
+Phi Kappa Sigma Fraternity
+\sectionsep
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %     AWARDS
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \section{Awards} 
+% Dean's List\\
+% NYU PROMISE Scholarship\\
+% Shelby C. Davis Scholarship\\
+% President’s Circle Scholarship\\
+% \sectionsep
+
+\sectionsep
+\DTMsetdatestyle{mylastupdate}
+\DTMdisplaydate{\the\year}{\the\month}{\the\day}{-1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%     COLUMN TWO
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{minipage} 
+\hfill
+\begin{minipage}[t]{0.65\textwidth} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     EXPERIENCE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Experience}
+
+\workplace{Ivy Tech Capital}{Jun. 2016 – Aug. 2016}\\
+\position{Software Engineer Intern}{Beijing, China}
+\vspace{0.9em} % Hacky fix for awkward extra vertical space
+\begin{tightemize}
+\item Designed \& developed prototype Chinese-focused {\bf fantasy sports web service} for start-up incubator team.
+\item Built out full product features in rapidly changing requirement environment via Python \& Django web framework.
+\item Created presentable MVP to incubator investors, {\bf won 2nd place} out of 10 teams.
+
+\end{tightemize}
+\sectionsep
+
+\workplace{Phi Kappa Sigma Delta Phi Chapter}{Jan. 2015 – present}\\
+\position{Technology Chair}{New York, NY}
+% \vspace{\topsep} % Hacky fix for awkward extra vertical space
+\begin{tightemize}
+\item Designed, developed, and maintained  {\bf \href{https://www.skullhouse.nyc}{organization website}}.
+\item Built abstraction layers in Python over NYU web services.
+\item Built \href{https://github.com/JasonYao/Bobst-Room-Automator}{automated chapter meeting booker} in Python \& Bash.
+\item Lowered production to \$0 USD for hosting by leveraging 3rd party services.
+
+\end{tightemize}
+\sectionsep
+
+\workplace{HiVi Acoustics}{May 2015 – Aug. 2015} \\
+\position{Software Engineer Intern}{Los Angeles, CA}
+% \vspace{\topsep} % Hacky fix for awkward extra vertical space
+\begin{tightemize}
+\item Helped build a new small \href{http://hivi.us/}{multi-lingual e-commerce platform} dealing with \$50,000+ USD in sales annually.
+\item Implemented frontend features in SASS \& JS, backend framework with Laravel, PHP, and MySQL (LEMP stack).
+
+\end{tightemize}
+\sectionsep
+
+% \runsubsection{The Westminster News} \\
+% \descript{Co-Editors-in-Chief (2014) | Layout Editor (2012) }
+% \location{Sep 2012 – May 2015 | Simsbury, CT}
+% \begin{tightemize}
+% \item Led 30+ staff at a 400-student boarding school to publish the monthly school newspaper.
+% \item Consulted in layout design and technology application.
+% \end{tightemize}
+% \sectionsep
+
+% \runsubsection{VietAbroader Organization} \\
+% \descript{Program Assistant Manager | VAPedia Associate }
+% \location{Mar 2013 – Mar 2014 | Ho Chi Minh City, Vietnam}
+% \begin{tightemize}
+% \item VietAbroader is a non-profit organization run by Vietnamese students abroad.
+% \item Designed the high school content for the VAPedia website.
+% \item Assisted in recruiting guest speakers and volunteers for VietAbroader Study-Abroad Conference 2013.
+% \end{tightemize}
+% \sectionsep
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     PROJECTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Projects}
+\runsubsection{Java -> C++ Transpiler}
+\descript{}
+\location{New York, NY, 2016 Fall}
+{\bf Team Leader} of 5 tasked with buildinga transpiler in Java. Used SBT to build, JUnit for testing, and visitor + delegator design patterns. *
+
+\sectionsep
+
+\runsubsection{QR Item Finder}
+\descript{}
+\location{New York, NY, 2015 Fall}
+{\bf Technical Lead} of 4 that built a \href{https://github.com/JasonYao/Large-Scale-Final-Project-Lost-and-Found-Recovery-Service}{QR item finder service} with a focus on scalability. Used Django, MySQL, Nginx, and memcached.
+\sectionsep
+
+
+\runsubsection{Meeter}
+\descript{}
+\location{New York, NY, 2017 Spring}
+\href{https://github.com/JasonYao/university-video-meeter}{Chat webapp} using Node, Express, MongoDB, AWS-S3, socket.io, and a  WebRTC library to connect university and high school students. (in progress)\\
+\sectionsep
+* Repo access available upon request
+
+\end{minipage} 
+
+\end{document}  
