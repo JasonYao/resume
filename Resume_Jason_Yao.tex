@@ -1,51 +1,38 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Hieu Do - Resume
-% 7/26/2016
+%%
+% Resume | Jason Yao
 %
-% Reference:
-% Debarghya Das (http://debarghyadas.com)
-
+% References:
+% 	Debarghya Das (http://debarghyadas.com)
+% %
 \documentclass[]{hieudo-build}
 
-\usepackage{fontspec}
-\defaultfontfeatures{
-    Path = /usr/local/texlive/2016/texmf-dist/fonts/opentype/public/fontawesome/ }
-\usepackage{fontawesome}
-
+% External Libraries
 \usepackage{hyperref}
 
-
-
-
-
-
-\hypersetup{colorlinks=true,urlcolor=blue,linkcolor=blue,pdfborderstyle={/S/U/W 1}}
+% Configurations
+\hypersetup{colorlinks=true,urlcolor=blue} % Turns the hyperlinks blue
 
 \begin{document}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%     TITLE NAME
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%
+% Header Section %
+%%%%%%%%%%%
 \namesection{Jason Yao}
 {\urlstyle{same}
-	\faEnvelope  \href{mailto:JasonYao@nyu.edu}{JasonYao@nyu.edu}\\
-	\faGithub  \href{https://github.com/JasonYao}{github.com/JasonYao}\\
-	\faLinkedinSquare   \href{https://www.linkedin.com/in/jasonyaonyu/}{ln.com/in/jasonyaonyu}\\
-    \faPhone \href{tel:19493352639}{+1 (949) 335-2639}
+	\faEnvelope \hspace{0.1cm} \href{mailto:JasonYao@nyu.edu}{JasonYao@nyu.edu}\\
+	\faGithub \hspace{0.1cm} \href{https://github.com/JasonYao}{github.com/JasonYao}\\
+	\faLinkedinSquare \hspace{0.1cm} \href{https://www.linkedin.com/in/JasonYaoNYU/}{ln.com/in/JasonYaoNYU}\\
+    \faPhone \hspace{0.1cm} \href{tel:19493352639}{+1 (949) 335-2639}
 }
-    
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%     COLUMN ONE
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%
+% Left column %
+%%%%%%%%%
 \begin{minipage}[t]{0.34\textwidth} 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     EDUCATION
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+% Education
+%%
 \section{Education} 
 
 \subsection{New York University}
@@ -58,11 +45,11 @@ Expected Grad. May 2017 \\
 Grad. May 2013 \\
 \sectionsep
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     SKILLS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+% Skills
+%%
 \section{Skills}
-% \subsection{Programming}
+\subsection{Programming}
 \location{Programming Languages:}
 Java, Python, C, JavaScript\\
 Bash
@@ -71,7 +58,6 @@ Bash
 \location{Frameworks:}
 Django, NodeJS, Express
 \newline
-
 
 \location{Databases:}
 SQL: PostgreSQL, MySQL\\
@@ -83,13 +69,14 @@ Git, Vim, npm,\\
 travisCI, AWS-cli
 
 \sectionsep
+
 \subsection{Languages}
 \location{Native fluency:} English, Mandarin\\
 \sectionsep
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     COURSEWORK
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+% Coursework
+%%
 \section{Coursework}
 \href{https://github.com/JasonYao/Fall2014NYU-DataStructures}{Data Structures}\\
 \href{https://github.com/JasonYao/Algorithmic-Problem-Solving}{Algorithms}\\
@@ -97,23 +84,21 @@ travisCI, AWS-cli
 \href{https://github.com/JasonYao?utf8=\%E2\%9C\%93\&tab=repositories\&q=parallel\&type=\&language=}{Parallel Computing}\\
 Object-Oriented Programming *
 Applied Internet Tech *
-\newline
 
 \sectionsep
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     ADDITIONAL INFORMATION
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+% Activities
+%%
 \section{Activities}
 Tech@NYU\\
 Varsity Fencing (Men's Foil)\\
 Phi Kappa Sigma Fraternity
 \sectionsep
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %     AWARDS
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%%
+% Awards
+%%
 % \section{Awards} 
 % Dean's List\\
 % NYU PROMISE Scholarship\\
@@ -121,22 +106,23 @@ Phi Kappa Sigma Fraternity
 % President’s Circle Scholarship\\
 % \sectionsep
 
+%%
+% Timestamp of resume generation
+%%
 \sectionsep
 \DTMsetdatestyle{mylastupdate}
 \DTMdisplaydate{\the\year}{\the\month}{\the\day}{-1}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%     COLUMN TWO
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{minipage} 
 \hfill
+%%%%%%%%%%
+% Right Column %
+%%%%%%%%%%
 \begin{minipage}[t]{0.65\textwidth} 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     EXPERIENCE
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+% Experience
+%%
 \section{Experience}
 
 \workplace{Ivy Tech Capital}{Jun. 2016 – Aug. 2016}\\
@@ -146,7 +132,6 @@ Phi Kappa Sigma Fraternity
 \item Designed \& developed prototype Chinese-focused {\bf fantasy sports web service} for start-up incubator team.
 \item Built out full product features in rapidly changing requirement environment via Python \& Django web framework.
 \item Created presentable MVP to incubator investors, {\bf won 2nd place} out of 10 teams.
-
 \end{tightemize}
 \sectionsep
 
@@ -158,7 +143,6 @@ Phi Kappa Sigma Fraternity
 \item Built abstraction layers in Python over NYU web services.
 \item Built \href{https://github.com/JasonYao/Bobst-Room-Automator}{automated chapter meeting booker} in Python \& Bash.
 \item Lowered production to \$0 USD for hosting by leveraging 3rd party services.
-
 \end{tightemize}
 \sectionsep
 
@@ -168,10 +152,13 @@ Phi Kappa Sigma Fraternity
 \begin{tightemize}
 \item Helped build a new small \href{http://hivi.us/}{multi-lingual e-commerce platform} dealing with \$50,000+ USD in sales annually.
 \item Implemented frontend features in SASS \& JS, backend framework with Laravel, PHP, and MySQL (LEMP stack).
-
 \end{tightemize}
 \sectionsep
 
+%%
+% Organisations
+%%
+%\section{Organisations}
 % \runsubsection{The Westminster News} \\
 % \descript{Co-Editors-in-Chief (2014) | Layout Editor (2012) }
 % \location{Sep 2012 – May 2015 | Simsbury, CT}
@@ -191,15 +178,14 @@ Phi Kappa Sigma Fraternity
 % \end{tightemize}
 % \sectionsep
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     PROJECTS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+% Projects
+%%
 \section{Projects}
 \runsubsection{Java -> C++ Transpiler}
 \descript{}
 \location{New York, NY, 2016 Fall}
 {\bf Team Leader} of 5 tasked with buildinga transpiler in Java. Used SBT to build, JUnit for testing, and visitor + delegator design patterns. *
-
 \sectionsep
 
 \runsubsection{QR Item Finder}
@@ -208,14 +194,12 @@ Phi Kappa Sigma Fraternity
 {\bf Technical Lead} of 4 that built a \href{https://github.com/JasonYao/Large-Scale-Final-Project-Lost-and-Found-Recovery-Service}{QR item finder service} with a focus on scalability. Used Django, MySQL, Nginx, and memcached.
 \sectionsep
 
-
 \runsubsection{Meeter}
 \descript{}
 \location{New York, NY, 2017 Spring}
 \href{https://github.com/JasonYao/university-video-meeter}{Chat webapp} using Node, Express, MongoDB, AWS-S3, socket.io, and a  WebRTC library to connect university and high school students. (in progress)\\
 \sectionsep
+
 * Repo access available upon request
-
-\end{minipage} 
-
-\end{document}  
+\end{minipage}
+\end{document}
