@@ -44,9 +44,10 @@ BA in Computer Science (CS) \\
 Grad. May 2017 \\
 \sectionsep
 
-\subsection{Hong Kong International School}
-Grad. May 2013 \\
-\sectionsep
+%% Turned off for US-based employers
+%\subsection{Hong Kong International School}
+%Grad. May 2013 \\
+%\sectionsep
 
 %%
 % Skills
@@ -55,10 +56,16 @@ Grad. May 2013 \\
 \subsection{Programming}
 \location{Programming Languages:}
 Java, Python, C, JavaScript\\
-Bash
+Bash, Golang
 \newline
 
-\location{Frameworks:}
+\location{Big Data Tools:}
+(Py)Spark + Yarn, AWS EMR, \\
+AWS Batch, AWS Glue, \\
+Hadoop
+\newline
+
+\location{Web Frameworks:}
 Django, NodeJS, Express
 \newline
 
@@ -68,8 +75,9 @@ noSQL: MongoDB
 \newline
 
 \location{Tools:}
-Git, Vim, npm,\\
+git, vim, npm,\\
 travisCI, AWS-cli
+\newline
 
 \sectionsep
 
@@ -78,31 +86,28 @@ travisCI, AWS-cli
 \sectionsep
 
 %%
-% Coursework
-%%
-\section{Coursework}
-\href{https://github.com/JasonYao/Fall2014NYU-DataStructures}{Data Structures}\\
-\href{https://github.com/JasonYao/Algorithmic-Problem-Solving}{Algorithms}\\
-
-\href{https://github.com/JasonYao?utf8=\%E2\%9C\%93\&tab=repositories\&q=parallel\&type=\&language=}{Parallel Computing}\\
-Object-Oriented Programming *
-Applied Internet Tech *
-
-\sectionsep
-
-%%
 % Activities
 %%
 \section{Activities}
-Tech@NYU\\
-Varsity Fencing (Men's Foil)\\
-Phi Kappa Sigma Fraternity
+Techwatch@MediaMath \\
+Phi Kappa Sigma Fraternity \\
+Tech@NYU \\
 \sectionsep
 
 %%
 % Awards
 %%
 % \section{Awards} 
+% Dean's List\\
+% NYU PROMISE Scholarship\\
+% Shelby C. Davis Scholarship\\
+% President’s Circle Scholarship\\
+% \sectionsep
+
+%%
+% Conference Talks \& Papers
+%%
+% \section{Conference Talks \& Papers} 
 % Dean's List\\
 % NYU PROMISE Scholarship\\
 % Shelby C. Davis Scholarship\\
@@ -128,22 +133,41 @@ Phi Kappa Sigma Fraternity
 %%
 \section{Experience}
 
-\workplace{MediaMath}{July 2017 – Present} \\
-\position{Software Engineer (Financial Platform)}{New York, NY}
+\workplace{MediaMath}{Oct. 2017 – Present} \\
+\position{Software Engineer II}{New York, NY}
  \vspace{\topsep} % Hacky fix for awkward extra vertical space
 \begin{tightemize}
-\item Will design \& build out mission-critical internal financial platforms at the core of the company
-\item Will leverage real-time distributed application building to build fault-tolerant services.
+\item {\bf Lead contributor} to a company-critical ETL service responsible
+for {\bf generating all fee data used by thousands of advertising bidders world-wide}.
+\item {\bf Reduced client friction by 75\%}, and increased MediaMath's potential
+revenue by enabling future individual feature pricing.
+\item {\bf Increased team developer velocity by 300\%} (based on story point
+completions before/after) by implementing an command-line API interacting
+with service subsystems
+\item Continued assuming SDE II responsibilities from before, increasing team cohesion,
+technical ability, and the implementation of positive feedback loops for the team.
+\item Increased the reliability and consistency of the service by building in
+monitoring and resiliency fallbacks compliant with the Service Level
+Objective established in partnership with PMs.
 \end{tightemize}
 \sectionsep
 
-\workplace{Ivy Tech Capital}{Jun. 2016 – Aug. 2016}\\
+\workplace{MediaMath}{Jul. 2017 – Oct. 2017 (3 months)} \\
+\position{Software Engineer I}{New York, NY}
+% \vspace{\topsep} % Hacky fix for awkward extra vertical space
+\begin{tightemize}
+\item Designed \& built out mission-critical internal financial platforms depended upon by the core of the company (responsible for over 70\% of company revenue), 
+\item Took on responsibilities of an SDE II early on, contributing to increasing team cohesion, technical ability, and the implementation of positive feedback loops for the team.
+\end{tightemize}
+\sectionsep
+
+\workplace{Ivy Tech Capital}{Jun. 2016 – Aug. 2016 (3 months)}\\
 \position{Software Engineer Intern}{Beijing, China}
 %\vspace{0.9em} % Hacky fix for awkward extra vertical space
 \begin{tightemize}
-\item Designed \& developed prototype Chinese-focused {\bf fantasy sports web service} for start-up incubator team.
-\item Built out full product features in rapidly changing requirement environment via Python \& Django web framework.
-\item Created presentable MVP to incubator investors, {\bf won 2nd place} out of 10 teams.
+\item Created presentable {\bf fantasy sports web service} MVP to
+incubator investors, winning an award for "Best Potential for Unicorn"
+by the judging panel. Built using Python \& the Django web framework.
 \end{tightemize}
 \sectionsep
 
@@ -151,10 +175,9 @@ Phi Kappa Sigma Fraternity
 \position{Technology Chair}{New York, NY}
 % \vspace{\topsep} % Hacky fix for awkward extra vertical space
 \begin{tightemize}
-\item Designed, developed, and maintained  {\bf \href{https://www.skullhouse.nyc}{organization website}}.
-\item Built abstraction layers in Python over NYU web services.
-\item Built \href{https://github.com/JasonYao/Bobst-Room-Automator}{automated chapter meeting booker} in Python \& Bash.
-\item Lowered hosting costs to \$0 USD by leveraging 3rd party services.
+\item Designed, developed, and maintained the 
+{\bf \href{https://www.skullhouse.nyc}{organization website}} and 
+\href{https://github.com/JasonYao/Bobst-Room-Automator}{tools}
 \end{tightemize}
 \sectionsep
 
@@ -184,25 +207,25 @@ Phi Kappa Sigma Fraternity
 %%
 % Projects
 %%
-\section{Projects}
-\runsubsection{Java -> C++ Transpiler}
-\descript{}
-\location{New York, NY, 2016 Fall}
-{\bf Team Leader} of 5 tasked with building a transpiler in Java. Used SBT to build, JUnit for testing, and visitor + delegator design patterns. *
-\sectionsep
+%\section{Projects}
+%\runsubsection{Java -> C++ Transpiler}
+%\descript{}
+%\location{New York, NY, 2016 Fall}
+%{\bf Team Leader} of 5 tasked with building a transpiler in Java. Used SBT to build, JUnit for testing, and visitor + delegator design patterns. *
+%\sectionsep
 
-\runsubsection{QR Item Finder}
-\descript{}
-\location{New York, NY, 2015 Fall}
-{\bf Technical Lead} of 4 that built a \href{https://github.com/JasonYao/Large-Scale-Final-Project-Lost-and-Found-Recovery-Service}{QR item finder service} with a focus on scalability. Used Django, MySQL, Nginx, and memcached.
-\sectionsep
+%\runsubsection{QR Item Finder}
+%\descript{}
+%\location{New York, NY, 2015 Fall}
+%{\bf Technical Lead} of 4 that built a \href{https://github.com/JasonYao/Large-Scale-Final-Project-Lost-and-Found-Recovery-Service}{QR item finder service} with a focus on scalability. Used Django, MySQL, Nginx, and memcached.
+%\sectionsep
 
-\runsubsection{Meeter}
-\descript{}
-\location{New York, NY, 2017 Spring}
-\href{https://github.com/JasonYao/university-video-meeter}{Chat webapp} using Node, Express, MongoDB, AWS-S3, socket.io, and a  WebRTC library to connect university and high school students. (in progress)\\
-\sectionsep
+%\runsubsection{Meeter}
+%\descript{}
+%\location{New York, NY, 2017 Spring}
+%\href{https://github.com/JasonYao/university-video-meeter}{Chat webapp} using Node, Express, MongoDB, AWS-S3, socket.io, and a  WebRTC library to connect university and high school students. (in progress)\\
+%\sectionsep
 
-* Repo access available upon request
+%* Repo access available upon request
 \end{minipage}
 \end{document}
