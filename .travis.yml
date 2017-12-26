@@ -8,6 +8,7 @@ branches:
 addons:
   apt:
     packages:
+    - latex-xcolor
     # Our build specifically depends on xelatex
     - texlive-xetex
 
