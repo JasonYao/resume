@@ -14,7 +14,7 @@ addons:
     - fonts-lmodern
     - texlive-fonts-recommended
     # Icons in the PDF depend on Font Awesome 4
-    - fonts-font-awesome
+    - texlive-fonts-extra # Don't install fonts-font-awesome, it doesn't work.
     # Our build specifically depends on xelatex
     - texlive-xetex
 
