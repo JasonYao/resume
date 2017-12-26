@@ -9,6 +9,7 @@ addons:
   apt:
     packages:
     - latex-xcolor
+    - texlive-fonts-recommended
     # Our build specifically depends on xelatex
     - texlive-xetex
 
