@@ -16,11 +16,12 @@ addons:
     - texlive-fonts-recommended
 
     # Required to get tracklang.sty
+    - texlive-generic-recommended
     - texlive-generic-extra
 
     # Attempt to get datetime2
     # - texlive-generic-extra
-    # - texlive-generic-recommended
+    #
 
     # Icons in the PDF depend on Font Awesome 4
     - texlive-fonts-extra # Don't install fonts-font-awesome, it doesn't work. Manual adding of the font doesn't work either
