@@ -29,9 +29,8 @@ env:
 
 before_script:
   - mkdir -p texmf
-  - xelatex lib/datetime2/datetime2.ins
-  - ls
-  - ls lib/datetime2
+  - cd lib/datetime2
+  - xelatex datetime2.ins
   # - tlmgr option repository ftp://tug.org/historic/systems/texlive/2015/tlnet-final
   # - tlmgr init-usertree
   # - tlmgr update --self
