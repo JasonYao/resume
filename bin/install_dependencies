@@ -64,7 +64,7 @@ function install_latex_package() {
 		else
 		    info "Latex Package Install: Copying pre-generated .sty file for ${package_name}"
 				# cp tex/${package_name}.sty ../..  # TODO P0: remove after
-				cp -r tex ../..
+				cp -r tex/* ../..
 		    success "Latex Package Install: Copied pre-generated .sty file for ${package_name}"
 		fi
 
