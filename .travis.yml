@@ -8,6 +8,7 @@ branches:
 addons:
   apt:
     packages:
+    - xzdec  # Required for tlmgr
     - latex-xcolor
     - texlive-latex-recommended
     - texlive-latex-extra
