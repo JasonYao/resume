@@ -9,21 +9,21 @@ addons:
   apt:
     packages:
     - latex-xcolor
-    # - texlive-latex-recommended
-    # - texlive-latex-extra
+    - texlive-latex-recommended
+    - texlive-latex-extra
     - fonts-lmodern
-    # - texlive-fonts-recommended
-    # # Icons in the PDF depend on Font Awesome 4
-    # - texlive-fonts-extra # Don't install fonts-font-awesome, it doesn't work.
-    # # Our build specifically depends on xelatex
-    # - texlive-xetex
-    - texlive-full
+    - texlive-fonts-recommended
+    # Icons in the PDF depend on Font Awesome 4
+    - texlive-fonts-extra # Don't install fonts-font-awesome, it doesn't work.
+    # Our build specifically depends on xelatex
+    - texlive-xetex
 
 env:
   - secure: "rX8dMwCL+1URZS6GjROqPEHQlrbODb85TmjJcdvQK8GOG5w1eXzejM5kArQDuMpLGljCNiPC4hDpmfCMVQ29SgVzR9epZS0EIz6A/D/eDAYWg5uw9ZxneJyT6IXuqRb3Ie2tqibHynS01E+97gt6U/TGNPFtO2SZRKnJpCGEOEx7tIECiswpqdCjAKoDEv2mjPmGPSArQKxUiWzcZr6m5ETE85ycPKXnVjZPRKG8UUXhXk/YcYVws0EcIfjSvNtvcIENJew5bESqzYL8jmrbAL+5g4KOBfQGI80RMNFBc16HiIo0gxz6m+nxd0hcRuLb3npo5jJYqHld7XWf6tf2ULfrMnyjoOfwdfS5P3B2j/YPzJfeX1Iyb+KO6X0ze7vYzp8izIYekd/aMBxuv4kdclnxh1m6BrrdYzsAQafeiAwfFzHsZG8Y1n44Kz99haayCqQFZMZKLQVLuMrNKg13xt38jMOoMH+wIdOIjyM+Mjatq3yg0nkhKSOOLy8AuLpwNv1dwTlmPnuCUgxyBSbSLV2Rvx4hN0qDX/QJ2uto6qjmPldJbZIxcxL7YWNUHEA/83RzVi2CNduA+VkPaAsRPJxVK0x9HjrnSosWPKCZbl8l6k9SN1oSUgYcazsSkW2BRgKgp6Ic0/UEQkkAHy1jpphxsNAwKx5A7xwkttpPYhM="
 
-# before_script:
-#   # Installs datetime2, which isn't in a handy ubuntu library besides texlive-full
+before_script:
+  - tlmgr install datetime2
+#   # Installs datetime2, which isn't in a handy ubuntu library, not even in texlive-full
 #   - wget http://mirrors.ctan.org/install/macros/latex/contrib/datetime2.tds.zip
 
 script:
