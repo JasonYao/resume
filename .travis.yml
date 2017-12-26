@@ -28,6 +28,9 @@ before_script:
   - tlmgr init-usertree
   - tlmgr update --self
   - tlmgr install datetime2
+  - fc-cache -f -v  # Rebuilds the font cache
+  - fc-list | grep "awesome"
+  - fc-list
 #   # Installs datetime2, which isn't in a handy ubuntu library, not even in texlive-full
 #   - wget http://mirrors.ctan.org/install/macros/latex/contrib/datetime2.tds.zip
 
