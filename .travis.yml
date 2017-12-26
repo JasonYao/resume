@@ -14,8 +14,13 @@ addons:
     - texlive-latex-extra
     - fonts-lmodern
     - texlive-fonts-recommended
+
+    # Attempt to get datetime2
+    # - texlive-generic-extra
+    - texlive-generic-recommended
+
     # Icons in the PDF depend on Font Awesome 4
-    - texlive-fonts-extra # Don't install fonts-font-awesome, it doesn't work.
+    # - texlive-fonts-extra # Don't install fonts-font-awesome, it doesn't work.
     # Our build specifically depends on xelatex
     - texlive-xetex
 
