@@ -1,0 +1,76 @@
+% This file is public domain.
+
+% arara: pdflatex
+\documentclass{article}
+
+\usepackage[calc]{datetime2}
+
+\begin{document}
+
+\DTMsavejulianday{mydate}{2457023}
+\DTMsavedate{mydate2}{2014-06-20}
+
+Date: \DTMusedate{mydate}.
+
+\newcount\myct
+\DTMsaveddatetojulianday{mydate}{\myct}
+
+Julian day number: \number\myct.
+
+\DTMsaveddateoffsettojulianday{mydate}{2}{\myct}
+
+Julian day number (offset+2): \number\myct.
+
+Is \texttt{mydate2} (\DTMusedate{mydate2}) before 
+\texttt{mydate} (\DTMusedate{mydate})?
+\DTMifdate
+ {mydate2}
+ {at most=
+   \DTMfetchyear{mydate}-\DTMfetchmonth{mydate}-\DTMfetchday{mydate}}
+ {yes}{no}.
+
+Is \texttt{mydate2} (\DTMusedate{mydate2}) after 
+\texttt{mydate} (\DTMusedate{mydate})?
+\DTMifdate
+ {mydate2}
+ {at least=
+   \DTMfetchyear{mydate}-\DTMfetchmonth{mydate}-\DTMfetchday{mydate}}
+ {yes}{no}.
+
+\DTMsaveddatediff{mydate}{mydate2}{\myct}
+
+\DTMusedate{mydate} is 
+\ifnum\myct=0
+ the same day as
+\else
+  \ifnum\myct<0
+   \number-\myct\space day\ifnum\myct<-1s\fi\space before
+  \else
+   \number\myct\space day\ifnum\myct>1s\fi\space after
+  \fi
+\fi
+\DTMusedate{mydate2}.
+
+Original date: 2014-06-3 20:45:00 +06:00
+
+\DTMsaveaszulutime{mydate}{2014}{6}{3}{20}{45}{0}{6}{0}
+UTC+00:00 date: \DTMuse{mydate}.
+
+\DTMsavetimestamp{mydate}{2014-05-01T03:55:00 -06:00}
+Original date: \DTMuse{mydate}.
+
+\DTMtozulu{mydate}{mydate2}
+UTC+00:00: \DTMuse{mydate2}.
+
+Offset: \DTMdate{2015-03-30+4}.
+
+Last: \DTMdate{2015-02-last}.
+
+Last with offset: \DTMdate{2015-02-last+-2}.
+
+Saved date with offset
+\DTMsavedate{offset}{2015-02-last+-2}
+
+Use date: \DTMusedate{offset}.
+
+\end{document}

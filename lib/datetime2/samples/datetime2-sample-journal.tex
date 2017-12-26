@@ -1,0 +1,127 @@
+% arara: pdflatex
+% arara: pdflatex
+\documentclass{memoir}
+
+\usepackage[en-GB,showdow]{datetime2}
+
+\usepackage{lipsum}% dummy text
+\usepackage[hidelinks]{hyperref}
+
+\newcommand*{\numdash}{\texorpdfstring{\,--\,}{--}}
+
+% \DTMmonthname is robust and can't be used in the bookmarks
+% or headings so use \DTMenglishmonthname since this
+% document is in English.
+\newcommand*{\entrymonth}[2]{\DTMenglishmonthname{#2} #1}
+
+% A range of dates.
+% Syntax: \daterange{yyyy1}{mm1}{dd1}{yyyy2}{mm2}{dd2}
+\newcommand*{\daterange}[6]{%
+  \ifnum#1=#4 
+% Same year
+    \ifnum#2=#5
+% Same month
+      \ifnum#3=#6
+% Same day - not a range!
+       \DTMdisplaydate{#1}{#2}{#3}%
+      \else
+% Range within the same month.
+% This needs to be done explicitly but match the separators
+% with the en-GB style.
+       \DTMenglishordinal{#3}\numdash\DTMenglishordinal{#6}%
+       \DTMenGBdaymonthsep
+       \DTMenglishmonthname{#2}%
+       \DTMenGBmonthyearsep\number#1
+      \fi
+    \else
+% Not the same month
+      \DTMdisplaydate{#1}{#2}{#3}{-1}\numdash\DTMdisplaydate{#4}{#5}{#6}{-1}%
+    \fi
+  \else
+% Not same year
+   \DTMdisplaydate{#1}{#2}{#3}{-1}\numdash\DTMdisplaydate{#4}{#5}{#6}{-1}%
+  \fi
+}
+
+% range of months
+% Syntax: \monthspan{yyyy1}{mm1}{yyyy2}{mm2}
+\newcommand*{\monthspan}[4]{%
+ \ifnum#1=#3
+% Same year
+   \DTMenglishmonthname{#2}\numdash\DTMenglishmonthname{#4}%
+   \DTMenGBmonthyearsep\number#1
+ \else
+% Not the same year
+   \DTMenglishmonthname{#2}%
+   \DTMenGBmonthyearsep\number#1
+   \numdash\DTMenglishmonthname{#4}%
+   \DTMenGBmonthyearsep\number#3
+ \fi
+}
+
+\newcommand*{\entrydate}[3]{\DTMdisplaydate{#1}{#2}{#3}{-1}}
+\newcommand*{\titleentrydate}[3]{\DTMdate{#1-#2-#3}}
+
+\renewcommand*{\printchaptertitle}[1]{%
+ {%
+   \let\entrydate\titleentrydate
+   \chaptitlefont{#1}%
+ }%
+}
+
+\setsecheadstyle{\let\entrydate\titleentrydate
+ \Large\bfseries\memRTLraggedright}
+
+\begin{document}
+
+\frontmatter
+\tableofcontents
+
+\mainmatter
+\chapter{Introduction}
+
+This is a test document that illustrates the use of dates within
+chapter titles.
+
+\section{Sample}
+
+An example section.
+
+\chapter{\entrymonth{2016}{01}}
+
+\lipsum
+
+\section{\entrydate{2016}{01}{01}}
+
+\lipsum[1-10]
+
+\section{\entrydate{2016}{01}{02}}
+
+\lipsum
+
+\section{\daterange{2016}{01}{04}{2016}{01}{12}}
+
+\lipsum[1-3]
+
+\chapter{\entrydate{2016}{02}{03}}
+
+\lipsum
+
+\chapter{\monthspan{2016}{02}{2016}{03}}
+
+\lipsum
+
+\section{\daterange{2016}{02}{04}{2016}{03}{01}}
+
+\lipsum
+
+\chapter{\monthspan{2015}{12}{2016}{01}}
+
+\lipsum
+
+\section{\daterange{2015}{12}{20}{2016}{01}{01}}
+
+\lipsum
+
+
+\end{document}

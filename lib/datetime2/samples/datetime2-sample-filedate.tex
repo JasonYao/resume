@@ -1,0 +1,23 @@
+% This file is public domain.
+
+% arara: pdflatex
+% May also work with lualatex on some platforms (such as Linux)
+% but the file mod date is not supported with xelatex.
+% (The time zone %z format with Lua may not work on some platforms.)
+% arara: pdflatex
+\documentclass{article}
+
+\usepackage{datetime2}
+
+\begin{document}
+Current date and time: \DTMnow.
+
+\DTMsavefilemoddate{filemod}{\jobname.tex}
+
+File modification date: \DTMuse{filemod}.
+
+Save current date and time.
+\DTMsavenow{mydate}
+
+Now use it: \DTMuse{mydate}.
+\end{document}

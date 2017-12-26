@@ -1,0 +1,84 @@
+% This file is public domain.
+
+% This document requires the datetime2-english module to be
+% installed (in addition to the datetime2 package).
+% arara: pdflatex
+\documentclass[british,american,australian,canadian,newzealand,en-GG,en-JE,en-IM,en-MT,en-IE]{article}
+
+\usepackage{babel}
+\usepackage[datesep=/,showzoneminutes=false,useregional]{datetime2}
+\usepackage[colorlinks]{hyperref}
+
+%\DTMlangsetup{mapzone=false}
+
+\DTMsavetimestamp{mydate}{2014-06-03T12:45:02+01:00}
+\DTMsavetimestamp{mydate2}{2015-03-20T08:05:09+00:00}
+\DTMsavetimestamp{mydate3}{2014-12-15T23:55:49-06:00}
+\DTMsavetimestamp{mydate4}{2014-01-27T12:05:00+09:00}
+\DTMsavetimestamp{mydate5}{2013-11-28T02:05:00+12:00}
+
+% This will clear the BST mapping when the regional styles are set.
+% The en-GB (british) style will then set it to BST.
+\renewcommand*{\DTMresetzones}{\DTMclearmap{01}{00}}
+
+\begin{document}
+\tableofcontents
+
+% Define command to test each region
+\newcommand{\testregion}[1]{%
+  \ifcsdef{date#1}{\selectlanguage{#1}}{\DTMsetstyle{#1}}%
+
+  \section{#1}
+
+  Today: \today.
+
+  Now: \DTMnow.
+
+  \subsection{\DTMuse{mydate}}
+  Saved Date (\texttt{mydate}): \DTMusedate{mydate}
+  Saved time (\texttt{mydate}): \DTMusetime{mydate}.
+  \typeout{Date (#1): \DTMusedate{mydate}}
+
+  \subsection{\DTMuse{mydate2}}
+  Saved Date (\texttt{mydate2}): \DTMusedate{mydate2}
+  Saved time (\texttt{mydate2}): \DTMusetime{mydate2}.
+  \typeout{Date (#1): \DTMusedate{mydate2}}
+
+  \subsection{\DTMuse{mydate3}}
+  Saved Date (\texttt{mydate3}): \DTMusedate{mydate3}
+  Saved time (\texttt{mydate3}): \DTMusetime{mydate3}.
+  \typeout{Date (#1): \DTMusedate{mydate3}}
+
+  \subsection{\DTMuse{mydate4}}
+  Saved Date (\texttt{mydate4}): \DTMusedate{mydate4}
+  Saved time (\texttt{mydate4}): \DTMusetime{mydate4}.
+  \typeout{Date (#1): \DTMusedate{mydate4}}
+
+  \subsection{\DTMuse{mydate5}}
+  Saved Date (\texttt{mydate5}): \DTMusedate{mydate5}
+  Saved time (\texttt{mydate5}): \DTMusetime{mydate5}.
+  \typeout{Date (#1): \DTMusedate{mydate5}}
+}
+
+\testregion{british}
+
+\testregion{american}
+
+\testregion{australian}
+
+\testregion{canadian}
+
+\testregion{newzealand}
+
+% no official babel language for these regions as far as I can tell:
+\testregion{en-GG}
+
+\testregion{en-JE}
+
+\testregion{en-IM}
+
+\testregion{en-MT}
+
+\testregion{en-IE}
+
+\end{document}

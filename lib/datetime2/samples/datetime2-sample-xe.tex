@@ -1,0 +1,20 @@
+% arara: xelatex: {shell: on}
+\documentclass{article}
+
+\usepackage{texosquery}
+% Disable texosquery:
+%\TeXOSQueryDryRuntrue 
+\usepackage{datetime2}
+
+% If you get an error that looks like:
+% ! I can't find file `"|texosquery -n"'.
+% Then the shell escape has been restricted and texosquery
+% wasn't allowed to run.
+
+\begin{document}
+\DTMnow.
+
+\DTMsavefilemoddate{moddate}{\jobname.tex}
+File \texttt{\jobname.tex} last modified: \DTMuse{moddate}.
+
+\end{document}

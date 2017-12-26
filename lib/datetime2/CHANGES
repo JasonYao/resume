@@ -1,0 +1,62 @@
+1.5.2 (2016-07-12):
+
+  * Added \DTMifhasstyle, \DTMifhasdatestyle, \DTMifhastimestyle,
+    \DTMifhaszonestyle, \DTMsetregional, \DTMtryregional
+    and \DTMsavefrompdfdata
+
+  * Added check for texosquery (allows seconds and time zone
+    to be supported with xelatex but requires shell escape)
+
+1.5.1 (2016-06-05) :
+
+  * Added check for \pdffeedback
+
+1.5 (2016-06-04) :
+
+  * Bug fix www.dickimaw-books.com/cgi-bin/bugtracker.cgi?action=view&key=109
+    (added \dtm@pdfcreationdate)
+
+1.4 (2016-02-11) :
+
+  * datetime2-calc.sty:
+
+    - new command \DTMcomputedayofweekindex
+
+  * datetime2.sty:
+
+    - new commands \DTMtoday and \DTMToday.
+      \today and \Today are now \let to them, respectively.
+
+    - added check for scrlttr2.
+
+  * Added extra sample file datetime2-sample-journal.tex
+
+1.3 (2016-01-22) :
+
+  * datetime2.sty:
+
+    - new styles: ddmmyy, mmddyy
+
+    - new command: \DTMusemodule
+
+    - added starred version of \DTMlangsetup
+
+  * datetime2-calc.sty:
+
+    - new standalone language-sensitive month name, weekday name
+      and date ordinal commands
+
+  * datetime2 manual:
+
+    - added chapter on migrating from datetime.sty
+
+1.2 (2015-11-10) :
+  * Added \DTMrenewdatestyle, \DTMrenewtimestyle,
+    \DTMrenewzonestyle, \DTMrenewstyle, \DTMprovidedatestyle,
+    \DTMprovidetimestyle, \DTMprovidezonestyle and \DTMprovidestyle.
+
+1.1 (2015-09-15) :
+  * Fixed bug in conversion to +00:00
+
+1.0 (2015-03-24) :
+  * Initial Release

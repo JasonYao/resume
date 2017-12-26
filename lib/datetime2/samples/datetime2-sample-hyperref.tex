@@ -1,0 +1,81 @@
+% This file is public domain.
+% This document additionally requires the datetime2-english module
+% to be installed.
+
+% arara: pdflatex
+% arara: pdflatex
+\documentclass[en-GB,en-US,en-AU]{article}
+
+\usepackage[datesep=/,showzoneminutes=false]{datetime2}
+\usepackage[colorlinks]{hyperref}
+
+\DTMsetup{showdow}
+
+\DTMsavetimestamp{mydate}{2014-06-03T12:45:02+01:00}
+
+\begin{document}
+\tableofcontents
+
+The use of \verb|\typeout| is to test the expansion in the event
+that the date/time needs to be written to an external file.
+Use
+\texttt{\href{http://www.dickimaw-books.com/latex/novices/html/texdoc.html}{texdoc} datetime2} to read the main user manual for
+the \texttt{datetime2} package and use \texttt{texdoc
+datetime2-english} for the English module documentation.
+
+\section{Default date: \today}
+
+Today: \today. Time: \DTMcurrenttime. Zone: \DTMcurrentzone.
+
+Now: \DTMnow.
+
+TWO DIGITS: \DTMtwodigits{2014}. \DTMtwodigits{2999}.
+\DTMtwodigits{-2}.
+
+\typeout{Date Stamp (Default): \DTMnow}
+
+Saved date: \DTMusedate{mydate}.
+Saved time: \DTMusetime{mydate}.
+
+Saved date-time: \DTMuse{mydate}.
+
+\typeout{Date Stamp (Default): \DTMuse{mydate}}
+
+\section{Default time: \DTMusetime{mydate}}
+
+\DTMsetstyle{iso}
+
+ISO: \DTMnow.
+\typeout{Date Stamp (ISO): \DTMnow}
+
+Saved date: \DTMuse{mydate}.
+\typeout{Date Stamp (ISO): \DTMuse{mydate}}
+
+\DTMsetstyle{en-GB}
+\section{(GB) \DTMusedate{mydate}}
+
+en-GB: \DTMnow.
+\typeout{Date Stamp (GB): \DTMnow}
+
+Saved date: \DTMuse{mydate}.
+\typeout{Date Stamp (GB): \DTMuse{mydate}}
+
+\DTMsetstyle{en-US}
+\section{(US) \DTMusedate{mydate}}
+
+en-US: \DTMnow.
+\typeout{Date Stamp (US): \DTMnow}
+
+Saved date: \DTMuse{mydate}.
+\typeout{Date Stamp (US): \DTMuse{mydate}}
+
+\DTMsetstyle{en-AU}
+\section{(AU) \DTMusedate{mydate}}
+
+en-AU: \DTMnow.
+\typeout{Date Stamp (AU): \DTMnow}
+
+Saved date: \DTMuse{mydate}.
+\typeout{Date Stamp (AU): \DTMuse{mydate}}
+
+\end{document}

@@ -1,0 +1,141 @@
+% This file is public domain.
+% This document additionally requires the datetime2-english module
+% to be installed.
+
+% arara: pdflatex
+\documentclass[english]{article}
+
+\usepackage{datetime2}
+
+%\DTMsetup{showseconds=false,datesep=/,timesep=.}
+
+\begin{document}
+\DTMsavetimestamp{mydate}{2015-04-01T08:05:00+01:00}
+\DTMsavetimestamp{mydate2}{2015-04-01T08:13:45+01:00}
+
+Default: \DTMnow. \DTMuse{mydate}.
+\typeout{Date-Time (default): \DTMnow. \DTMuse{mydate}.}
+
+\DTMsetstyle{iso}
+
+ISO: \DTMnow. \DTMuse{mydate}.
+\typeout{Date-Time (iso): \DTMnow. \DTMuse{mydate}.}
+
+\DTMsetstyle{pdf}
+
+PDF: \DTMnow. \DTMuse{mydate}.
+\typeout{Date-Time (pdf): \DTMnow. \DTMuse{mydate}.}
+
+\DTMsetstyle{ddmmyyyy}
+
+ddmmyyyy: \DTMnow. \DTMuse{mydate}.
+\typeout{Date-Time (ddmmyyyy): \DTMnow. \DTMuse{mydate}.}
+
+\DTMsetstyle{dmyyyy}
+
+dmyyyy: \DTMnow. \DTMuse{mydate}.
+\typeout{Date-Time (dmyyyy): \DTMnow. \DTMuse{mydate}.}
+
+\DTMsetstyle{dmyy}
+
+dmyy: \DTMnow. \DTMuse{mydate}.
+\typeout{Date-Time (dmyy): \DTMnow. \DTMuse{mydate}.}
+
+\DTMsetstyle{mmddyyyy}
+
+mmddyyyy: \DTMnow. \DTMuse{mydate}.
+\typeout{Date-Time (mmddyyyy): \DTMnow. \DTMuse{mydate}.}
+
+\DTMsetstyle{mdyyyy}
+
+mdyyyy: \DTMnow. \DTMuse{mydate}.
+\typeout{Date-Time (mdyyyy): \DTMnow. \DTMuse{mydate}.}
+
+\DTMsetstyle{mdyy}
+
+mdyy: \DTMnow. \DTMuse{mydate}.
+\typeout{Date-Time (mdyy): \DTMnow. \DTMuse{mydate}.}
+
+\DTMsetstyle{yyyymd}
+
+yyyymd: \DTMnow. \DTMuse{mydate}.
+\typeout{Date-Time (yyyymd): \DTMnow. \DTMuse{mydate}.}
+
+Testing time styles.
+
+\DTMsavetime{noon}{12:00:00}
+\DTMsavetime{midnight1}{00:00:00}
+\DTMsavetime{midnight2}{24:00:00}
+\DTMsavetime{8am}{08:00:00}
+\DTMsavetime{8pm}{20:00:00}
+\DTMsavetime{1203}{12:03:00}
+\DTMsavetime{2401}{24:01:00}
+\DTMsavetime{0001}{00:01:00}
+
+\DTMsettimestyle{hmmss}
+
+hmmss: \DTMcurrenttime. \DTMusetime{mydate}.
+\DTMusetime{mydate2}.
+\DTMusetime{noon}.
+\DTMusetime{midnight1}.
+\DTMusetime{midnight2}.
+\DTMusetime{8am}.
+\DTMusetime{8pm}.
+\DTMusetime{1203}.
+\DTMusetime{2401}.
+\DTMusetime{0001}.
+
+\typeout{Time (hmmss): \DTMcurrenttime.
+ \DTMusetime{mydate}.
+ \DTMusetime{mydate2}.
+ \DTMusetime{noon}.
+ \DTMusetime{midnight1}.
+ \DTMusetime{midnight2}.
+ \DTMusetime{8am}.
+ \DTMusetime{8pm}.
+ \DTMusetime{1203}.
+ \DTMusetime{2401}.
+ \DTMusetime{0001}.
+}
+
+\DTMsettimestyle{englishampm}
+ampm: \DTMcurrenttime. 
+\DTMusetime{mydate}.
+\DTMusetime{mydate2}.
+\DTMusetime{noon}.
+\DTMusetime{midnight1}.
+\DTMusetime{midnight2}.
+\DTMusetime{8am}.
+\DTMusetime{8pm}.
+\DTMusetime{1203}.
+\DTMusetime{2401}.
+\DTMusetime{0001}.
+
+\typeout{Time (ampm): \DTMcurrenttime.
+\DTMusetime{mydate}.
+\DTMusetime{mydate2}.
+\DTMusetime{noon}.
+\DTMusetime{midnight1}.
+\DTMusetime{midnight2}.
+\DTMusetime{8am}.
+\DTMusetime{8pm}.
+\DTMusetime{1203}.
+\DTMusetime{2401}.
+\DTMusetime{0001}.
+}
+
+\renewcommand*{\DTMenglishampmfmt}[1]{\protect\textsc{#1}}
+
+(ampm sc) \DTMcurrenttime. 
+\DTMusetime{mydate}.
+\DTMusetime{mydate2}.
+\DTMusetime{noon}.
+\DTMusetime{midnight1}.
+\DTMusetime{midnight2}.
+\DTMusetime{8am}.
+\DTMusetime{8pm}.
+\DTMusetime{1203}.
+\DTMusetime{2401}.
+\DTMusetime{0001}.
+
+\end{document}
