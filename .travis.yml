@@ -20,7 +20,7 @@ addons:
     - texlive-generic-recommended
 
     # Icons in the PDF depend on Font Awesome 4
-    # - texlive-fonts-extra # Don't install fonts-font-awesome, it doesn't work.
+    - texlive-fonts-extra # Don't install fonts-font-awesome, it doesn't work. Manual adding of the font doesn't work either
     # Our build specifically depends on xelatex
     - texlive-xetex
 
@@ -33,9 +33,9 @@ before_script:
   # - tlmgr init-usertree
   # - tlmgr update --self
   # - tlmgr install datetime2
-  - fc-cache -f -v  # Rebuilds the font cache
+  # - fc-cache -f -v  # Rebuilds the font cache
   # - fc-list | grep awesome
-  - fc-list
+  # - fc-list
 #   # Installs datetime2, which isn't in a handy ubuntu library, not even in texlive-full
 #   - wget http://mirrors.ctan.org/install/macros/latex/contrib/datetime2.tds.zip
 
