@@ -25,9 +25,9 @@ env:
 before_script:
   - mkdir -p texmf
   # - tlmgr option repository ftp://tug.org/historic/systems/texlive/2015/tlnet-final
-  - tlmgr init-usertree
-  - tlmgr update --self
-  - tlmgr install datetime2
+  # - tlmgr init-usertree
+  # - tlmgr update --self
+  # - tlmgr install datetime2
   - fc-cache -f -v  # Rebuilds the font cache
   - fc-list | grep "awesome"
   - fc-list
