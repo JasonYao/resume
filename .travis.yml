@@ -15,6 +15,9 @@ addons:
     - fonts-lmodern
     - texlive-fonts-recommended
 
+    # Required to get tracklang.sty
+    - texlive-generic-extra
+
     # Attempt to get datetime2
     # - texlive-generic-extra
     # - texlive-generic-recommended
