@@ -11,6 +11,7 @@ addons:
     - latex-xcolor
     - texlive-latex-recommended
     - texlive-latex-extra
+    - fonts-lmodern
     - texlive-fonts-recommended
     # Our build specifically depends on xelatex
     - texlive-xetex
