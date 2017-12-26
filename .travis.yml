@@ -16,15 +16,15 @@ addons:
     - texlive-fonts-recommended
 
     # Required to get tracklang.sty
-    - texlive-generic-recommended
-    - texlive-generic-extra
+    # - texlive-generic-recommended
+    # - texlive-generic-extra <-- both of these don't work
 
     # Attempt to get datetime2
     # - texlive-generic-extra
     #
 
     # Icons in the PDF depend on Font Awesome 4
-    - texlive-fonts-extra # Don't install fonts-font-awesome, it doesn't work. Manual adding of the font doesn't work either
+    # - texlive-fonts-extra # Don't install fonts-font-awesome, it doesn't work. Manual adding of the font doesn't work either
     # Our build specifically depends on xelatex
     - texlive-xetex
 
@@ -34,6 +34,12 @@ env:
 
 before_script:
   - bin/install_dependencies
+  #
+  # - mkdir -p texmf
+  # - cd lib/datetime2
+  # - xelatex datetime2.ins
+  # - cp datetime2.sty ${TRAVIS_BUILD_DIR}
+  # - cd ${TRAVIS_BUILD_DIR}
   # - tlmgr option repository ftp://tug.org/historic/systems/texlive/2015/tlnet-final
   # - tlmgr init-usertree
   # - tlmgr update --self

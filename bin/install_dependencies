@@ -55,8 +55,18 @@ function install_latex_package() {
 		wget ${package_download_link}
 		unzip ${package_name}.zip
 		cd ${package_name}
-		xelatex ${package_name}.ins
-		cp ${package_name}.sty ../..
+
+		if [[ -f ${package_name}.ins ]]; then
+			  info "Latex Package Install: Generating .sty file for ${package_name} now"
+		    xelatex ${package_name}.ins
+        cp ${package_name}.sty ../..
+				success "Latex Package Install: Generated .sty file for ${package_name}"
+		else
+		    info "Latex Package Install: Copying pre-generated .sty file for ${package_name}"
+				cp tex/${package_name}.sty ../..
+		    success "Latex Package Install: Copied pre-generated .sty file for ${package_name}"
+		fi
+
 		cd ../..
 		success "Latex Package Install: Successfully installed ${package_name}"
 }
