@@ -45,7 +45,7 @@ function stash_push () {
 declare -A latex_dependency_packages
 latex_dependency_packages[datetime2]=mirrors.ctan.org/macros/latex/contrib/datetime2.zip
 latex_dependency_packages[tracklang]=mirrors.ctan.org/macros/generic/tracklang.zip
-latex_dependency_packages[fontawesome]=mirrors.ctan.org/fonts/fontawesome.zip
+# latex_dependency_packages[fontawesome]=mirrors.ctan.org/fonts/fontawesome.zip
 
 function install_latex_package() {
 		package_name=$1
