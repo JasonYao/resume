@@ -24,6 +24,7 @@ env:
 
 before_script:
   - mkdir -p texmf
+  - tlmgr option repository ftp://tug.org/historic/systems/texlive/2015/tlnet-final
   - tlmgr init-usertree
   - tlmgr install datetime2
 #   # Installs datetime2, which isn't in a handy ubuntu library, not even in texlive-full
