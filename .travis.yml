@@ -17,7 +17,7 @@ addons:
 
     # Attempt to get datetime2
     # - texlive-generic-extra
-    - texlive-generic-recommended
+    # - texlive-generic-recommended
 
     # Icons in the PDF depend on Font Awesome 4
     - texlive-fonts-extra # Don't install fonts-font-awesome, it doesn't work. Manual adding of the font doesn't work either
@@ -31,7 +31,7 @@ before_script:
   - mkdir -p texmf
   - cd lib/datetime2
   - xelatex datetime2.ins
-  - cd ~
+  - cd ${TRAVIS_BUILD_DIR}
   # - tlmgr option repository ftp://tug.org/historic/systems/texlive/2015/tlnet-final
   # - tlmgr init-usertree
   # - tlmgr update --self
