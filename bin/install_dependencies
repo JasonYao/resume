@@ -59,8 +59,8 @@ function install_latex_package() {
 		if [[ -f ${package_name}.ins ]]; then
 			  info "Latex Package Install: Generating .sty file for ${package_name} now"
 		    xelatex ${package_name}.ins
-        cp ${package_name}.sty ../..
-				cp ${package_name}.tex ../..
+				cp *.sty ../..
+				cp *.tex ../..
 				success "Latex Package Install: Generated .sty file for ${package_name}"
 		else
 		    info "Latex Package Install: Copying pre-generated .sty file for ${package_name}"
