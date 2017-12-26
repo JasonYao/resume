@@ -10,6 +10,7 @@ addons:
     packages:
     - latex-xcolor
     - texlive-latex-recommended
+    - texlive-latex-extra
     - texlive-fonts-recommended
     # Our build specifically depends on xelatex
     - texlive-xetex
