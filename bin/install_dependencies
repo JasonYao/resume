@@ -66,5 +66,5 @@ mkdir -p lib
 
 for latex_dependency_package in "${!latex_dependency_packages[@]}"
 do
-	install_latex_package $latex_dependency_package ${array[$latex_dependency_package]}
+	install_latex_package $latex_dependency_package ${latex_dependency_packages[$latex_dependency_package]}
 done
