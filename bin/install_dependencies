@@ -100,7 +100,7 @@ done
 
 success "Latex Package Install: Successfully compiled all dependencies"
 
-if texhash ; then
+if texhash ~/texmf ; then
     success "Latex Package Install: Successfully installed all packages into TDS"
 else
     warning "Latex Package Install: Failed to install all packages into TDS"
