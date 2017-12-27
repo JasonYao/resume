@@ -60,6 +60,9 @@ function install_latex_package() {
 			  info "Latex Package Install: Generating .sty file for ${package_name} now"
 		    xelatex ${package_name}.ins
 
+				# TODO P0: remove after
+				ls
+
 				# Moves the .sty files
 				mkdir -p ../tex/latex/${package_name}
 				cp *.sty ../tex/latex/${package_name}
@@ -67,6 +70,11 @@ function install_latex_package() {
 				# Moves the .tex files
 				mkdir -p ../tex/plain/${package_name}
 				cp *.tex ../tex/plain/${package_name}
+
+				# TODO P0: remove after
+				ls
+				ls ../tex/latex/${package_name}
+				ls ../tex/plain/${package_name}
 
 				success "Latex Package Install: Generated .sty file for ${package_name}"
 		else
