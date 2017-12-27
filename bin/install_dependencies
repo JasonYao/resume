@@ -67,6 +67,7 @@ function install_latex_package() {
 				# Moves the .tex files
 				mkdir -p ../tex/plain/${package_name}
 				cp *.tex ../tex/plain/${package_name}
+
 				success "Latex Package Install: Generated .sty file for ${package_name}"
 		else
 		    info "Latex Package Install: Copying pre-generated .sty file for ${package_name}"
@@ -75,10 +76,13 @@ function install_latex_package() {
 		    success "Latex Package Install: Copied pre-generated .sty file for ${package_name}"
 		fi
 
+		# Cleans up
+		cd ..
+		rm -rf ${package_name}
+
 		success "Latex Package Install: Successfully installed ${package_name}"
 }
 
-bash --version
 mkdir -p ~/texmf
 
 for latex_dependency_package in "${!latex_dependency_packages[@]}"
