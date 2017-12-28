@@ -141,8 +141,10 @@ success "TexLive: Luatex was found"
 # texlive-latex-base is needed to run pdflatex
 info "TexLive: Installing dependencies"
 tlmgr install   \
-  datetime2          \
-  tracklang
+  datetime2     \
+  tracklang     \
+	xelatex       \
+	fontawesome
 	# TODO P0: Add in fontawesome
 success "TexLive: All dependencies installed"
 
