@@ -10,38 +10,38 @@ cache:
     - /tmp/texlive
     - $HOME/.texlive
 
-addons:
-  apt:
-    packages:
-    - xzdec  # Required for tlmgr
-    - latex-xcolor
-    - texlive-latex-recommended
-    - texlive-latex-extra
-    - fonts-lmodern
-    - texlive-fonts-recommended
-
-    # Attempt to see if this fixes datetime2 and tracklang
-    - lmodern
-
-    # Required to get tracklang.sty
-    # - texlive-generic-recommended
-    # - texlive-generic-extra <-- both of these don't work
-
-    # Attempt to get datetime2
-    # - texlive-generic-extra
-    #
-
-    # Icons in the PDF depend on Font Awesome 4
-    - texlive-fonts-extra # Don't install fonts-font-awesome, it doesn't work. Manual adding of the font doesn't work either
-    # Our build specifically depends on xelatex
-    - texlive-xetex
+# addons:
+#   apt:
+#     packages:
+#     - xzdec  # Required for tlmgr
+#     - latex-xcolor
+#     - texlive-latex-recommended
+#     - texlive-latex-extra
+#     - fonts-lmodern
+#     - texlive-fonts-recommended
+#
+#     # Attempt to see if this fixes datetime2 and tracklang
+#     - lmodern
+#
+#     # Required to get tracklang.sty
+#     # - texlive-generic-recommended
+#     # - texlive-generic-extra <-- both of these don't work
+#
+#     # Attempt to get datetime2
+#     # - texlive-generic-extra
+#     #
+#
+#     # Icons in the PDF depend on Font Awesome 4
+#     - texlive-fonts-extra # Don't install fonts-font-awesome, it doesn't work. Manual adding of the font doesn't work either
+#     # Our build specifically depends on xelatex
+#     - texlive-xetex
 
 env:
   # Github access token giving access to push to this repo
   - secure: "rX8dMwCL+1URZS6GjROqPEHQlrbODb85TmjJcdvQK8GOG5w1eXzejM5kArQDuMpLGljCNiPC4hDpmfCMVQ29SgVzR9epZS0EIz6A/D/eDAYWg5uw9ZxneJyT6IXuqRb3Ie2tqibHynS01E+97gt6U/TGNPFtO2SZRKnJpCGEOEx7tIECiswpqdCjAKoDEv2mjPmGPSArQKxUiWzcZr6m5ETE85ycPKXnVjZPRKG8UUXhXk/YcYVws0EcIfjSvNtvcIENJew5bESqzYL8jmrbAL+5g4KOBfQGI80RMNFBc16HiIo0gxz6m+nxd0hcRuLb3npo5jJYqHld7XWf6tf2ULfrMnyjoOfwdfS5P3B2j/YPzJfeX1Iyb+KO6X0ze7vYzp8izIYekd/aMBxuv4kdclnxh1m6BrrdYzsAQafeiAwfFzHsZG8Y1n44Kz99haayCqQFZMZKLQVLuMrNKg13xt38jMOoMH+wIdOIjyM+Mjatq3yg0nkhKSOOLy8AuLpwNv1dwTlmPnuCUgxyBSbSLV2Rvx4hN0qDX/QJ2uto6qjmPldJbZIxcxL7YWNUHEA/83RzVi2CNduA+VkPaAsRPJxVK0x9HjrnSosWPKCZbl8l6k9SN1oSUgYcazsSkW2BRgKgp6Ic0/UEQkkAHy1jpphxsNAwKx5A7xwkttpPYhM="
 
 before_script:
-  - bin/install_dependencies
+  - source bin/install_dependencies
   #
   # - mkdir -p texmf
   # - cd lib/datetime2

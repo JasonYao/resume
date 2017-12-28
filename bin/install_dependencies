@@ -112,8 +112,10 @@ function install_latex_package() {
 
 
 # See if there is a cached version of TL available
+info "TexLive: Checking for cache version existence"
 export PATH=/tmp/texlive/bin/x86_64-linux:$PATH
 if ! command -v texlua > /dev/null; then
+	info "TexLive: Could not be found in cache, downloading and installing now"
   # Obtain TeX Live
   wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
   tar -xzf install-tl-unx.tar.gz
@@ -123,21 +125,33 @@ if ! command -v texlua > /dev/null; then
   ./install-tl --profile=../bin/texlive.profile
 
   cd ..
+
+	success "TexLive: Minimal texlive version was installed"
 fi
+
+success "TexLive: Successfully installed"
 
 # Just including texlua so the cache check above works
 # Needed for any use of texlua even if not testing LuaTeX
+info "TexLive: Checking for the installed luatex"
 tlmgr install luatex
+success "TexLive: Luatex was found"
 
 # Other contrib packages: done as a block to avoid multiple calls to tlmgr
 # texlive-latex-base is needed to run pdflatex
+info "TexLive: Installing dependencies"
 tlmgr install   \
   datetime2          \
   tracklang
 	# TODO P0: Add in fontawesome
+success "TexLive: All dependencies installed"
 
 # Keep no backups (not required, simply makes cache bigger)
+info "TexLive: Disabling backups"
 tlmgr option -- autobackup 0
+success "TexLive: Backups are disabled"
 
 # Update the TL install but add nothing new
+info "TexLive: Updating to the latest version"
 tlmgr update --self --all --no-auto-install
+success "TexLive: Updated to the latest version"
