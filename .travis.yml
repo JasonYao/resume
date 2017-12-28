@@ -5,6 +5,11 @@ branches:
   only:
     - source
 
+cache:
+  directories:
+    - /tmp/texlive
+    - $HOME/.texlive
+
 addons:
   apt:
     packages:
