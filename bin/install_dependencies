@@ -145,9 +145,9 @@ tlmgr install                 \
   tracklang                   \
 	collection-fontsrecommended \
 	xcolor                      \
-	xetex                       \
-	fontawesome
-
+	fontawesome                 \
+	titlesec                    \
+	xetex
 success "TexLive: All dependencies installed"
 
 # Keep no backups (not required, simply makes cache bigger)
