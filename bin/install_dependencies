@@ -140,12 +140,13 @@ success "TexLive: Luatex was found"
 # Other contrib packages: done as a block to avoid multiple calls to tlmgr
 # texlive-latex-base is needed to run pdflatex
 info "TexLive: Installing dependencies"
-tlmgr install   \
-  datetime2     \
-  tracklang     \
-	xetex       \
+tlmgr install                 \
+  datetime2                   \
+  tracklang                   \
+	collection-fontsrecommended \
+	xetex                       \
 	fontawesome
-	# TODO P0: Add in fontawesome
+
 success "TexLive: All dependencies installed"
 
 # Keep no backups (not required, simply makes cache bigger)

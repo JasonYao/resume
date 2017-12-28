@@ -10,33 +10,33 @@ cache:
     - /tmp/texlive
     - $HOME/.texlive
 
-addons:
-  apt:
-    packages:
-    # Required due to https://tex.stackexchange.com/questions/129799/font-eu1-lmr-m-n-10-lmroman10-regularmapping-tex-text-at-10-0pt-not-loadab/360733#360733
-    - fonts-lmodern
-    # - xzdec  # Required for tlmgr
-    # - latex-xcolor
-    # - texlive-latex-recommended
-    # - texlive-latex-extra
-    # - fonts-lmodern
-    # - texlive-fonts-recommended
-    #
-    # # Attempt to see if this fixes datetime2 and tracklang
-    # - lmodern
-    #
-    # # Required to get tracklang.sty
-    # # - texlive-generic-recommended
-    # # - texlive-generic-extra <-- both of these don't work
-    #
-    # # Attempt to get datetime2
-    # # - texlive-generic-extra
-    # #
-    #
-    # # Icons in the PDF depend on Font Awesome 4
-    # - texlive-fonts-extra # Don't install fonts-font-awesome, it doesn't work. Manual adding of the font doesn't work either
-    # # Our build specifically depends on xelatex
-    # - texlive-xetex
+# addons:
+#   apt:
+#     packages:
+#     # Required due to https://tex.stackexchange.com/questions/129799/font-eu1-lmr-m-n-10-lmroman10-regularmapping-tex-text-at-10-0pt-not-loadab/360733#360733
+#     - fonts-lmodern
+#     # - xzdec  # Required for tlmgr
+#     # - latex-xcolor
+#     # - texlive-latex-recommended
+#     # - texlive-latex-extra
+#     # - fonts-lmodern
+#     # - texlive-fonts-recommended
+#     #
+#     # # Attempt to see if this fixes datetime2 and tracklang
+#     # - lmodern
+#     #
+#     # # Required to get tracklang.sty
+#     # # - texlive-generic-recommended
+#     # # - texlive-generic-extra <-- both of these don't work
+#     #
+#     # # Attempt to get datetime2
+#     # # - texlive-generic-extra
+#     # #
+#     #
+#     # # Icons in the PDF depend on Font Awesome 4
+#     # - texlive-fonts-extra # Don't install fonts-font-awesome, it doesn't work. Manual adding of the font doesn't work either
+#     # # Our build specifically depends on xelatex
+#     # - texlive-xetex
 
 env:
   # Github access token giving access to push to this repo
