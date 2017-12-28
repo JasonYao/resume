@@ -109,7 +109,7 @@ function install_latex_package() {
 # fi
 
 
-
+# Modified from https://tex.stackexchange.com/questions/398830/how-to-build-my-latex-automatically-with-pdflatex-using-travis-ci/398831#398831
 
 # See if there is a cached version of TL available
 info "TexLive: Checking for cache version existence"
@@ -143,7 +143,7 @@ info "TexLive: Installing dependencies"
 tlmgr install   \
   datetime2     \
   tracklang     \
-	xelatex       \
+	xetex       \
 	fontawesome
 	# TODO P0: Add in fontawesome
 success "TexLive: All dependencies installed"
