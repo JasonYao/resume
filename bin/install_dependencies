@@ -147,6 +147,7 @@ tlmgr install                 \
 	xcolor                      \
 	fontawesome                 \
 	titlesec                    \
+	textpos                     \
 	xetex
 success "TexLive: All dependencies installed"
 
