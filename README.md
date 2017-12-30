@@ -1,7 +1,10 @@
-# Resume
+# Resume | Jason Yao
+[![Build Status](https://travis-ci.org/JasonYao/resume.svg?branch=source)](https://travis-ci.org/JasonYao/resume)
+
 By [Jason Yao](https://github.com/jasonyao/)
 
-## Description
+> Spending too much time automating the creation of a pretty resume
+
 This repo contains my resume, along with any
 necessary files to generate it.
 
@@ -9,24 +12,33 @@ Currently, [LaTeX](https://www.latex-project.org)
 is used due to its readability, ease-of-change,
 and aesthetic final output.
 
-## Resume Generation
-To generate the final `.pdf` format of the resume,
-use the `XeTeX` engine.
+The LaTeX engine in use is [Xe(La)TeX](http://xetex.sourceforge.net/),
+used for its UTF-8 goodness and implicit access to
+system-wide fonts.
 
-For the graphical front-end, the recommendation is to use
-[Texmaker](http://www.xm1math.net/texmaker/), due to its ability to show the current
-build (Yes, we know the latest version was back in 2015,
-but newer graphical front-ends have so far been pale
-in comparison even after all these years).
+## Link to Resume
+To see the resume, please click the image below:
+[![Even this thumbnail is automatically generated](docs/Resume_Jason_Yao.jpg)
+](https://www.jasonyao.com/resume/Resume_Jason_Yao.pdf)
 
-## Dependencies
-- [MacTex](https://www.tug.org/mactex/) (Back-end compiler)
-- [Font Awesome](https://github.com/FortAwesome/Font-Awesome) (Nice symbol library)
+## Install (macOS)
+```sh
+# Installs pdf generation dependencies
+brew cask install mactex
+brew tap caskroom/fonts
+brew cask install font-fontawesome
 
-## Installation
-- Install the Font Awesome fonts globally on your system
-- Install MacTex
-- Set Texmaker to use XeTeX
+# [OPTIONAL] Installs a good pdf viewer and IDE
+brew cask install texmaker
+```
+
+## Usage
+To generate the pdf from the command-line:
+```sh
+bin/build
+# OR
+xelatex Resume_Jason_Yao.tex
+```
 
 ## License
 This repo is licensed under the terms of the MIT license,
