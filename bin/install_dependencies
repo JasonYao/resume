@@ -156,7 +156,6 @@ tlmgr install                 \
   tracklang                   \
 	collection-fontsrecommended \
 	xcolor                      \
-	fontawesome                 \
 	titlesec                    \
 	textpos                     \
 	ms                          \
@@ -165,6 +164,7 @@ tlmgr install                 \
 	fontspec                    \
 	xltxtra                     \
 	realscripts                 \
+	etoolbox                    \
 	xetex
 success "TexLive: All dependencies installed"
 
