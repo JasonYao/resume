@@ -153,6 +153,7 @@ tlmgr install                 \
 	titlesec                    \
 	textpos                     \
 	ms                          \
+	isodate                     \
 	xetex
 success "TexLive: All dependencies installed"
 
