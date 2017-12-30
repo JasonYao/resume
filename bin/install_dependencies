@@ -150,6 +150,7 @@ success "TexLive: Luatex was found"
 #   - Package `ms` gives us `everyshi.sty`, which is a requirement
 #   - Package `collection-fontsrecommended` contains a lot of fonts,
 #     but we really just need `EU` and a few others
+#   - Package `fontawesome` and the binary from apt are both required
 info "TexLive: Installing dependencies"
 tlmgr install                 \
   datetime2                   \
@@ -166,6 +167,7 @@ tlmgr install                 \
 	xltxtra                     \
 	realscripts                 \
 	etoolbox                    \
+	xkeyval                     \
 	xetex
 success "TexLive: All dependencies installed"
 
