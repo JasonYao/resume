@@ -137,8 +137,12 @@ info "TexLive: Checking for the installed luatex"
 tlmgr install luatex
 success "TexLive: Luatex was found"
 
-# Other contrib packages: done as a block to avoid multiple calls to tlmgr
-# texlive-latex-base is needed to run pdflatex
+# Other contrib packages: done as a block to
+# avoid multiple calls to tlmgr texlive-latex-base
+# is needed to run pdflatex
+#
+# NOTE: Package `ms` gives us `everyshi.sty`,
+# which is a requirement
 info "TexLive: Installing dependencies"
 tlmgr install                 \
   datetime2                   \
@@ -148,7 +152,7 @@ tlmgr install                 \
 	fontawesome                 \
 	titlesec                    \
 	textpos                     \
-	everyshi                    \
+	ms                          \
 	xetex
 success "TexLive: All dependencies installed"
 
