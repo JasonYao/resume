@@ -44,7 +44,8 @@ info "The TRAVIS_PULL_REQUEST value is: $TRAVIS_PULL_REQUEST"
 if [[ "$TRAVIS_BRANCH" == "source" ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then
     info "Deployment: Starting deployment of resume"
 
-		mv Resume_Jason_Yao.pdf docs/Resume_Jason_Yao.pdf
+		mv Resume_Jason_Yao.pdf docs/
+		mv Resume_Jason_Yao.png docs/
     git init
 
     # Sets up the repo to push as myself
