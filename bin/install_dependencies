@@ -164,6 +164,7 @@ tlmgr install                 \
 	isodate                     \
 	fontspec                    \
 	xltxtra                     \
+	realscripts                 \
 	xetex
 success "TexLive: All dependencies installed"
 
