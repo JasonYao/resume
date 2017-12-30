@@ -156,6 +156,7 @@ tlmgr install                 \
   tracklang                   \
 	collection-fontsrecommended \
 	xcolor                      \
+	fontawesome                 \
 	titlesec                    \
 	textpos                     \
 	ms                          \
