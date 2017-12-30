@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+###
+# Helper functions
+##
+function info () {
+	printf "\r  [ \033[00;34m..\033[0m ] %s\n" "$1"
+}
+
+function success () {
+	printf "\r\033[2K  [ \033[00;32mOK\033[0m ] %s\n" "$1"
+}
+
+function warn () {
+  printf "\r\033[2K  [\033[0;31mWARN\033[0m] %s\n" "$1"
+}
+
+function sub_warn () {
+  printf "\r\033[2K  [\033[0;31mWARN\033[0m] \t%s\n" "$1"
+}
+
+function stash_pop () {
+	# Puts back the stuff that wasn't committed
+	info "Git stashing: Putting back temporarily stashed files"
+	git stash pop -q
+}
+
+function stash_push () {
+    info "Git stashing: Stashing non-committed files temporarily"
+    if git stash -q --keep-index ; then
+        success "Git stashing: All non-committed files have been temporarily stashed"
+    else
+        warn "Git stashing: An error occurred trying to stash non-relevant files, please check for any merge conflicts"
+        exit 1
+    fi
+}
+
+# Some source used from the sample .pre-commit files by the golang team,
+# at https://tip.golang.org/misc/git/pre-commit
+
+info "The TRAVIS_BRANCH value is: $TRAVIS_BRANCH"
+info "The TRAVIS_PULL_REQUEST value is: $TRAVIS_PULL_REQUEST"
+
+if [[ "$TRAVIS_BRANCH" == "source" ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then
+    info "Deployment: Starting deployment of resume"
+
+		mv Resume_Jason_Yao.pdf docs/Resume_Jason_Yao.pdf
+    git init
+
+    # Sets up the repo to push as myself
+    git config user.name "Jason Yao"
+    git config user.email "JasonYao@nyu.edu"
+    git remote add upstream "https://$GITHUB_ACCESS_TOKEN@github.com/JasonYao/JasonYao.github.io.git"
+
+    # Commit a new build and push to master (which will auto deploy to the doc/ directory on the master branch)
+    git fetch upstream
+    git reset upstream/master
+    git add -A .
+    git commit -m "[Build] ${TRAVIS_COMMIT}"
+    git push -q upstream HEAD:master
+
+    success "Deployment: Resume is now deployed"
+else
+    info "Deployment: Skipping deployment of the resume due to not meeting deployment conditions"
+fi
