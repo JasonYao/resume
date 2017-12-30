@@ -50,7 +50,7 @@ info "end of lsing"
 
 # Generates the image thumbnail
 info "Thumbnail Build: Generating image thumbnail now"
-if convert Resume_Jason_Yao.pdf Resume_Jason_Yao.jpg ; then
+if convert ${TRAVIS_BUILD_DIR}/Resume_Jason_Yao.pdf ${TRAVIS_BUILD_DIR}/Resume_Jason_Yao.jpg ; then
     success "Thumbnail Build: Generated the new image thumbnail now"
 else
     warn "Thumbnail Build: Failed to generate the new image thumbnail"
