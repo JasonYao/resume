@@ -119,6 +119,11 @@ if ! command -v texlua > /dev/null; then
   # Obtain TeX Live
   wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
   tar -xzf install-tl-unx.tar.gz
+
+	# Technically this'll only work until 2100 AD,
+	# but I'm willing to take the risk that I'll be
+	# dead by then or the services I'm using will
+	# have changed
   cd install-tl-20*
 
   # Install a minimal system
@@ -155,6 +160,7 @@ tlmgr install                 \
 	ms                          \
 	substr                      \
 	isodate                     \
+	fontspec                    \
 	xetex
 success "TexLive: All dependencies installed"
 
