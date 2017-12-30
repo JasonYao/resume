@@ -35,6 +35,7 @@ function stash_push () {
     fi
 }
 
+# Generates the resume PDF
 info "Build: Generating resume document now"
 if xelatex Resume_Jason_Yao.tex ; then
     success "Build: Generated the new resume document"
@@ -42,25 +43,6 @@ else
 		warn "Build: Failed to generate the new resume document"
 		exit 1
 fi
-
-# TODO P0: Remove after
-info "lsing"
-ls
-info "end of lsing"
-
-info "gs check"
-which gs
-gs -v
-info "end of gs check"
-
-info "convert check"
-which convert
-convert -version
-info "end of convert"
-
-#info "testing of gs on the pdf"
-#gs ${TRAVIS_BUILD_DIR}/Resume_Jason_Yao.pdf
-#info "end of testing gs on the pdf"
 
 # Generates the image thumbnail
 info "Thumbnail Build: Generating image thumbnail now"
