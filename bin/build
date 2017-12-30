@@ -48,9 +48,23 @@ info "lsing"
 ls
 info "end of lsing"
 
+info "gs check"
+which gs
+gs -v
+info "end of gs check"
+
+info "convert check"
+which convert
+convert -version
+info "end of convert"
+
+#info "testing of gs on the pdf"
+#gs ${TRAVIS_BUILD_DIR}/Resume_Jason_Yao.pdf
+#info "end of testing gs on the pdf"
+
 # Generates the image thumbnail
 info "Thumbnail Build: Generating image thumbnail now"
-if convert ${TRAVIS_BUILD_DIR}/Resume_Jason_Yao.pdf ${TRAVIS_BUILD_DIR}/Resume_Jason_Yao.jpg ; then
+if convert -density 300 -quality 90 ${TRAVIS_BUILD_DIR}/Resume_Jason_Yao.pdf ${TRAVIS_BUILD_DIR}/Resume_Jason_Yao.png ; then
     success "Thumbnail Build: Generated the new image thumbnail now"
 else
     warn "Thumbnail Build: Failed to generate the new image thumbnail"

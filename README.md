@@ -18,7 +18,7 @@ system-wide fonts.
 
 ## Link to Resume
 To see the resume, please click the image below:
-[![Even this thumbnail is automatically generated](docs/Resume_Jason_Yao.jpg)
+[![Even this thumbnail is automatically generated](docs/Resume_Jason_Yao.png)
 ](https://www.jasonyao.com/resume/Resume_Jason_Yao.pdf)
 
 ## Install (macOS)

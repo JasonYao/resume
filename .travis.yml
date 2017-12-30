@@ -13,7 +13,10 @@ cache:
 addons:
   apt:
     packages:
+      # Dependency for the resume pdf generation
       - fonts-font-awesome
+      # Dependency for the .pdf -> .png conversion
+      - ghostscript
 
 env:
   # Github access token giving access to push to this repo
