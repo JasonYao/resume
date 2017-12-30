@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+
+###
+# Helper functions
+##
+function info () {
+	printf "\r  [ \033[00;34m..\033[0m ] %s\n" "$1"
+}
+
+function success () {
+	printf "\r\033[2K  [ \033[00;32mOK\033[0m ] %s\n" "$1"
+}
+
+function warn () {
+  printf "\r\033[2K  [\033[0;31mWARN\033[0m] %s\n" "$1"
+}
+
+function sub_warn () {
+  printf "\r\033[2K  [\033[0;31mWARN\033[0m] \t%s\n" "$1"
+}
+
+function stash_pop () {
+	# Puts back the stuff that wasn't committed
+	info "Git stashing: Putting back temporarily stashed files"
+	git stash pop -q
+}
+
+function stash_push () {
+    info "Git stashing: Stashing non-committed files temporarily"
+    if git stash -q --keep-index ; then
+        success "Git stashing: All non-committed files have been temporarily stashed"
+    else
+        warn "Git stashing: An error occurred trying to stash non-relevant files, please check for any merge conflicts"
+        exit 1
+    fi
+}
+
+##
+# We install the TexLive package manager for our
+# Tex needs
+##
+
+# Modified from https://tex.stackexchange.com/questions/398830/how-to-build-my-latex-automatically-with-pdflatex-using-travis-ci/398831#398831
+
+# See if there is a cached version of TL available
+info "TexLive: Checking for cache version existence"
+export PATH=/tmp/texlive/bin/x86_64-linux:$PATH
+if ! command -v texlua > /dev/null; then
+	info "TexLive: Could not be found in cache, downloading and installing now"
+
+  # Obtain TeX Live
+  wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
+  tar -xzf install-tl-unx.tar.gz
+
+	# Technically this'll only work until 2100 AD,
+	# but I'm willing to take the risk that I'll be
+	# dead by then or the services I'm using will
+	# have changed/died out
+  cd install-tl-20*
+
+  # Install a minimal system
+  ./install-tl --profile=../bin/texlive.profile
+
+  cd ..
+
+	success "TexLive: Minimal texlive version was installed"
+else
+	success "TexLive: Cached version found and installed"
+fi
+
+# Just including texlua so the cache check above works
+# Needed for any use of texlua even if not testing LuaTeX
+info "TexLive: Checking for the installed luatex"
+tlmgr install luatex
+success "TexLive: Luatex was found"
+
+# Installs the dependencies that we need
+# NOTE:
+#   - Other additional packages should be added to the block to avoid
+#     multiple calls to tlmgr
+#   - Package `ms` gives us `everyshi.sty`, which is a requirement
+#   - Package `collection-fontsrecommended` contains a lot of fonts,
+#     but we really just need `EU` and a few others
+#   - Package `fontawesome` and the binary from apt are both required
+info "TexLive: Installing dependencies"
+tlmgr install                 \
+  datetime2                   \
+  tracklang                   \
+	collection-fontsrecommended \
+	xcolor                      \
+	fontawesome                 \
+	titlesec                    \
+	textpos                     \
+	ms                          \
+	substr                      \
+	isodate                     \
+	fontspec                    \
+	xltxtra                     \
+	realscripts                 \
+	etoolbox                    \
+	xkeyval                     \
+	xetex
+success "TexLive: All dependencies installed"
+
+# Keep no backups (not required, simply makes cache bigger)
+info "TexLive: Disabling backups"
+tlmgr option -- autobackup 0
+success "TexLive: Backups are disabled"
+
+# Update the TL install but add nothing new
+info "TexLive: Updating to the latest version"
+tlmgr update --self --all --no-auto-install
+success "TexLive: Updated to the latest version"

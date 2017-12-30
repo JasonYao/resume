@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+###
+# Helper functions
+##
+function info () {
+	printf "\r  [ \033[00;34m..\033[0m ] %s\n" "$1"
+}
+
+function success () {
+	printf "\r\033[2K  [ \033[00;32mOK\033[0m ] %s\n" "$1"
+}
+
+function warn () {
+  printf "\r\033[2K  [\033[0;31mWARN\033[0m] %s\n" "$1"
+}
+
+function sub_warn () {
+  printf "\r\033[2K  [\033[0;31mWARN\033[0m] \t%s\n" "$1"
+}
+
+function stash_pop () {
+	# Puts back the stuff that wasn't committed
+	info "Git stashing: Putting back temporarily stashed files"
+	git stash pop -q
+}
+
+function stash_push () {
+    info "Git stashing: Stashing non-committed files temporarily"
+    if git stash -q --keep-index ; then
+        success "Git stashing: All non-committed files have been temporarily stashed"
+    else
+        warn "Git stashing: An error occurred trying to stash non-relevant files, please check for any merge conflicts"
+        exit 1
+    fi
+}
+
+# Generates the resume PDF
+info "Build: Generating resume document now"
+if xelatex Resume_Jason_Yao.tex ; then
+    success "Build: Generated the new resume document"
+else
+		warn "Build: Failed to generate the new resume document"
+		exit 1
+fi
+
+# Generates the image thumbnail
+info "Thumbnail Build: Generating image thumbnail now"
+if convert -density 300 -quality 90 ${TRAVIS_BUILD_DIR}/Resume_Jason_Yao.pdf ${TRAVIS_BUILD_DIR}/Resume_Jason_Yao.png ; then
+    success "Thumbnail Build: Generated the new image thumbnail"
+else
+    warn "Thumbnail Build: Failed to generate the new image thumbnail"
+    exit 1
+fi
