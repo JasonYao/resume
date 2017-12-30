@@ -148,6 +148,7 @@ tlmgr install                 \
 	fontawesome                 \
 	titlesec                    \
 	textpos                     \
+	everyshi                    \
 	xetex
 success "TexLive: All dependencies installed"
 
