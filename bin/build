@@ -43,6 +43,11 @@ else
 		exit 1
 fi
 
+# TODO P0: Remove after
+info "lsing"
+ls
+info "end of lsing"
+
 # Generates the image thumbnail
 info "Thumbnail Build: Generating image thumbnail now"
 if convert Resume_Jason_Yao.pdf Resume_Jason_Yao.jpg ; then
