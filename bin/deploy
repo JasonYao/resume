@@ -60,7 +60,6 @@ if [[ "$TRAVIS_BRANCH" == "source" ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]]
     git push -q upstream HEAD:master
 
     success "Deployment: Resume is now deployed"
-
 else
     info "Deployment: Skipping deployment of the resume due to not meeting deployment conditions"
 fi
