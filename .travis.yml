@@ -14,30 +14,6 @@ addons:
   apt:
     packages:
       - fonts-font-awesome
-#     # Required due to https://tex.stackexchange.com/questions/129799/font-eu1-lmr-m-n-10-lmroman10-regularmapping-tex-text-at-10-0pt-not-loadab/360733#360733
-#     - fonts-lmodern
-#     # - xzdec  # Required for tlmgr
-#     # - latex-xcolor
-#     # - texlive-latex-recommended
-#     # - texlive-latex-extra
-#     # - fonts-lmodern
-#     # - texlive-fonts-recommended
-#     #
-#     # # Attempt to see if this fixes datetime2 and tracklang
-#     # - lmodern
-#     #
-#     # # Required to get tracklang.sty
-#     # # - texlive-generic-recommended
-#     # # - texlive-generic-extra <-- both of these don't work
-#     #
-#     # # Attempt to get datetime2
-#     # # - texlive-generic-extra
-#     # #
-#     #
-#     # # Icons in the PDF depend on Font Awesome 4
-#     # - texlive-fonts-extra # Don't install fonts-font-awesome, it doesn't work. Manual adding of the font doesn't work either
-#     # # Our build specifically depends on xelatex
-#     # - texlive-xetex
 
 env:
   # Github access token giving access to push to this repo
@@ -45,21 +21,6 @@ env:
 
 before_script:
   - source bin/install_dependencies
-  #
-  # - mkdir -p texmf
-  # - cd lib/datetime2
-  # - xelatex datetime2.ins
-  # - cp datetime2.sty ${TRAVIS_BUILD_DIR}
-  # - cd ${TRAVIS_BUILD_DIR}
-  # - tlmgr option repository ftp://tug.org/historic/systems/texlive/2015/tlnet-final
-  # - tlmgr init-usertree
-  # - tlmgr update --self
-  # - tlmgr install datetime2
-  # - fc-cache -f -v  # Rebuilds the font cache
-  # - fc-list | grep awesome
-  # - fc-list
-#   # Installs datetime2, which isn't in a handy ubuntu library, not even in texlive-full
-#   - wget http://mirrors.ctan.org/install/macros/latex/contrib/datetime2.tds.zip
 
 script:
   - bin/build
