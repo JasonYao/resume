@@ -51,7 +51,7 @@ if [[ "$TRAVIS_BRANCH" == "source" ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]]
     # Sets up the repo to push as myself
     git config user.name "Jason Yao"
     git config user.email "JasonYao@nyu.edu"
-    git remote add upstream "https://$GITHUB_ACCESS_TOKEN@github.com/JasonYao/JasonYao.github.io.git"
+    git remote add upstream "https://$GITHUB_ACCESS_TOKEN@github.com/JasonYao/resume.git"
 
     # Commit a new build and push to master (which will auto deploy to the doc/ directory on the master branch)
     git fetch upstream
