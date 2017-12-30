@@ -47,7 +47,7 @@ fi
 # Generates the image thumbnail
 info "Thumbnail Build: Generating image thumbnail now"
 if convert -density 300 -quality 90 ${TRAVIS_BUILD_DIR}/Resume_Jason_Yao.pdf ${TRAVIS_BUILD_DIR}/Resume_Jason_Yao.png ; then
-    success "Thumbnail Build: Generated the new image thumbnail now"
+    success "Thumbnail Build: Generated the new image thumbnail"
 else
     warn "Thumbnail Build: Failed to generate the new image thumbnail"
     exit 1
