@@ -10,9 +10,10 @@ cache:
     - /tmp/texlive
     - $HOME/.texlive
 
-# addons:
-#   apt:
-#     packages:
+addons:
+  apt:
+    packages:
+      - fonts-font-awesome
 #     # Required due to https://tex.stackexchange.com/questions/129799/font-eu1-lmr-m-n-10-lmroman10-regularmapping-tex-text-at-10-0pt-not-loadab/360733#360733
 #     - fonts-lmodern
 #     # - xzdec  # Required for tlmgr
