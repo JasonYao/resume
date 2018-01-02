@@ -2,28 +2,28 @@
 % Resume | Jason Yao
 %
 % References:
-% 	Debarghya Das (http://debarghyadas.com)
+% 		Debarghya Das (http://debarghyadas.com)
 % %
 \documentclass[]{hieudo-build}
 
 % External Libraries
 \usepackage{hyperref}
 
-% Configurations
+% Configuration Settings
 \hypersetup{colorlinks=true,urlcolor=blue} % Turns the hyperlinks blue
 
 \begin{document}
 
-%%%%%%%%%%%
+%%%%%%%%%%%%
 % Header Section %
-%%%%%%%%%%%
+%%%%%%%%%%%%
 \namesection{Jason Yao}
 {
-\small % At normal size it moves the rest onto a second page, so either have all 5 at small, or 4 at normal size
+\normalsize % If you need to squeeze this to be smaller, set this to \small
 \urlstyle{same}
 	\faEnvelope \hspace{0.1cm} \href{mailto:JasonYao@nyu.edu}{JasonYao@nyu.edu}\\
 	\faGithub \hspace{0.1cm} \href{https://github.com/JasonYao}{github.com/JasonYao}\\
-	\faLinkedinSquare \hspace{0.1cm} \href{https://www.linkedin.com/in/JasonYaoNYU/}{ln.com/in/JasonYaoNYU}\\
+	\faLinkedinSquare \hspace{0.1cm} \href{https://www.linkedin.com/in/JasonYaoNYU/}{linkedin.com/in/JasonYaoNYU}\\
     \faPhone \hspace{0.1cm} \href{tel:19493352639}{+1 (949) 335-2639} \\
     \faGlobe \hspace{0.1cm} \href{https://www.JasonYao.com}{JasonYao.com}
 }
@@ -81,8 +81,14 @@ travisCI, AWS-cli
 
 \sectionsep
 
-\subsection{Languages}
-\location{Native fluency:} English, Mandarin\\
+\subsection{General}
+\location{Languages (Native fluency):}
+English, Mandarin
+\newline
+
+\location{Miscellaneous:}
+I know how to learn, use Google, and read Stack Overflow.
+
 \sectionsep
 
 %%
@@ -117,7 +123,6 @@ Tech@NYU \\
 %%
 % Timestamp of resume generation
 %%
-\sectionsep
 \DTMsetdatestyle{mylastupdate}
 \DTMdisplaydate{\the\year}{\the\month}{\the\day}{-1}
 
@@ -133,16 +138,18 @@ Tech@NYU \\
 %%
 \section{Experience}
 
-\workplace{MediaMath}{Oct. 2017 – Present} \\
-\position{Software Engineer II}{New York, NY}
+\workplace{MediaMath}{New York, NY (7+ months)}
+\position{Software Engineer II}{Oct. 2017 – Present}
+
  \vspace{\topsep} % Hacky fix for awkward extra vertical space
+ 
 \begin{tightemize}
 \item {\bf Lead contributor} to a company-critical ETL service responsible
 for {\bf generating all fee data used by thousands of advertising bidders world-wide}.
-\item {\bf Reduced client friction by 75\%}, and increased MediaMath's potential
-revenue by enabling future individual feature pricing.
+\item {\bf Reduced client friction by 75\%}, and increased company's potential
+revenue substantially by enabling individual feature pricing.
 \item {\bf Increased team developer velocity by 300\%} (based on story point
-completions before/after) by implementing an command-line API interacting
+completions before/after) by creating a command-line API interacting
 with service subsystems
 \item Continued assuming SDE II responsibilities from before, increasing team cohesion,
 technical ability, and the implementation of positive feedback loops for the team.
@@ -152,18 +159,21 @@ Objective established in partnership with PMs.
 \end{tightemize}
 \sectionsep
 
-\workplace{MediaMath}{Jul. 2017 – Oct. 2017 (3 months)} \\
-\position{Software Engineer I}{New York, NY}
-% \vspace{\topsep} % Hacky fix for awkward extra vertical space
+\position{Software Engineer I}{Jul. 2017 – Oct. 2017}
+
+\vspace{\topsep} % Hacky fix for awkward extra vertical space
+
 \begin{tightemize}
 \item Designed \& built out mission-critical internal financial platforms depended upon by the core of the company (responsible for over 70\% of company revenue), 
 \item Took on responsibilities of an SDE II early on, contributing to increasing team cohesion, technical ability, and the implementation of positive feedback loops for the team.
 \end{tightemize}
 \sectionsep
 
-\workplace{Ivy Tech Capital}{Jun. 2016 – Aug. 2016 (3 months)}\\
-\position{Software Engineer Intern}{Beijing, China}
-%\vspace{0.9em} % Hacky fix for awkward extra vertical space
+\workplace{Ivy Tech Capital}{Beijing, China (3 months)}
+\position{Software Engineer Intern}{Jun. 2016 – Aug. 2016}
+
+\vspace{0.9em} % Hacky fix for awkward extra vertical space
+
 \begin{tightemize}
 \item Created presentable {\bf fantasy sports web service} MVP to
 incubator investors, winning an award for "Best Potential for Unicorn"
@@ -171,9 +181,11 @@ by the judging panel. Built using Python \& the Django web framework.
 \end{tightemize}
 \sectionsep
 
-\workplace{Phi Kappa Sigma Delta Phi Chapter}{Jan. 2015 – May 2017}\\
-\position{Technology Chair}{New York, NY}
-% \vspace{\topsep} % Hacky fix for awkward extra vertical space
+\workplace{Phi Kappa Sigma, Delta Phi Chapter}{New York, NY}
+\position{Technology Chair}{Jan. 2015 – May 2017}
+
+\vspace{\topsep} % Hacky fix for awkward extra vertical space
+
 \begin{tightemize}
 \item Designed, developed, and maintained the 
 {\bf \href{https://www.skullhouse.nyc}{organization website}} and 
@@ -207,12 +219,11 @@ by the judging panel. Built using Python \& the Django web framework.
 %%
 % Projects
 %%
-%\section{Projects}
-%\runsubsection{Java -> C++ Transpiler}
-%\descript{}
-%\location{New York, NY, 2016 Fall}
-%{\bf Team Leader} of 5 tasked with building a transpiler in Java. Used SBT to build, JUnit for testing, and visitor + delegator design patterns. *
-%\sectionsep
+\section{Projects}
+\runsubsection{Java -> C++ Transpiler}
+\descript{New York, NY, 2016 Fall}
+{\bf Team Leader} of 5 tasked with building a transpiler in Java. Used SBT to build, JUnit for testing, and visitor + delegator design patterns. *
+\sectionsep
 
 %\runsubsection{QR Item Finder}
 %\descript{}
@@ -226,6 +237,10 @@ by the judging panel. Built using Python \& the Django web framework.
 %\href{https://github.com/JasonYao/university-video-meeter}{Chat webapp} using Node, Express, MongoDB, AWS-S3, socket.io, and a  WebRTC library to connect university and high school students. (in progress)\\
 %\sectionsep
 
-%* Repo access available upon request
+* Repo access available upon request
 \end{minipage}
+
+% TODO P2: Remove after
+%\newpage
+%\tableofcontents
 \end{document}

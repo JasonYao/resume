@@ -22,7 +22,7 @@
 \usepackage{datetime2}
 
 % Color definitions
-\definecolor{date}{HTML}{000000} 
+\definecolor{date}{HTML}{000000}
 \definecolor{primary}{HTML}{000000}
 \definecolor{headings}{HTML}{0E0E0F}
 \definecolor{subheadings}{HTML}{1A1C1E}
@@ -44,48 +44,68 @@
 \newcommand{\namesection}[2]{
 	\hspace{-1.7em}\raggedright{\parbox[b]{30em}{\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Bol}\fontsize{58pt}{0cm}\selectfont #1}}
     \hfill
-    \raggedleft{\parbox[b]{12em}{\color{headings}\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Lig}\fontsize{11pt}{14pt}\selectfont #2}}
-   	\vspace{2.2em} 
+	% To increase the amount of space available for the links, increment the below's em value
+    \raggedleft{\parbox[b]{13em}{\color{headings}\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Lig}\fontsize{11pt}{14pt}\selectfont #2}}
+   	\vspace{2.2em}
 }
-\titlespacing{\section}{0pt}{0pt}{5pt}
 
-% Headings command
+% Section formatting
 \titleformat{\section}{\color{headings}
 \scshape\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-ExtraLight}\fontsize{18pt}{24pt}\selectfont \raggedright\uppercase}{} {0em}{}
+\titlespacing{\section}{0pt}{0pt}{5pt}
 
-% Subeadings command
+% Subsection formatting
 \titleformat{\subsection}{\color{subheadings}
-\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Bol}\fontsize{12pt}{12pt}\selectfont\bfseries}{}{0em}{}
+\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Bol}\fontsize{14pt}{14pt}\selectfont\bfseries}{}{0em}{}
 \titlespacing{\subsection}{0pt}{\parskip}{-\parskip}
+
+% Subsubsection formatting
+\titleformat{\subsubsection}{\color{subheadings}
+\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Bol}\fontsize{12pt}{12pt}\selectfont\bfseries}{}{0em}{}
 \titlespacing{\subsubsection}{0pt}{\parskip}{-\parskip}
+
+% Grouped logic section formatting
 \newcommand{\runsubsection}[1]{\color{subheadings}
 \fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Bol}\fontsize{12pt}{12pt}\selectfont\bfseries {#1} \normalfont}
-\titlespacing{\section}{0pt}{0pt}{5pt}
 
-% Jobtitle command
+% Old jobtitle command
+%\newcommand{\workplace}[2]{
+%\color{subheadings}\raggedright
+%\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Bol}\fontsize{12pt}{12pt}\selectfont\bfseries {#1} \normalfont
+%\hfill
+%\color{subheadings}\raggedleft
+%\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Reg}\fontsize{12pt}{12pt}\selectfont\bfseries {#2} \normalfont
+%}
+
+% New jobtitle command
 \newcommand{\workplace}[2]{
-\color{subheadings}\raggedright
-\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Bol}\fontsize{12pt}{12pt}\selectfont\bfseries {#1} \normalfont
-\hfill
-\color{subheadings}\raggedleft
-\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Reg}\fontsize{12pt}{12pt}\selectfont\bfseries {#2} \normalfont
+	\subsection{
+		{#1}\hfill{\normalfont \bfseries #2}
+	}
 }
-\titlespacing{\section}{0pt}{0pt}{5pt}
+
+% Old position command
+%\newcommand{\position}[2]{	\color{subheadings}\raggedright\scshape\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Reg}\fontsize{11pt}{13pt}\selectfont {#1}\normalfont
+%\hfill
+%\color{subheadings}\raggedleft\scshape\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Reg}\fontsize{11pt}{13pt}\selectfont {#2\\}\normalfont
+%}
+%\titlespacing{\section}{0pt}{0pt}{3pt}
+
+% New position command
+\newcommand{\position}[2]{
+	\subsubsection{
+		{#1}\hfill{\normalfont \bfseries #2}
+	}
+}
+
+% Suppresses the subsubsection numbering while keeping it in the ToC
+\renewcommand\thesubsubsection{}
 
 % Descriptors command
 \newcommand{\descript}[1]{\color{subheadings}\raggedright\scshape\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Reg}\fontsize{11pt}{13pt}\selectfont {#1 \\} \normalfont}
-\titlespacing{\section}{0pt}{0pt}{3pt}
-
-% Positions command
-\newcommand{\position}[2]{	\color{subheadings}\raggedright\scshape\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Reg}\fontsize{11pt}{13pt}\selectfont {#1}\normalfont
-\hfill
-\color{subheadings}\raggedleft\scshape\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Reg}\fontsize{11pt}{13pt}\selectfont {#2\\}\normalfont
-}
-\titlespacing{\section}{0pt}{0pt}{3pt}
 
 % Location command
 \newcommand{\location}[1]{\color{primary}\raggedright\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Reg}\fontsize{11pt}{12pt}\selectfont {#1\\} \normalfont}
-\titlespacing{\section}{0pt}{0pt}{3pt}
 
 % Section seperators command
 \newcommand{\sectionsep}[0]{\vspace{8pt}}

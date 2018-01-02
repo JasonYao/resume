@@ -17,7 +17,7 @@ used for its UTF-8 goodness and implicit access to
 system-wide fonts.
 
 ## Link to Resume
-To see the resume, please click the image below:
+To see the pdf version of this resume, please click the image below:
 [![Even this thumbnail is automatically generated](https://www.jasonyao.com/resume/Resume_Jason_Yao.png)
 ](https://www.jasonyao.com/resume/Resume_Jason_Yao.pdf)
 

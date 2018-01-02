@@ -3,6 +3,7 @@
 *.aux
 *.out
 *.synctex.gz
+*.toc
 
 # macOS ignores
 .DS_Store
