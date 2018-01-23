@@ -99,6 +99,7 @@ tlmgr install                 \
 	realscripts                 \
 	etoolbox                    \
 	xkeyval                     \
+	datenumber                  \
 	xetex
 success "TexLive: All dependencies installed"
 
