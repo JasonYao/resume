@@ -61,7 +61,7 @@
 
 % Subsubsection formatting
 \titleformat{\subsubsection}{\color{subheadings}
-\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Bol}\fontsize{12pt}{12pt}\selectfont\bfseries}{}{0em}{}
+\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Bol}\fontsize{12pt}{12pt}\selectfont\bfseries}{}{1em}{}
 \titlespacing{\subsubsection}{0pt}{\parskip}{-\parskip}
 
 % Grouped logic section formatting
@@ -77,10 +77,52 @@
 %\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Reg}\fontsize{12pt}{12pt}\selectfont\bfseries {#2} \normalfont
 %}
 
+% Gives the years & months difference between two dates
+% Initial base code from: https://tex.stackexchange.com/questions/14518/difference-between-two-dates/14519#14519
+\usepackage{datenumber}
+\usepackage{calc}
+
+\newcounter{datetoday}
+\newcounter{diffyears}
+\newcounter{diffmonths}
+\newcounter{diffdays}
+
+\newcommand{\diffdates}[4]{%
+      \setmydatenumber{datetoday}{#1}{#2}{01}%
+      \setmydatenumber{diffdays}{#3}{#4}{01}%
+      \addtocounter{diffdays}{-\thedatetoday}%
+      \ifnum\value{diffdays}>0
+        \def\diffbefore{in }%
+        \def\diffafter{}%
+      \else
+        \def\diffbefore{}%
+        \def\diffafter{ago}%
+        \setcounter{diffdays}{-\value{diffdays}}%
+      \fi
+      \setcounter{diffyears}{\value{diffdays}/365}%
+      \setcounter{diffdays}{\value{diffdays}-365*\value{diffyears}}%
+      \setcounter{diffmonths}{\value{diffdays}/30}%
+      \setcounter{diffdays}{\value{diffdays}-30*\value{diffmonths}}%
+      %
+      \ifnum\value{diffyears}=0
+      \else
+          \ifnum\value{diffyears}>1
+              \thediffyears\space years,
+          \else
+              \thediffyears\space year,
+          \fi
+      \fi
+      \ifnum\value{diffmonths}=0
+      \else
+        \ifnum\value{diffmonths}>1
+            \thediffmonths\space months\else\thediffmonths\space month\fi
+      \fi
+}
+
 % New jobtitle command
-\newcommand{\workplace}[2]{
+\newcommand{\workplace}[3]{
 	\subsection{
-		{#1}\hfill{\normalfont \bfseries #2}
+    {#1}\hfill{\normalfont \bfseries #2 (#3)}
 	}
 }
 
