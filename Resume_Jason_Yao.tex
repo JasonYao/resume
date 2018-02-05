@@ -138,7 +138,10 @@ Tech@NYU \\
 %%
 \section{Experience}
 
-\workplace{MediaMath}{New York, NY (7+ months)}
+% Note: All uses of \diffdate inside a \section, or \workplace
+% requires a \protect in front, as discussed at:
+% https://tex.stackexchange.com/questions/43127/error-with-newcommand-and-section/43130#43130
+\workplace{MediaMath}{New York, NY}{\protect\diffdates{2017}{07}{\the\year}{\the\month}}
 \position{Software Engineer II}{Oct. 2017 – Present}
 
  \vspace{\topsep} % Hacky fix for awkward extra vertical space
@@ -169,7 +172,7 @@ Objective established in partnership with PMs.
 \end{tightemize}
 \sectionsep
 
-\workplace{Ivy Tech Capital}{Beijing, China (3 months)}
+\workplace{Ivy Tech Capital}{Beijing, China}{\protect\diffdates{2016}{06}{2016}{08}}
 \position{Software Engineer Intern}{Jun. 2016 – Aug. 2016}
 
 \vspace{0.9em} % Hacky fix for awkward extra vertical space
@@ -181,7 +184,7 @@ by the judging panel. Built using Python \& the Django web framework.
 \end{tightemize}
 \sectionsep
 
-\workplace{Phi Kappa Sigma, Delta Phi Chapter}{New York, NY}
+\workplace{Phi Kappa Sigma}{New York, NY}{\protect\diffdates{2015}{01}{2017}{05}}
 \position{Technology Chair}{Jan. 2015 – May 2017}
 
 \vspace{\topsep} % Hacky fix for awkward extra vertical space
