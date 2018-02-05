@@ -61,7 +61,7 @@
 
 % Subsubsection formatting
 \titleformat{\subsubsection}{\color{subheadings}
-\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Bol}\fontsize{12pt}{12pt}\selectfont\bfseries}{}{0em}{}
+\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Bol}\fontsize{12pt}{12pt}\selectfont\bfseries}{}{1em}{}
 \titlespacing{\subsubsection}{0pt}{\parskip}{-\parskip}
 
 % Grouped logic section formatting
