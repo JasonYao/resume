@@ -4,13 +4,7 @@
 % References:
 % 		Debarghya Das (http://debarghyadas.com)
 % %
-\documentclass[]{hieudo-build}
-
-% External Libraries
-\usepackage{hyperref}
-
-% Configuration Settings
-\hypersetup{colorlinks=true,urlcolor=blue} % Turns the hyperlinks blue
+\documentclass[]{two-column-resume}
 
 \begin{document}
 
@@ -19,19 +13,19 @@
 %%%%%%%%%%%%
 \namesection{Jason Yao}
 {
-\normalsize % If you need to squeeze this to be smaller, set this to \small
+\large  % If you need to squeeze this to be smaller, set this to \normalsize or \small
 \urlstyle{same}
 	\faEnvelope \hspace{0.1cm} \href{mailto:JasonYao@nyu.edu}{JasonYao@nyu.edu}\\
 	\faGithub \hspace{0.1cm} \href{https://github.com/JasonYao}{github.com/JasonYao}\\
 	\faLinkedinSquare \hspace{0.1cm} \href{https://www.linkedin.com/in/JasonYaoNYU/}{linkedin.com/in/JasonYaoNYU}\\
     \faPhone \hspace{0.1cm} \href{tel:19493352639}{+1 (949) 335-2639} \\
-    \faGlobe \hspace{0.1cm} \href{https://www.JasonYao.com}{JasonYao.com}
+    \faGlobe \hspace{0.1cm} \href{https://www.JasonYao.com}{www.JasonYao.com}
 }
 
 %%%%%%%%%
 % Left column %
 %%%%%%%%%
-\begin{minipage}[t]{0.34\textwidth} 
+\begin{minipage}[t]{0.34\textwidth}
 
 %%
 % Education
@@ -56,13 +50,11 @@ Grad. May 2017 \\
 \subsection{Programming}
 \location{Programming Languages:}
 Java, Python, C, JavaScript\\
-Bash, Golang
+Bash
 \newline
 
 \location{Big Data Tools:}
-(Py)Spark + Yarn, AWS EMR, \\
-AWS Batch, AWS Glue, \\
-Hadoop
+(Py)Spark + Yarn, AWS EMR
 \newline
 
 \location{Web Frameworks:}
@@ -76,8 +68,8 @@ noSQL: MongoDB
 
 \location{Tools:}
 git, vim, npm,\\
-travisCI, AWS-cli
-\newline
+travisCI, AWS-cli, \\
+\LaTeX
 
 \sectionsep
 
@@ -87,7 +79,8 @@ English, Mandarin
 \newline
 
 \location{Miscellaneous:}
-I know how to learn, use Google, and read Stack Overflow.
+I know how to learn, use Google,\\
+sing badly, and read Stack Overflow.
 
 \sectionsep
 
@@ -225,7 +218,7 @@ by the judging panel. Built using Python \& the Django web framework.
 \section{Projects}
 \runsubsection{Java -> C++ Transpiler}
 \descript{New York, NY, 2016 Fall}
-{\bf Team Leader} of 5 tasked with building a transpiler in Java. Used SBT to build, JUnit for testing, and visitor + delegator design patterns. *
+\textbf{Team Leader} of 5 tasked with building a transpiler in Java. Used SBT to build, JUnit for testing, and visitor + delegator design patterns. *
 \sectionsep
 
 %\runsubsection{QR Item Finder}
