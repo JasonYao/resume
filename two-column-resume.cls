@@ -1,5 +1,5 @@
 % Intro Options
-\ProvidesClass{hieudo-build}[2016/07/26 CV class]
+\ProvidesClass{two-column-resume}[2016/07/26 CV class]
 \NeedsTeXFormat{LaTeX2e}
 \DeclareOption{print}{\def\@cv@print{}}
 \DeclareOption*{%
@@ -45,7 +45,7 @@
 	\hspace{-1.7em}\raggedright{\parbox[b]{30em}{\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Bol}\fontsize{58pt}{0cm}\selectfont #1}}
     \hfill
 	% To increase the amount of space available for the links, increment the below's em value
-    \raggedleft{\parbox[b]{13em}{\color{headings}\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Lig}\fontsize{11pt}{14pt}\selectfont #2}}
+    \raggedleft{\parbox[b]{14em}{\color{headings}\fontspec[Path = fonts/NiveauGrotesk/]{Niveau-Lig}\fontsize{11pt}{14pt}\selectfont #2}}
    	\vspace{2.2em}
 }
 
@@ -154,3 +154,9 @@
 
 % Bullet Lists with fewer gaps command
 \newenvironment{tightemize}{\vspace{-\topsep}\begin{itemize}\itemsep1pt \parskip0pt \parsep0pt}{\end{itemize}\vspace{-\topsep}}
+
+% Sets up hyperlink coloring
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,urlcolor=blue} % Turns the hyperlinks blue
+
+\setmainfont{IM FELL Great Primer Roman}
