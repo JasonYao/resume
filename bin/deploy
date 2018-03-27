@@ -4,23 +4,23 @@
 # Pretty output functions
 ##
 
-function info () {
+function info() {
 	printf "\\t  [\\033[00;34mINFO\\033[0m] %s\\n" "${1}"
 }
 
-function user () {
+function user() {
 	printf "\\t  [ \\033[0;33m??\\033[0m ] %s\\n" "${1}"
 }
 
-function success () {
+function success() {
 	printf "\\t\\033[2K  [ \\033[00;32mOK\\033[0m ] %s\\n" "${1}"
 }
 
-function warn () {
+function warn() {
 	printf "\\t\\033[2K  [\\033[38:2:255:165:0mWARN\\033[0m] %s\\n" "${1}"
 }
 
-function fail () {
+function fail() {
 	printf "\\t\\033[2K  [\\033[0;31mFAIL\\033[0m] %s\\n" "${1}"
 	exit 1
 }
@@ -29,13 +29,13 @@ function fail () {
 # Helper functions
 ##
 
-function stash_pop () {
+function stash_pop() {
 	# Puts back the stuff that wasn't committed
 	info "Git stashing: Putting back temporarily stashed files"
 	git stash pop -q
 }
 
-function stash_push () {
+function stash_push() {
     info "Git stashing: Stashing non-committed files temporarily"
     if git stash -q --keep-index ; then
         success "Git stashing: All non-committed files have been temporarily stashed"

@@ -4,29 +4,29 @@
 # Pretty output functions
 ##
 
-function info () {
+function info() {
 	printf "\\t  [\\033[00;34mINFO\\033[0m] %s\\n" "${1}"
 }
 
-function user () {
+function user() {
 	printf "\\t  [ \\033[0;33m??\\033[0m ] %s\\n" "${1}"
 }
 
-function success () {
+function success() {
 	printf "\\t\\033[2K  [ \\033[00;32mOK\\033[0m ] %s\\n" "${1}"
 }
 
-function warn () {
+function warn() {
 	printf "\\t\\033[2K  [\\033[38:2:255:165:0mWARN\\033[0m] %s\\n" "${1}"
 }
 
-function fail () {
+function fail() {
 	printf "\\t\\033[2K  [\\033[0;31mFAIL\\033[0m] %s\\n" "${1}"
 	exit 1
 }
 
 if bin/test ; then
-    success "Shell Linting: Successfully passed all shell lint checks for the bootstrapping file"
+    success "Unit Testing: Successfully passed all unit tests"
 else
-    fail "Shell Linting: Failed to pass all shell lint checks for the bootstrapping file"
+    fail "Unit Testing: Failed to pass all unit tests"
 fi
