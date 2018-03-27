@@ -105,6 +105,8 @@
       \setcounter{diffdays}{\value{diffdays}-30*\value{diffmonths}}%
       %
       \ifnum\value{diffyears}=0
+	      \ifnum\value{diffmonths}=0
+		     Current month start\fi
       \else
           \ifnum\value{diffyears}>1
               \thediffyears\space years,

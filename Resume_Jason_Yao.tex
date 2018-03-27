@@ -134,24 +134,33 @@ Tech@NYU \\
 % Note: All uses of \diffdate inside a \section, or \workplace
 % requires a \protect in front, as discussed at:
 % https://tex.stackexchange.com/questions/43127/error-with-newcommand-and-section/43130#43130
-\workplace{MediaMath}{New York, NY}{\protect\diffdates{2017}{07}{\the\year}{\the\month}}
-\position{Software Engineer II}{Oct. 2017 – Present}
+\workplace{Squarespace}{New York, NY}{\protect\diffdates{2018}{03}{\the\year}{\the\month}}
+\position{Software Engineer III}{Mar. 2018 – Present}
+
+ \vspace{\topsep} % Hacky fix for awkward extra vertical space
+ 
+\begin{tightemize}
+\item Software Engineer on the \textbf{Domain Name Registrar} team,
+responsible for \textbf{building out the DNR service}
+\end{tightemize}
+\sectionsep
+
+\workplace{MediaMath}{New York, NY}{\protect\diffdates{2017}{07}{2018}{03}}
+\position{Software Engineer II}{Oct. 2017 – Mar. 2018}
 
  \vspace{\topsep} % Hacky fix for awkward extra vertical space
  
 \begin{tightemize}
 \item {\bf Lead contributor} to a company-critical ETL service responsible
 for {\bf generating all fee data used by thousands of advertising bidders world-wide}.
-\item {\bf Reduced client friction by 75\%}, and increased company's potential
-revenue substantially by enabling individual feature pricing.
+\item {\bf Reduced client friction by over 90\%}, and increased
+company's potential revenue substantially by enabling individual feature pricing.
 \item {\bf Increased team developer velocity by 300\%} (based on story point
 completions before/after) by creating a command-line API interacting
 with service subsystems
-\item Continued assuming SDE II responsibilities from before, increasing team cohesion,
-technical ability, and the implementation of positive feedback loops for the team.
-\item Increased the reliability and consistency of the service by building in
-monitoring and resiliency fallbacks compliant with the Service Level
-Objective established in partnership with PMs.
+\item Continued assuming SDE II responsibilities, increasing team cohesion,
+technical ability, and positive feedback loop implementations
+\item Increased visibility and insight into the service by building out monitoring and resiliency layers
 \end{tightemize}
 \sectionsep
 
@@ -160,8 +169,8 @@ Objective established in partnership with PMs.
 \vspace{\topsep} % Hacky fix for awkward extra vertical space
 
 \begin{tightemize}
-\item Designed \& built out mission-critical internal financial platforms depended upon by the core of the company (responsible for over 70\% of company revenue), 
-\item Took on responsibilities of an SDE II early on, contributing to increasing team cohesion, technical ability, and the implementation of positive feedback loops for the team.
+\item Designed \& built out mission-critical internal financial platforms depended upon by the core of the company (responsible for over 70\% of company revenue)
+\item Took on responsibilities of an SDE II early on, contributing to increasing team cohesion, technical ability, and the implementation of positive feedback loops for the team
 \end{tightemize}
 \sectionsep
 
@@ -173,7 +182,7 @@ Objective established in partnership with PMs.
 \begin{tightemize}
 \item Created presentable {\bf fantasy sports web service} MVP to
 incubator investors, winning an award for "Best Potential for Unicorn"
-by the judging panel. Built using Python \& the Django web framework.
+by judging panel. Built with Python, Django, MySQL, nginx, and AWS services
 \end{tightemize}
 \sectionsep
 
@@ -218,7 +227,7 @@ by the judging panel. Built using Python \& the Django web framework.
 \section{Projects}
 \runsubsection{Java -> C++ Transpiler}
 \descript{New York, NY, 2016 Fall}
-\textbf{Team Leader} of 5 tasked with building a transpiler in Java. Used SBT to build, JUnit for testing, and visitor + delegator design patterns. *
+\textbf{Team Leader} of 5 tasked with building a transpiler in Java. Used SBT to build, JUnit for testing, and visitor + delegator design patterns *
 \sectionsep
 
 %\runsubsection{QR Item Finder}
