@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+##
+# Pretty output functions
+##
+
+function info() {
+	printf "\\t  [\\033[00;34mINFO\\033[0m] %s\\n" "${1}"
+}
+
+function user() {
+	printf "\\t  [ \\033[0;33m??\\033[0m ] %s\\n" "${1}"
+}
+
+function success() {
+	printf "\\t\\033[2K  [ \\033[00;32mOK\\033[0m ] %s\\n" "${1}"
+}
+
+function warn() {
+	printf "\\t\\033[2K  [\\033[38:2:255:165:0mWARN\\033[0m] %s\\n" "${1}"
+}
+
+function fail() {
+	printf "\\t\\033[2K  [\\033[0;31mFAIL\\033[0m] %s\\n" "${1}"
+	exit 1
+}
+
+# Unit test to make sure that we don't go over the Linkedin summary character limit
+BIO_FILE=bio
+LINKEDIN_SUMMARY_CHARACTER_LIMIT=2000
+BIO_FILE_WORD_COUNT="$(wc -c ${BIO_FILE} | cut -f1 -d' ' )"
+
+if [[ ${BIO_FILE_WORD_COUNT} -lt ${LINKEDIN_SUMMARY_CHARACTER_LIMIT} ]]; then
+    success "Unit Testing: Successfully kept the bio from going over the Linkedin character limit"
+else
+    fail "Unit Testing: Failed to keep the bio from going over the Linkedin character limit: ${BIO_FILE_WORD_COUNT} used out of ${LINKEDIN_SUMMARY_CHARACTER_LIMIT} characters allowed"
+fi
+
+# Unit test to make sure that we're keeping to best practices with our bash scripts
+bash_files=(bin/build bin/deploy bin/test bin/install_dependencies git/pre-push)
+
+for bash_file in "${bash_files[@]}"; do
+    if shellcheck "${bash_file}" ; then
+        success "Linting: Successfully linted the bash file: ${bash_file}"
+    else
+        fail "Linting: Failed to lint the bash file: ${bash_file}"
+    fi
+done
