@@ -1,31 +1,42 @@
 #!/usr/bin/env bash
 
+##
+# Pretty output functions
+##
+
+function info() {
+	printf "\\t  [\\033[00;34mINFO\\033[0m] %s\\n" "${1}"
+}
+
+function user() {
+	printf "\\t  [ \\033[0;33m??\\033[0m ] %s\\n" "${1}"
+}
+
+function success() {
+	printf "\\t\\033[2K  [ \\033[00;32mOK\\033[0m ] %s\\n" "${1}"
+}
+
+function warn() {
+	printf "\\t\\033[2K  [\\033[38:2:255:165:0mWARN\\033[0m] %s\\n" "${1}"
+}
+
+function fail() {
+	printf "\\t\\033[2K  [\\033[0;31mFAIL\\033[0m] %s\\n" "${1}"
+	exit 1
+}
+
+
 ###
 # Helper functions
 ##
-function info () {
-	printf "\r  [ \033[00;34m..\033[0m ] %s\n" "$1"
-}
 
-function success () {
-	printf "\r\033[2K  [ \033[00;32mOK\033[0m ] %s\n" "$1"
-}
-
-function warn () {
-  printf "\r\033[2K  [\033[0;31mWARN\033[0m] %s\n" "$1"
-}
-
-function sub_warn () {
-  printf "\r\033[2K  [\033[0;31mWARN\033[0m] \t%s\n" "$1"
-}
-
-function stash_pop () {
+function stash_pop() {
 	# Puts back the stuff that wasn't committed
 	info "Git stashing: Putting back temporarily stashed files"
 	git stash pop -q
 }
 
-function stash_push () {
+function stash_push() {
     info "Git stashing: Stashing non-committed files temporarily"
     if git stash -q --keep-index ; then
         success "Git stashing: All non-committed files have been temporarily stashed"
@@ -56,7 +67,7 @@ if ! command -v texlua > /dev/null; then
 	# but I'm willing to take the risk that I'll be
 	# dead by then or the services I'm using will
 	# have changed/died out
-  cd install-tl-20*
+  cd install-tl-20* || exit
 
   # Install a minimal system
   ./install-tl --profile=../bin/texlive.profile

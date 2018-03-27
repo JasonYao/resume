@@ -7,3 +7,6 @@
 
 # macOS ignores
 .DS_Store
+
+# IDS ignores
+.idea/
