@@ -26,6 +26,7 @@ before_script:
   - source bin/install_dependencies
 
 script:
+  - bin/test
   - bin/build
 
 after_success:
