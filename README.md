@@ -25,8 +25,8 @@ To see the pdf version of this resume, please click the image below:
 ```sh
 # Installs pdf generation dependencies
 brew cask install mactex
-brew tap caskroom/fonts
-brew cask install font-fontawesome
+
+# Install the FontAwesome font by double clicking on it
 
 # [OPTIONAL] Installs a good pdf viewer and IDE
 brew cask install texmaker
