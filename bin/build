@@ -1,75 +1,58 @@
 #!/usr/bin/env bash
 
-tex_file_name=Resume_Jason_Yao.tex
+set -e # Fails on the first error
 
 ##
-# Pretty output functions
+# Generates a given pdf and thumbnail
+# image from a tex file
 ##
 
-function info() {
-	printf "\\t  [\\033[00;34mINFO\\033[0m] %s\\n" "${1}"
-}
+# shellcheck source=bin/utils.sh
+source "$(dirname "$0")/utils.sh"
 
-function user() {
-	printf "\\t  [ \\033[0;33m??\\033[0m ] %s\\n" "${1}"
-}
+base_file_name="Resume_Jason_Yao"
+tex_file_name="${base_file_name}.tex"
 
-function success() {
-	printf "\\t\\033[2K  [ \\033[00;32mOK\\033[0m ] %s\\n" "${1}"
-}
+function start() {
+    generate_pdf "${tex_file_name}"
 
-function warn() {
-	printf "\\t\\033[2K  [\\033[38:2:255:165:0mWARN\\033[0m] %s\\n" "${1}"
-}
-
-function fail() {
-	printf "\\t\\033[2K  [\\033[0;31mFAIL\\033[0m] %s\\n" "${1}"
-	exit 1
-}
-
-###
-# Helper functions
-##
-
-function stash_pop() {
-	# Puts back the stuff that wasn't committed
-	info "Git stashing: Putting back temporarily stashed files"
-	git stash pop -q
-}
-
-function stash_push() {
-    info "Git stashing: Stashing non-committed files temporarily"
-    if git stash -q --keep-index ; then
-        success "Git stashing: All non-committed files have been temporarily stashed"
-    else
-        warn "Git stashing: An error occurred trying to stash non-relevant files, please check for any merge conflicts"
-        exit 1
-    fi
+    # We use the absolute path here because
+    # imagemagick 6 throws exceptions with a
+    # relative path
+    generate_thumbnail "$(pwd)/${base_file_name}"
 }
 
 function generate_pdf() {
+    input_file_name=$1
+    # We generate the image 3 times to let it stabilize
+    for count in {1..3}
+    do
+        generate_pdf_once ${count} "${input_file_name}"
+    done
+}
+
+function generate_pdf_once() {
     count=$1
     input_tex_file_name=$2
 
     info "Build ${count}: Generating resume document now"
-	if xelatex "${input_tex_file_name}" ; then
-		success "Build ${count}: Generated the new resume document"
+    if xelatex "${input_tex_file_name}" ; then
+        success "Build ${count}: Generated the new resume document"
     else
-		fail "Build ${count}: Failed to generate the new resume document"
+        fail "Build ${count}: Failed to generate the new resume document"
     fi
 }
 
-# Generates the resume PDF
-for count in {1..3}
-do
-	generate_pdf ${count} ${tex_file_name}
-done
+function generate_thumbnail() {
+    # Generates the image thumbnail for a given pdf
+    absolute_base_file_name=$1
+    info "Thumbnail Build: Generating image thumbnail now"
 
-# Generates the image thumbnail
-info "Thumbnail Build: Generating image thumbnail now"
-if convert -density 300 -quality 90 "${TRAVIS_BUILD_DIR}/Resume_Jason_Yao.pdf" "${TRAVIS_BUILD_DIR}/Resume_Jason_Yao.png" ; then
-    success "Thumbnail Build: Generated the new image thumbnail"
-else
-    warn "Thumbnail Build: Failed to generate the new image thumbnail"
-    exit 1
-fi
+    if convert -flatten -density 300 "${absolute_base_file_name}.pdf[0]" "${absolute_base_file_name}.png" ; then
+        success "Thumbnail Build: Generated the new image thumbnail"
+    else
+        fail "Thumbnail Build: Failed to generate the new image thumbnail"
+    fi
+}
+
+start

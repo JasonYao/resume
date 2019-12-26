@@ -1,76 +1,69 @@
 #!/usr/bin/env bash
 
+set -e # Fails on the first error
+
 ##
-# Pretty output functions
-##
-
-function info() {
-	printf "\\t  [\\033[00;34mINFO\\033[0m] %s\\n" "${1}"
-}
-
-function user() {
-	printf "\\t  [ \\033[0;33m??\\033[0m ] %s\\n" "${1}"
-}
-
-function success() {
-	printf "\\t\\033[2K  [ \\033[00;32mOK\\033[0m ] %s\\n" "${1}"
-}
-
-function warn() {
-	printf "\\t\\033[2K  [\\033[38:2:255:165:0mWARN\\033[0m] %s\\n" "${1}"
-}
-
-function fail() {
-	printf "\\t\\033[2K  [\\033[0;31mFAIL\\033[0m] %s\\n" "${1}"
-	exit 1
-}
-
-###
-# Helper functions
+# Utilizes Github Pages to deploy the generated
+# pdf online
 ##
 
-function stash_pop() {
-	# Puts back the stuff that wasn't committed
-	info "Git stashing: Putting back temporarily stashed files"
-	git stash pop -q
-}
+# shellcheck source=bin/utils.sh
+source "$(dirname "$0")/utils.sh"
 
-function stash_push() {
-    info "Git stashing: Stashing non-committed files temporarily"
-    if git stash -q --keep-index ; then
-        success "Git stashing: All non-committed files have been temporarily stashed"
+files_to_deploy=(Resume_Jason_Yao.pdf Resume_Jason_Yao.png)
+repo_name="resume"
+
+function start() {
+    # Some source used from the sample .pre-commit files by the golang team,
+    # at https://tip.golang.org/misc/git/pre-commit
+
+    info "The TRAVIS_BRANCH value is: $TRAVIS_BRANCH"
+    info "The TRAVIS_PULL_REQUEST value is: $TRAVIS_PULL_REQUEST"
+
+    if [[ "$TRAVIS_BRANCH" == "source" ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then
+        deploy_via_github_pages
     else
-        warn "Git stashing: An error occurred trying to stash non-relevant files, please check for any merge conflicts"
-        exit 1
+        info "Deployment: Skipping deployment of the resume due to not meeting deployment conditions"
     fi
 }
 
-# Some source used from the sample .pre-commit files by the golang team,
-# at https://tip.golang.org/misc/git/pre-commit
+function deploy_via_github_pages() {
+    stage_files_for_deployment
+    setup_git_configurations
+    deploy_files
+    success "Deployment: Resume is now deployed"
+}
 
-info "The TRAVIS_BRANCH value is: $TRAVIS_BRANCH"
-info "The TRAVIS_PULL_REQUEST value is: $TRAVIS_PULL_REQUEST"
+function stage_files_for_deployment() {
+    info "Staging: Staging files for deployment"
+    for file_name in "${files_to_deploy[@]}"
+    do
+        mv "${file_name}" docs/
+        success "Staging: Staged ${file_name} for deployment"
+    done
+    success "Staging: Staged all files for deployment"
+}
 
-if [[ "$TRAVIS_BRANCH" == "source" ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then
-    info "Deployment: Starting deployment of resume"
-
-		mv Resume_Jason_Yao.pdf docs/
-		mv Resume_Jason_Yao.png docs/
+function setup_git_configurations() {
+    info "Git Config: Setting up git for automated pushing"
     git init
 
     # Sets up the repo to push as myself
-    git config user.name "Jason Yao"
-    git config user.email "JasonYao@nyu.edu"
-    git remote add upstream "https://$GITHUB_ACCESS_TOKEN@github.com/JasonYao/resume.git"
+    git config user.name "${GIT_AUTHOR_NAME}"
+    git config user.email "${GIT_AUTHOR_EMAIL}"
+    git remote add upstream "https://$GITHUB_ACCESS_TOKEN@github.com/JasonYao/${repo_name}.git"
+    success "Git Config: Setup git for automated pushing"
+}
 
-    # Commit a new build and push to master (which will auto deploy to the doc/ directory on the master branch)
+function deploy_files() {
+    # Commit a new build and push to master (from which Github
+    # Pages will auto deploy whatever is in the docs/ directory
+    # on the master branch to the world
     git fetch upstream
     git reset upstream/master
     git add -A .
     git commit -m "[Build] ${TRAVIS_COMMIT}"
     git push -q upstream HEAD:master
+}
 
-    success "Deployment: Resume is now deployed"
-else
-    info "Deployment: Skipping deployment of the resume due to not meeting deployment conditions"
-fi
+start
