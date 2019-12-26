@@ -10,3 +10,8 @@
 
 # IDS ignores
 .idea/
+
+# Dependency ignores
+install-tl-20*
+install-tl-unx.tar.gz
+

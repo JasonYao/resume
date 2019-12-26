@@ -19,7 +19,7 @@
 \usepackage[hmargin=1.5cm, vmargin=1.5cm]{geometry}
 \usepackage[usenames,dvipsnames]{xcolor}
 \usepackage{titlesec}
-\usepackage{hyperref}
+\usepackage[unicode=true]{hyperref}
 \usepackage[absolute]{textpos}
 \usepackage[UKenglish]{babel}
 \usepackage[UKenglish]{isodate}
@@ -124,7 +124,7 @@
 % Workplace display command
 \newcommand{\workplace}[3]{
 	\subsection{
-    {#1}\hfill{\normalfont #2 (#3)}
+    \texorpdfstring{{#1}\hfill{\normalfont #2 (#3)}}{#1}
 	}
 }
 
