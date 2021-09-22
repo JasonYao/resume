@@ -1,0 +1,93 @@
+% Right Column
+\begin{minipage}[t]{0.65\textwidth}
+
+%
+% Experience
+%
+\section{Experience}
+
+\BLOCK{for employer in employers}
+    \workplace{\VAR{employer.company_name}}{\VAR{employer.location}}{\VAR{employer.work_duration}}
+    \BLOCK{for position in employer.positions}
+        \position{\VAR{position.title}}{\VAR{position.start_date} – \VAR{position.end_date}}
+        \vspace{\topsep} % Hacky fix for awkward extra vertical space
+        \begin{tightemize}
+            \BLOCK{for description_line in position.descriptions}
+                \item \VAR{description_line}
+            \BLOCK{endfor}
+        \end{tightemize}
+        \sectionsep
+    \BLOCK{endfor}
+\BLOCK{endfor}
+
+%\workplace{Ivy Tech Capital}{Beijing, China}{\protect\diffdates{2016}{06}{2016}{08}}
+%\position{Software Engineer Intern}{Jun. 2016 – Aug. 2016}
+
+%\vspace{0.9em} % Hacky fix for awkward extra vertical space
+
+%\begin{tightemize}
+%\item Created presentable {\bf fantasy sports web service} MVP to
+%incubator investors, winning an award for "Best Potential for Unicorn"
+%by judging panel.
+%\item Built with Python 3, Django, MySQL, nginx, and AWS
+%\end{tightemize}
+%\sectionsep
+
+%\workplace{Phi Kappa Sigma}{New York, NY}{\protect\diffdates{2015}{01}{2017}{05}}
+%\position{Technology Chair}{Jan. 2015 – May 2017}
+
+%\vspace{\topsep} % Hacky fix for awkward extra vertical space
+
+%\begin{tightemize}
+%\item Designed, developed, and maintained the
+%\href{https://www.skullhouse.nyc}{organization website} and
+%\href{https://github.com/JasonYao/Bobst-Room-Automator}{tools}
+%\end{tightemize}
+%\sectionsep
+
+%
+% Organisations
+%
+%\section{Organisations}
+% \runsubsection{The Westminster News} \\
+% \descript{Co-Editors-in-Chief (2014) | Layout Editor (2012) }
+% \location{Sep 2012 – May 2015 | Simsbury, CT}
+% \begin{tightemize}
+% \item Led 30+ staff at a 400-student boarding school to publish the monthly school newspaper.
+% \item Consulted in layout design and technology application.
+% \end{tightemize}
+% \sectionsep
+
+% \runsubsection{VietAbroader Organization} \\
+% \descript{Program Assistant Manager | VAPedia Associate }
+% \location{Mar 2013 – Mar 2014 | Ho Chi Minh City, Vietnam}
+% \begin{tightemize}
+% \item VietAbroader is a non-profit organization run by Vietnamese students abroad.
+% \item Designed the high school content for the VAPedia website.
+% \item Assisted in recruiting guest speakers and volunteers for VietAbroader Study-Abroad Conference 2013.
+% \end{tightemize}
+% \sectionsep
+
+%
+% Projects
+%
+%\section{Projects}
+%\runsubsection{Java -> C++ Transpiler}
+%\descript{New York, NY, 2016 Fall}
+%\textbf{Team Leader} of 5 tasked with building a transpiler in Java. Used SBT to build, JUnit for testing, and visitor + delegator design patterns *
+%\sectionsep
+
+%\runsubsection{QR Item Finder}
+%\descript{}
+%\location{New York, NY, 2015 Fall}
+%{\bf Technical Lead} of 4 that built a \href{https://github.com/JasonYao/Large-Scale-Final-Project-Lost-and-Found-Recovery-Service}{QR item finder service} with a focus on scalability. Used Django, MySQL, Nginx, and memcached.
+%\sectionsep
+
+%\runsubsection{Meeter}
+%\descript{}
+%\location{New York, NY, 2017 Spring}
+%\href{https://github.com/JasonYao/university-video-meeter}{Chat webapp} using Node, Express, MongoDB, AWS-S3, socket.io, and a  WebRTC library to connect university and high school students. (in progress)\\
+%\sectionsep
+
+% * Repo access available upon request
+\end{minipage}

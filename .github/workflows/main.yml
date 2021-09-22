@@ -1,0 +1,81 @@
+name: Build and deploy to GitHub Pages
+
+# We don't want another build triggered from our deployment branch (master in this instance)
+on:
+  push:
+    branches-ignore:
+      - master
+
+  schedule:
+    # Runs on the 1st of every month at 4PM
+    - cron: "0 16 1 * *"
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  GIT_AUTHOR_NAME: "Jason Yao"
+  GIT_AUTHOR_EMAIL: "Hello@JasonYao.com"
+  DEPLOY_ACCESS_TOKEN: ${{ secrets.DEPLOY_ACCESS_TOKEN }}
+  BRANCH_REF_NAME: ${{ github.head_ref }}
+  SHA_COMMIT_HASH: ${{ github.sha }}
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      # Deploy pipeline metadata
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+
+      - name: Extracts the current branch name
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - run: echo "🔎 The name of your branch is ${{ steps.extract_branch.outputs.branch }} and your repository is ${{ github.repository }}."
+
+      # Sets up environment
+      - name: Checkout repo code
+        uses: actions/checkout@v2
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+
+      - name: Python 3 setup
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+          architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+
+      - name: Cache Texlive
+        id: cache-texlive
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-texlive-dependencies
+        with:
+          path: |
+            /tmp/texlive
+            $HOME/.texlive
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('/tmp/texlive/package-manifest.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      #   fonts-font-awesome is for the resume pdf generation
+      #   ghostscript is for the .pdf -> .png conversion
+      - name: Install dependencies
+        run: sudo apt-get -y install fonts-font-awesome ghostscript
+
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+
+      # Generates data output files
+      - name: Installs texlive and python dependencies
+        # We source here since texlive manager state is required
+        run: source bin/install_dependencies
+
+      - name: Test
+        run: bin/test
+
+      - name: Build
+        run: bin/build
+
+      - name: Deploy
+        run: bin/deploy ${{ steps.extract_branch.outputs.branch }}
