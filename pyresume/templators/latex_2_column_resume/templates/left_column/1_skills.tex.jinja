@@ -1,0 +1,29 @@
+%
+% Skills
+%
+\section{Skills}
+\setlength{\parindent}{3ex}
+\subsection{Programming}
+
+\BLOCK{for skill_header, skills in programming_skills.items()}
+    \subsubsection{\VAR{skill_header}}
+    \BLOCK{for skill in skills}
+        \VAR{skill}\VAR{", " if not loop.last else ""}
+    \BLOCK{endfor}
+    \newline
+\BLOCK{endfor}
+
+\sectionsep
+
+\subsection{General}
+
+\subsubsection{Languages (Native Fluency)}
+\BLOCK{for language in languages}
+\VAR{language}\VAR{", " if not loop.last else ""}
+\BLOCK{endfor}
+\newline
+
+\subsubsection{Miscellaneous}
+\VAR{misc}
+
+\setlength{\parindent}{0ex}

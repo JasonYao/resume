@@ -1,0 +1,47 @@
+% Left column
+\begin{minipage}[t]{0.34\textwidth}
+
+    \BLOCK{include 'left_column/0_education.tex.jinja'}
+
+    \sectionsep
+
+    \BLOCK{include 'left_column/1_skills.tex.jinja'}
+
+    \sectionsep
+
+%
+% Activities
+%
+%\section{Activities}
+%Techwatch@MediaMath \\
+%Phi Kappa Sigma Fraternity \\
+%Tech@NYU \\
+%\sectionsep
+
+%
+% Awards
+%
+% \section{Awards}
+% Dean's List\\
+% NYU PROMISE Scholarship\\
+% Shelby C. Davis Scholarship\\
+% President’s Circle Scholarship\\
+% \sectionsep
+
+%
+% Conference Talks \& Papers
+%
+% \section{Conference Talks \& Papers}
+% Dean's List\\
+% NYU PROMISE Scholarship\\
+% Shelby C. Davis Scholarship\\
+% President’s Circle Scholarship\\
+% \sectionsep
+
+%
+% Timestamp of resume generation
+%
+    \DTMsetdatestyle{mylastupdate}
+    \DTMdisplaydate{\the\year}{\the\month}{\the\day}{-1}
+
+\end{minipage}

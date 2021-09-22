@@ -10,20 +10,29 @@ set -e # Fails on the first error
 # shellcheck source=bin/utils.sh
 source "$(dirname "$0")/utils.sh"
 
-files_to_deploy=(Resume_Jason_Yao.pdf Resume_Jason_Yao.png)
+files_to_deploy=(Resume_Jason_Yao.pdf Resume_Jason_Yao.png json-schema.json raw-data.json biography.txt)
+files_to_upload_to_remote=(Resume_Jason_Yao.pdf Resume_Jason_Yao.png)
+
 repo_name="resume"
+
+BRANCH_NAME=$1
 
 function start() {
     # Some source used from the sample .pre-commit files by the golang team,
     # at https://tip.golang.org/misc/git/pre-commit
 
-    info "The TRAVIS_BRANCH value is: $TRAVIS_BRANCH"
-    info "The TRAVIS_PULL_REQUEST value is: $TRAVIS_PULL_REQUEST"
+    info "The BRANCH_NAME value is: $BRANCH_NAME"
 
-    if [[ "$TRAVIS_BRANCH" == "source" ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then
+    if [[ "$BRANCH_NAME" == "source" ]]; then
         deploy_via_github_pages
     else
-        info "Deployment: Skipping deployment of the resume due to not meeting deployment conditions"
+        info "Deployment: Skipping deployment of the resume due to not meeting deployment conditions, uploading artifacts for remote sharing"
+
+            for file_name in "${files_to_upload_to_remote[@]}"
+            do
+                curl -F "file=@${file_name}" https://file.io | jq '.link'
+                success "Upload: Uploaded ${file_name} for sharing (useful for seeing the generated output from PR builder runners)"
+            done
     fi
 }
 
@@ -51,19 +60,19 @@ function setup_git_configurations() {
     # Sets up the repo to push as myself
     git config user.name "${GIT_AUTHOR_NAME}"
     git config user.email "${GIT_AUTHOR_EMAIL}"
-    git remote add upstream "https://$GITHUB_ACCESS_TOKEN@github.com/JasonYao/${repo_name}.git"
+    git remote add upstream "https://$DEPLOY_ACCESS_TOKEN@github.com/JasonYao/${repo_name}.git"
     success "Git Config: Setup git for automated pushing"
 }
 
 function deploy_files() {
-    # Commit a new build and push to master (from which Github
+    # Commit a new build and push to publish (from which Github
     # Pages will auto deploy whatever is in the docs/ directory
-    # on the master branch to the world
+    # on the publish branch to the world
     git fetch upstream
-    git reset upstream/master
+    git reset upstream/publish
     git add -A .
-    git commit -m "[Build] ${TRAVIS_COMMIT}"
-    git push -q upstream HEAD:master
+    git commit -m "[Build] ${SHA_COMMIT_HASH}"
+    git push -q upstream HEAD:publish
 }
 
 start

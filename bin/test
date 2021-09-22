@@ -13,7 +13,7 @@ bash_files=(bin/build bin/deploy bin/test bin/install_dependencies git/pre-push)
 
 function start() {
     lint
-    test_linkedin_bio
+    run_tests
 }
 
 function lint() {
@@ -30,18 +30,8 @@ function lint() {
     done
 }
 
-function test_linkedin_bio() {
-    # "unit test" to make sure that we don't go over the
-    # Linkedin summary character limit
-    BIO_FILE=bio
-    LINKEDIN_SUMMARY_CHARACTER_LIMIT=2000
-    BIO_FILE_WORD_COUNT="$(wc -c ${BIO_FILE} | cut -f1 -d' ' )"
-
-    if [[ ${BIO_FILE_WORD_COUNT} -lt ${LINKEDIN_SUMMARY_CHARACTER_LIMIT} ]]; then
-        success "Unit Testing: Successfully kept the bio from going over the Linkedin character limit"
-    else
-        fail "Unit Testing: Failed to keep the bio from going over the Linkedin character limit: ${BIO_FILE_WORD_COUNT} used out of ${LINKEDIN_SUMMARY_CHARACTER_LIMIT} characters allowed"
-    fi
+function run_tests() {
+    pytest
 }
 
 start
