@@ -45,7 +45,7 @@ curl https://www.jasonyao.com/resume/json-schema.json | jq '.'
   can be accessed over curl with:
 ```sh
 # The jq just adds in some pretty-formatting, feel free to omit if you don't want it
-curl https://www.jasonyao.com/resume/json-schema.json | jq '.'
+curl https://www.jasonyao.com/resume/raw-data.json | jq '.'
 ```
 
 ### Raw Biography Data
