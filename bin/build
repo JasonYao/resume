@@ -14,12 +14,23 @@ base_file_name="Resume_Jason_Yao"
 tex_file_name="${base_file_name}.tex"
 
 function start() {
+    generate_outputs
+
     generate_pdf "${tex_file_name}"
 
     # We use the absolute path here because
     # imagemagick 6 throws exceptions with a
     # relative path
     generate_thumbnail "$(pwd)/${base_file_name}"
+}
+
+function generate_outputs() {
+    info "Generating output formats"
+    if python main.py ; then
+      success "Successfully generated output formats"
+    else
+      fail "Failed to generate output formats"
+    fi
 }
 
 function generate_pdf() {
@@ -34,6 +45,9 @@ function generate_pdf() {
 function generate_pdf_once() {
     count=$1
     input_tex_file_name=$2
+
+    # Other scripts apparently don't export PATHs correctly between github action steps
+    export PATH=/tmp/texlive/bin/x86_64-linux:$PATH
 
     info "Build ${count}: Generating resume document now"
     if xelatex "${input_tex_file_name}" ; then

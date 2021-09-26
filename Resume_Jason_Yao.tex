@@ -1,113 +1,126 @@
-%%
-% Resume | Jason Yao
-%
-% References:
-% 		Debarghya Das (http://debarghyadas.com)
-% %
+%\documentclass[showframe]{two-column-resume} % Uncomment this if you need to see the columns
 \documentclass[]{two-column-resume}
 
 \begin{document}
 
-%%%%%%%%%%%%
-% Header Section %
-%%%%%%%%%%%%
+    % Header Section
 \namesection{Jason Yao}
 {
-\large  % If you need to squeeze this to be smaller, set this to \normalsize or \small
-\urlstyle{same}
-	\faEnvelope \hspace{0.1cm} \href{mailto:Hello@JasonYao.com}{Hello@JasonYao.com}\\
-	\faGithub \hspace{0.1cm} \href{https://github.com/JasonYao}{github.com/JasonYao}\\
-	\faLinkedinSquare \hspace{0.1cm} \href{https://www.linkedin.com/in/JasonYaoNYU/}{linkedin.com/in/JasonYaoNYU}\\
-    \faPhone \hspace{0.1cm} \href{tel:19493352639}{+1 (949) 335-2639} \\
-    \faGlobe \hspace{0.1cm} \href{https://www.JasonYao.com}{www.JasonYao.com}
+    \large  % If you need to squeeze this to be smaller, set this to \normalsize or \small
+    \urlstyle{same}
+    \faEnvelope \hspace{0.1cm} \href{mailto:Hello@JasonYao.com}{Hello@JasonYao.com}\\
+    \faPhone \hspace{0.1cm} \href{tel:+1-949-335-2639}{+1 (949) 335-2639} \\
+    \faGithub \hspace{0.1cm} \href{https://Github.com/JasonYao}{Github.com/JasonYao}\\
+    \faLinkedin \hspace{0.1cm} \href{https://www.Linkedin.com/in/JasonYaoNYU}{Linkedin.com/in/JasonYaoNYU}\\
+    \faGlobe \hspace{0.1cm} \href{https://www.JasonYao.com}{JasonYao.com}
 }
 
-%%%%%%%%%
-% Left column %
-%%%%%%%%%
+    % Left column
 \begin{minipage}[t]{0.34\textwidth}
 
-%%
+    %
 % Education
-%%
+%
 \section{Education}
 
 \subsection{New York University}
 \descript{College of Arts \& Science}
-BA in Computer Science (CS) \\
+BA in Computer Science \\
 Grad. May 2017 \\
-\sectionsep
 
-%% Turned off for US-based employers
+% Turned off for US-based employers
 %\subsection{Hong Kong International School}
 %Grad. May 2013 \\
 %\sectionsep
 
-%%
+    \sectionsep
+
+    %
 % Skills
-%%
+%
 \section{Skills}
 \setlength{\parindent}{3ex}
 \subsection{Programming}
-\subsubsection{Programming Languages}
-Java, Python, C, JavaScript,\\
-TypeScipt, Bash
-\newline
 
-\subsubsection{Big Data Tools}
-(Py)Spark + Yarn, AWS EMR
-\newline
-
-\subsubsection{Frameworks}
-Spring/SpringBoot, Django,\\
-NodeJS, Express
-\newline
-
-\subsubsection{Databases}
-SQL: PostgreSQL, MySQL\\
-noSQL: MongoDB
-\newline
-
-\subsubsection{Observability}
-Prometheus, Graphana,\\
-Kibana, LightStep,\\
-OpenTracing
-\newline
-
-\subsubsection{Tools}
-git, vim, kubernetes,\\
-docker, npm, travisCI,\\
-AWS-cli, \LaTeX, droneCD,\\
-Guava, Consul, Envoy\\
+    \subsubsection{Languages}
+            Java, 
+            Python, 
+            C, 
+            JavaScript, 
+            TypeScript, 
+            Bash
+        \newline
+    \subsubsection{Big Data Tools}
+            (Py)Spark + Yarn, 
+            AWS EMR
+        \newline
+    \subsubsection{Web Frameworks}
+            Spring/SpringBoot, 
+            Django, 
+            Flask, 
+            NodeJS, 
+            Express
+        \newline
+    \subsubsection{Data Layer/Caches}
+            PostgreSQL, 
+            MySQL, 
+            MongoDB, 
+            Redis, 
+            Hibernate, 
+            JPA
+        \newline
+    \subsubsection{Message Buses}
+            Kafka, 
+            AWS SQS, 
+            RabbitMQ
+        \newline
+    \subsubsection{Observability}
+            Prometheus, 
+            Graphana, 
+            LightStep, 
+            OpenTelemetry
+        \newline
+    \subsubsection{Tools}
+            git, 
+            vim, 
+            Kubernetes, 
+            Docker, 
+            npm, 
+            TravisCI, 
+            Github Actions, 
+            DroneCD, 
+            \LaTeX, 
+            Consul, 
+            Envoy
+        \newline
 
 \sectionsep
 
 \subsection{General}
+
 \subsubsection{Languages (Native Fluency)}
-English, Mandarin
+English, 
+Chinese
 \newline
 
 \subsubsection{Miscellaneous}
-I know how to learn, use\\
-Google, sing badly in the shower, \\
-and read Stack Overflow.\\
-Obsessed with NYCRuns.
+I know how to learn, use Google, sing badly in the shower, and read SO
+
 \setlength{\parindent}{0ex}
+    \sectionsep
 
-\sectionsep
-
-%%
+%
 % Activities
-%%
+%
 %\section{Activities}
 %Techwatch@MediaMath \\
 %Phi Kappa Sigma Fraternity \\
 %Tech@NYU \\
 %\sectionsep
 
-%%
+%
 % Awards
-%%
+%
 % \section{Awards}
 % Dean's List\\
 % NYU PROMISE Scholarship\\
@@ -115,9 +128,9 @@ Obsessed with NYCRuns.
 % President’s Circle Scholarship\\
 % \sectionsep
 
-%%
+%
 % Conference Talks \& Papers
-%%
+%
 % \section{Conference Talks \& Papers}
 % Dean's List\\
 % NYU PROMISE Scholarship\\
@@ -125,69 +138,52 @@ Obsessed with NYCRuns.
 % President’s Circle Scholarship\\
 % \sectionsep
 
-%%
+%
 % Timestamp of resume generation
-%%
-\DTMsetdatestyle{mylastupdate}
-\DTMdisplaydate{\the\year}{\the\month}{\the\day}{-1}
+%
+    \DTMsetdatestyle{mylastupdate}
+    \DTMdisplaydate{\the\year}{\the\month}{\the\day}{-1}
 
-\end{minipage}
-\hfill
-%%%%%%%%%%
-% Right Column %
-%%%%%%%%%%
+\end{minipage}    \hfill%
+    % Right Column
 \begin{minipage}[t]{0.65\textwidth}
 
-%%
+%
 % Experience
-%%
+%
 \section{Experience}
 
-% Note: All uses of \diffdate inside a \section, or \workplace
-% requires a \protect in front, as discussed at:
-% https://tex.stackexchange.com/questions/43127/error-with-newcommand-and-section/43130#43130
-\workplace{Squarespace}{New York, NY}{\protect\diffdates{2018}{03}{\the\year}{\the\month}}
-\position{Software Engineer III (Domains)}{Mar. 2018 – Present}
-
- \vspace{\topsep} % Hacky fix for awkward extra vertical space
-
-\begin{tightemize}
-\item First engineer on Domain Registrar team, \textbf{turned Squarespace into a Domain Name Registrar}, enabling direct domain registration and management without 3rd parties.
-\item Designed and built registrar TLS, EPP, and product features that \textbf{lowered domain registrations from \textasciitilde 30s to \textasciitilde 100ms (99.6\% reduction)}
-\item Designed and built robust backend services and systems for Squarespace Emails that \textbf{lowered error rates from \textasciitilde 40\% to \textasciitilde 2\%}, and \textbf{decreased customer support volume from \textasciitilde 60\% to <1\%}
-\item Reduced company reliance on 3rd party vendors by building out registrar functionality in-house, \textbf{lowering domain costs on average by \textasciitilde 20\%}, and \textbf{provided new uptime guarantee of 99.9\% compared to old 3rd party's 95\% uptime} for all domain actions
-\item Proposed, designed, and built the backend systems for a generic fraud detection system, \textbf{increasing the number of identified fraudulently purchased domains by over 3.5 times baseline}. Converted fraud detection model at Squarespace from \textit{reactive to customer write-ins} to \textit{proactively identifying fraudulently purchased domains}
-\item Wired up deep observability metrics via Prometheus/Graphana, \textbf{providing useful technical and business dashboards and alerts in previously opaque systems running in production}
-\end{tightemize}
-\sectionsep
-
-\workplace{MediaMath}{New York, NY}{\protect\diffdates{2017}{07}{2018}{03}}
-\position{Software Engineer II}{Oct. 2017 – Mar. 2018}
-
- \vspace{\topsep} % Hacky fix for awkward extra vertical space
-
-\begin{tightemize}
-\item \textbf{Tech Lead} for a company-critical ETL service that \textbf{generated all fee data used by thousands of advertising bidders world-wide}
-\item \textbf{Reduced client friction by over 90\%}, and increased
-company's potential revenue substantially by enabling individual feature pricing
-\item {\bf Increased team developer velocity by >300\%} (based on story point
-completions before/after) by creating a command-line API interacting
-with service subsystems
-\item Continued assuming SDE II responsibilities, increasing team cohesion,technical ability, and positive feedback loop implementations
-\item Significantly increased visibility and insight into the service by building out monitoring and resiliency layers
-\end{tightemize}
-\sectionsep
-
-\position{Software Engineer I}{Jul. 2017 – Oct. 2017}
-
-\vspace{\topsep} % Hacky fix for awkward extra vertical space
-
-\begin{tightemize}
-\item Designed \& built out mission-critical internal financial platforms depended upon by the core of the company (responsible for over 70\% of company revenue)
-\item Took on responsibilities of an SDE II early on, contributing to increasing team cohesion, technical ability, and the implementation of positive feedback loops for the team
-\end{tightemize}
-\sectionsep
-
+    \workplace{Google}{New York, NY}{Starting Soon}
+            \position{Software Engineer L4 (Google Search)}{Sep 2021 – Present}
+        \vspace{\topsep} % Hacky fix for awkward extra vertical space
+        \begin{tightemize}
+                            \item Software engineer on Google Search's developer efficiency team
+                    \end{tightemize}
+        \sectionsep
+        \workplace{Squarespace}{New York, NY}{3 years, 6 months}
+            \position{Software Engineer III (Domains)}{Mar 2018 – Sep 2021}
+        \vspace{\topsep} % Hacky fix for awkward extra vertical space
+        \begin{tightemize}
+                            \item First engineer on Domain Registrar team, \textbf{turned Squarespace into a Domain Name Registrar}, enabling direct domain registration and management without 3rd parties.
+                            \item Designed and built registrar TLS, EPP, and product features that \textbf{lowered domain registrations from \textasciitilde30s to \textasciitilde100ms (99.6\% latency reduction)}
+                            \item Designed and built robust backend services and systems for Squarespace Emails that \textbf{lowered error rates from \textasciitilde40\% to \textasciitilde2\%}, and \textbf{decreased customer support volume from \textasciitilde60\% to <1\%}
+                            \item Reduced company reliance on 3rd party vendors by building out registrar functionality in-house, lowering domain costs on average by \textasciitilde20\%, and \textbf{provided new uptime guarantee of 99.9\% compared to old 3rd party's 95\% uptime} for all domain actions
+                            \item Proposed, designed, and built the backend systems for a generic fraud detection system, increasing the number of identified fraudulently purchased domains by over 3.5 times baseline. Converted fraud detection model at Squarespace from \textit{reactive to customer write-ins} to \textit{proactively identifying fraudulently purchased domains}
+                            \item Wired up deep observability metrics via Prometheus/Graphana, \textbf{providing useful technical and business dashboards and alerts in previously opaque systems running in production}
+                    \end{tightemize}
+        \sectionsep
+        \workplace{MediaMath}{New York, NY}{9 months}
+            \position{Software Engineer I \& II}{Jul 2017 – Mar 2018}
+        \vspace{\topsep} % Hacky fix for awkward extra vertical space
+        \begin{tightemize}
+                            \item \textbf{Tech Lead} for a company-critical ETL service that \textbf{generated all fee data used by thousands of advertising bidders world-wide}
+                            \item \textbf{Reduced client friction by over 90\%}, and unlocked company's potential revenue substantially by enabling individual feature pricing
+                            \item \textbf{Increased team developer velocity by >300\%} (based on story point completions before/after) by creating a command-line API interacting with service subsystems
+                            \item Continued assuming SDE II responsibilities, increasing team cohesion,technical ability, and positive feedback loop implementations
+                            \item Significantly increased visibility and insight into the service by building out monitoring and resiliency layers
+                    \end{tightemize}
+        \sectionsep
+    
 %\workplace{Ivy Tech Capital}{Beijing, China}{\protect\diffdates{2016}{06}{2016}{08}}
 %\position{Software Engineer Intern}{Jun. 2016 – Aug. 2016}
 
@@ -213,9 +209,9 @@ with service subsystems
 %\end{tightemize}
 %\sectionsep
 
-%%
+%
 % Organisations
-%%
+%
 %\section{Organisations}
 % \runsubsection{The Westminster News} \\
 % \descript{Co-Editors-in-Chief (2014) | Layout Editor (2012) }
@@ -236,9 +232,9 @@ with service subsystems
 % \end{tightemize}
 % \sectionsep
 
-%%
+%
 % Projects
-%%
+%
 %\section{Projects}
 %\runsubsection{Java -> C++ Transpiler}
 %\descript{New York, NY, 2016 Fall}
@@ -258,6 +254,4 @@ with service subsystems
 %\sectionsep
 
 % * Repo access available upon request
-\end{minipage}
-
-\end{document}
+\end{minipage}\end{document}

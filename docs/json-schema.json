@@ -1,0 +1,125 @@
+{
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "New York",
+        "addressRegion": "NY",
+        "postalCode": "10038",
+        "streetAddress": "180 Water Street, Apt. 2217"
+    },
+    "name": "Jason Yao",
+    "description": "Jason Yao is a Canadian-born, Hong Kong-raised, and American-educated software engineer currently working at Google in New York. He is an avid supporter of netizen and privacy rights through the EFF, and a maintainer of multiple open source projects, most notably pydotfiles.",
+    "email": "mailto:Hello@JasonYao.com",
+    "image": "https://jasonyao.com/profile.jpg",
+    "telephone": "tel:+1-949-335-2639",
+    "url": "https://www.JasonYao.com",
+    "nationality": {
+        "@type": "Country",
+        "name": "CAN"
+    },
+    "jobTitle": "Software Engineer",
+    "worksFor": {
+        "@type": "OrganizationRole",
+        "alumniOf": {
+            "@type": "Corporation",
+            "name": "Google",
+            "sameAs": "https://en.wikipedia.org/wiki/Google"
+        },
+        "startDate": "2021-09-27",
+        "endDate": null
+    },
+    "alumniOf": [
+        {
+            "@type": "OrganizationRole",
+            "alumniOf": {
+                "@type": "Corporation",
+                "name": "Squarespace",
+                "sameAs": "https://en.wikipedia.org/wiki/Squarespace"
+            },
+            "startDate": "2018-03-27",
+            "endDate": "2021-09-10"
+        },
+        {
+            "@type": "OrganizationRole",
+            "alumniOf": {
+                "@type": "Corporation",
+                "name": "MediaMath",
+                "sameAs": "https://www.linkedin.com/company/mediamath/"
+            },
+            "startDate": "2017-07-03",
+            "endDate": "2018-03-23"
+        },
+        {
+            "@type": "OrganizationRole",
+            "alumniOf": {
+                "@type": "CollegeOrUniversity",
+                "name": "New York University",
+                "sameAs": "https://en.wikipedia.org/wiki/New_York_University"
+            },
+            "startDate": "2014-09-02",
+            "endDate": "2017-05-25"
+        },
+        {
+            "@type": "OrganizationRole",
+            "alumniOf": {
+                "@type": "HighSchool",
+                "name": "Hong Kong International School",
+                "sameAs": "https://en.wikipedia.org/wiki/Hong_Kong_International_School"
+            },
+            "startDate": "2000-09-05",
+            "endDate": "2013-05-25"
+        }
+    ],
+    "knowsAbout": [
+        "Java",
+        "Python",
+        "C",
+        "JavaScript",
+        "TypeScript",
+        "Bash",
+        "(Py)Spark + Yarn",
+        "AWS EMR",
+        "Spring/SpringBoot",
+        "Django",
+        "Flask",
+        "NodeJS",
+        "Express",
+        "PostgreSQL",
+        "MySQL",
+        "MongoDB",
+        "Redis",
+        "Hibernate",
+        "JPA",
+        "Kafka",
+        "AWS SQS",
+        "RabbitMQ",
+        "Prometheus",
+        "Graphana",
+        "LightStep",
+        "OpenTelemetry",
+        "git",
+        "vim",
+        "Kubernetes",
+        "Docker",
+        "npm",
+        "TravisCI",
+        "Github Actions",
+        "DroneCD",
+        "LaTeX",
+        "Consul",
+        "Envoy"
+    ],
+    "knowsLanguage": [
+        {
+            "@type": "Language",
+            "name": "English",
+            "alternateName": "en"
+        },
+        {
+            "@type": "Language",
+            "name": "Chinese",
+            "alternateName": "zh"
+        }
+    ]
+}

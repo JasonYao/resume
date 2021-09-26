@@ -15,3 +15,9 @@
 install-tl-20*
 install-tl-unx.tar.gz
 
+# Local dev ignores
+.python-version
+
+# Build cache ignores
+__pycache__/
+

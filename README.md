@@ -1,25 +1,62 @@
 # Resume | Jason Yao
-[![Build Status](https://travis-ci.org/JasonYao/resume.svg?branch=source)](https://travis-ci.org/JasonYao/resume)
+[![Build Status](https://github.com/JasonYao/resume/actions/workflows/main.yml/badge.svg)](https://github.com/JasonYao/resume/actions/workflows/main.yml)
 
-By [Jason Yao](https://github.com/jasonyao/)
+> Spending too much time automating the creation of
+  a pretty and content-driven resume
 
-> Spending too much time automating the creation of a pretty resume
-
-This repo contains my resume, along with any
-necessary files to generate it.
-
-Currently, [LaTeX](https://www.latex-project.org)
-is used due to its readability, ease-of-change,
-and aesthetic final output.
-
-The LaTeX engine in use is [Xe(La)TeX](http://xetex.sourceforge.net/),
-used for its UTF-8 goodness and implicit access to
-system-wide fonts.
+This repo enables the automatic building, committing,
+and distribution of my resume.
 
 ## Link to Resume
 To see the pdf version of this resume, please click the image below:
 [![Even this thumbnail is automatically generated](https://www.jasonyao.com/resume/Resume_Jason_Yao.png)
 ](https://www.jasonyao.com/resume/Resume_Jason_Yao.pdf)
+
+## Overview
+![look at all the pwetty lines](docs/img/resume_system_design.svg)
+
+1. We use Python 3 for pre-processing and templating of data
+2. [LaTeX](https://www.latex-project.org), and in particular
+   [Xe(La)TeX](http://xetex.sourceforge.net/) is used to
+   actually generate the PDF version of the resume, which
+   is used for its UTF-8 goodness and implicit access to
+   system-wide fonts.
+
+## Output Formats
+
+### Generated PDF
+* See above for a link to view/download the generated PDF
+
+### JSON-LD Schema.org JSON Payload
+* This data payload format is a [JSON-LD schema.org markup](https://jsonld.com/person/) for metadata 
+     content data
+* The data payload can be found [here](https://www.jasonyao.com/resume/json-schema.json), and
+  can be accessed over curl with:
+
+```sh
+# The jq just adds in some pretty-formatting, feel free to omit if you don't want it
+curl https://www.jasonyao.com/resume/json-schema.json | jq '.'
+```
+
+### JSON Data
+* This data payload format is a more complete and human-readable version of the resume data
+  in JSON form, without having any of the metadata annotations from the JSON-LD version
+* The data payload can be found [here](https://www.jasonyao.com/resume/raw-data.json), and
+  can be accessed over curl with:
+```sh
+# The jq just adds in some pretty-formatting, feel free to omit if you don't want it
+curl https://www.jasonyao.com/resume/json-schema.json | jq '.'
+```
+
+### Raw Biography Data
+* This is just a raw text file with the latest version of my linkedin bio
+* The raw biography text can be found [here](https://www.jasonyao.com/resume/biography.txt), and
+  can be accessed over curl with:
+
+```sh
+# The jq just adds in some pretty-formatting, feel free to omit if you don't want it
+curl https://www.jasonyao.com/resume/biography.txt
+```
 
 ## Install (macOS)
 ```sh
@@ -38,6 +75,14 @@ To generate the pdf from the command-line:
 bin/build
 # OR
 xelatex Resume_Jason_Yao.tex
+```
+
+## Testing
+To run the automated tests:
+```sh
+bin/test
+# OR
+pytest
 ```
 
 ## License

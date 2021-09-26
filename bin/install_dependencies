@@ -23,6 +23,8 @@ function start() {
     # really care
     cat /etc/ImageMagick-6/policy.xml
     sudo mv /etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/policy.xml.backup
+
+    install_python_dependencies
 }
 
 function install_texlive_package_manager() {
@@ -40,6 +42,8 @@ function install_texlive_package_manager() {
     info "TexLive: Disabling backups"
     tlmgr option -- autobackup 0
     success "TexLive: Backups are disabled"
+
+    update_cache_manifest
 }
 
 function bootstrap_texlive_package_manager() {
@@ -118,6 +122,22 @@ function install_tex_dependency_packages() {
         bitset                      \
         xetex
     success "TexLive: All dependencies installed"
+}
+
+function update_cache_manifest() {
+  info "Updating cache manifest"
+  tlmgr list --only-installed --data name,lcat-version > /tmp/texlive/package-manifest.txt
+}
+
+function install_python_dependencies() {
+    # Installs wheel since it throws a warning about falling back
+    #   to using the old setup.py if it's not installed
+    pip install wheel
+
+    # We install dev since we're running tests- if we're on our
+    #   local and don't need to run tests, we can just do
+    #   pip install -r requirements/common.txt
+    pip install -r requirements/dev.txt
 }
 
 start
