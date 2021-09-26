@@ -1,10 +1,14 @@
 name: Build and deploy to GitHub Pages
 
-# We don't want another build triggered from our deployment branch (publish in this instance)
+# We don't want another build triggered from our deployment branch (master in this instance)
 on:
   push:
     branches-ignore:
-      - publish
+      - master
+
+  schedule:
+    # Runs on the 1st of every month at 4PM
+    - cron: "0 16 1 * *"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
