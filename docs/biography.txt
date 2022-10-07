@@ -1,15 +1,11 @@
 Hey there!
-I'm Jason, a Software Engineer on Google Search's developer efficiency team. I got my BA in Computer Science from New York University, and am Canadian-born, Hong Kong-raised, and American-educated.
+I'm Jason, a Software Engineer on Google's Search Feature Debugger team, helping to design and build world-class debugging and introspection tools for 10s of thousands of Google Search engineers.
+
+I got my BA in Computer Science from New York University, and am Canadian-born, Hong Kong-raised, and American-educated.
 
 Previously to Google, I was an engineer at Squarespace on their Domains team, helping to propose, design, and implement everything required for turning Squarespace into a full-fledged Domain Registrar, building in new features/resiliency layers/observability into the existing Domains and Squarespace Emails product, and creating the first automated Fraud Detection system for Domains at Squarespace.
 
-Before that, I was an engineer on the FPG team at MediaMath, leading a team of three other engineers in building out a mission-critical ETL process as a service from scratch that affected >90% of company revenue. We built out everything from an initial proof of concept to adding in the final layers of resiliency and monitoring. Because of our work, the service directly decreased our client friction by >90%, and enabled multiple new revenue streams for the company.
-
 I'm an all-purpose software engineer with lots of experience in web product engineering, dev-ops automation, and singing in the shower badly.
-
-For web dev, I have prior experience building out APIs/services from scratch in Spring/SpringBoot in Java, Node + Express in JavaScript, or with the Django framework in Python.
-
-For dev-ops, I have setup automated and error-tolerant development pipelines, automated roll-out/deployments, and leveraged framework testing suites in order to increase developer velocity and code-base stability in both professional and personal settings.
 
 Outside of general software development, I have a passion for home bartending and creating small projects. I am an ardent supporter of the EFF and ACLU for their amazing work for netizens and privacy/freedom.
 
