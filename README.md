@@ -1,31 +1,19 @@
 # Resume | Jason Yao
 [![Build Status](https://github.com/JasonYao/resume/actions/workflows/main.yml/badge.svg)](https://github.com/JasonYao/resume/actions/workflows/main.yml)
 
-> Spending too much time automating the creation of
-  a pretty and content-driven resume
+> Imagine what I could do if I wasn't doing this
 
-This repo enables the automatic building, committing,
-and distribution of my resume.
+The following respo contains all the code required in automatically
+generating, distributing, and service-ifying my resume data.
 
 ## Link to Resume
 To see the pdf version of this resume, please click the image below:
 [![Even this thumbnail is automatically generated](https://www.jasonyao.com/resume/Resume_Jason_Yao.png)
 ](https://www.jasonyao.com/resume/Resume_Jason_Yao.pdf)
 
-## Overview
-![look at all the pwetty lines](docs/img/resume_system_design.svg)
-
-1. We use Python 3 for pre-processing and templating of data
-2. [LaTeX](https://www.latex-project.org), and in particular
-   [Xe(La)TeX](http://xetex.sourceforge.net/) is used to
-   actually generate the PDF version of the resume, which
-   is used for its UTF-8 goodness and implicit access to
-   system-wide fonts.
-
-## Output Formats
-
-### Generated PDF
-* See above for a link to view/download the generated PDF
+## Resume Data API
+I'm a big fan of data-driven architectures, so even my resume data is
+in a machine and human readable form through the following commands below.
 
 ### JSON-LD Schema.org JSON Payload
 * This data payload format is a [JSON-LD schema.org markup](https://jsonld.com/person/) for metadata 
@@ -57,6 +45,16 @@ curl https://www.jasonyao.com/resume/raw-data.json | jq '.'
 # The jq just adds in some pretty-formatting, feel free to omit if you don't want it
 curl https://www.jasonyao.com/resume/biography.txt
 ```
+
+## Pipeline Overview
+![look at all the pwetty lines](docs/img/resume_system_design.svg)
+
+1. We use Python 3 for pre-processing and templating of data
+2. [LaTeX](https://www.latex-project.org), and in particular
+   [Xe(La)TeX](http://xetex.sourceforge.net/) is used to
+   actually generate the PDF version of the resume, which
+   is used for its UTF-8 goodness and implicit access to
+   system-wide fonts.
 
 ## Install (macOS)
 ```sh

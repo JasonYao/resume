@@ -10,7 +10,7 @@ set -e # Fails on the first error
 # shellcheck source=bin/utils.sh
 source "$(dirname "$0")/utils.sh"
 
-files_to_deploy=(Resume_Jason_Yao.pdf Resume_Jason_Yao.png json-schema.json raw-data.json biography.txt)
+files_to_deploy=(Resume_Jason_Yao.pdf Resume_Jason_Yao.png json-schema.json raw-data.json biography.txt index.html)
 files_to_upload_to_remote=(Resume_Jason_Yao.pdf Resume_Jason_Yao.png)
 
 repo_name="resume"
@@ -28,19 +28,27 @@ function start() {
     else
         info "Deployment: Skipping deployment of the resume due to not meeting deployment conditions, uploading artifacts for remote sharing"
 
-            for file_name in "${files_to_upload_to_remote[@]}"
-            do
-                curl -F "file=@${file_name}" https://file.io | jq '.link'
-                success "Upload: Uploaded ${file_name} for sharing (useful for seeing the generated output from PR builder runners)"
-            done
+        for file_name in "${files_to_upload_to_remote[@]}"
+        do
+            curl -F "file=@${file_name}" https://file.io | jq '.link'
+            success "Upload: Uploaded ${file_name} for sharing (useful for seeing the generated output from PR builder runners)"
+        done
     fi
 }
 
 function deploy_via_github_pages() {
+    copy_resume_page_html_for_personal_site
     stage_files_for_deployment
     setup_git_configurations
     deploy_files
     success "Deployment: Resume is now deployed"
+}
+
+function copy_resume_page_html_for_personal_site() {
+  info "Personal site: Downloading resume HTML"
+  git clone -b publish --single-branch --depth 1 https://github.com/JasonYao/JasonYao.github.io personal_site
+  cp personal_site/docs/resume/index.html .
+  rm -rf personal_site
 }
 
 function stage_files_for_deployment() {
