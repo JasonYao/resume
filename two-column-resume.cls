@@ -27,6 +27,8 @@
 \usepackage{fontawesome}
 \pagenumbering{gobble}
 \usepackage{datetime2}
+\usepackage{graphicx} % Used to render company logos
+\graphicspath{{assets}}
 
 % Color definitions
 \definecolor{date}{HTML}{669999}
@@ -54,7 +56,7 @@
 	\hspace{-1.7em}\raggedright{\parbox[b]{30em}{\fontspec[Path = fonts/IM_Fell_French_Canon_SC/]{IMFeFCsc28P}\fontsize{58pt}{0cm}\selectfont \MakeUppercase{#1}}}
     \hfill
 	% To increase the amount of space available for the links, increment the below's em value
-    \raggedleft{\parbox[b]{14em}{\color{headings}\fontspec[Path = fonts/IM_Fell_Great_Primer/]{IMFeGPrm28P}\fontsize{11pt}{14pt}\selectfont #2}}
+    \raggedleft{\parbox[b]{15em}{\color{headings}\fontspec[Path = fonts/IM_Fell_Great_Primer/]{IMFeGPrm28P}\fontsize{11pt}{14pt}\selectfont #2}}
    	\vspace{2.2em}
 }
 
@@ -122,9 +124,9 @@
 }
 
 % Workplace display command
-\newcommand{\workplace}[3]{
+\newcommand{\workplace}[4]{
 	\subsection{
-    \texorpdfstring{{#1}\hfill{\normalfont #2 (#3)}}{#1}
+    \texorpdfstring{{\includegraphics[width=1.25em]{#1}}\thickspace{#2}\hfill{\normalfont #3 (#4)}}{#1}
 	}
 }
 
