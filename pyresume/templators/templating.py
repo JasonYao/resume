@@ -290,10 +290,17 @@ class WorkPosition:
 
 
 @dataclass(frozen=True, order=True)
+class WorkLogos:
+    short: Optional[str]
+    long: Optional[str]
+
+
+@dataclass(frozen=True, order=True)
 class WorkDescription:
     company_name: str
     location: str
     positions: list[WorkPosition]
+    logos: WorkLogos
 
 
 @dataclass(frozen=True, order=True)

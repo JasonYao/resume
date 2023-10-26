@@ -159,7 +159,7 @@ JOB_HISTORY = [
                 "start_date": "2023-11-01",
                 "end_date": None,
                 "descriptions": [
-                    "Designing & leading implementation on Google's next generation debugging platform"
+                    "Designing & leading implementation on Google's next generation horizontal debugging platform"
                 ]
             },
             {
@@ -171,7 +171,11 @@ JOB_HISTORY = [
                     "Proposed, designed, and lead team of 5 SWEs in implementation on next generation platform architecture, enabling faster developer velocity and additional latency improvements"
                 ]
             }
-        ]
+        ],
+        "logos": {
+            "short": "logos/short/google",
+            "long": "logos/long/google"
+        }
     },
     {
         "company_name": "Squarespace",
@@ -190,7 +194,11 @@ JOB_HISTORY = [
                     "Wired up deep observability metrics via Prometheus/Graphana, **providing useful technical and business dashboards and alerts in previously opaque systems running in production**"
                 ]
             }
-        ]
+        ],
+        "logos": {
+            "short": "logos/short/squarespace",
+            "long": "logos/long/squarespace"
+        }
     },
     {
         "company_name": "MediaMath",
@@ -208,7 +216,11 @@ JOB_HISTORY = [
                     # "Significantly increased visibility and insight into the service by building out monitoring and resiliency layers"
                 ]
             }
-        ]
+        ],
+        "logos": {
+            "short": "logos/short/mediamath",
+            "long": "logos/long/mediamath",
+        }
     }
 ]
 

@@ -27,6 +27,8 @@
 \usepackage{fontawesome}
 \pagenumbering{gobble}
 \usepackage{datetime2}
+\usepackage{graphicx} % Used to render company logos
+\graphicspath{{assets}}
 
 % Color definitions
 \definecolor{date}{HTML}{669999}
@@ -122,9 +124,9 @@
 }
 
 % Workplace display command
-\newcommand{\workplace}[3]{
+\newcommand{\workplace}[4]{
 	\subsection{
-    \texorpdfstring{{#1}\hfill{\normalfont #2 (#3)}}{#1}
+    \texorpdfstring{{\includegraphics[width=1.25em]{#1}}\thickspace{#2}\hfill{\normalfont #3 (#4)}}{#1}
 	}
 }
 
