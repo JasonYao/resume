@@ -125,7 +125,8 @@ def map_to_experience(job: WorkDescription) -> WorkExperience:
         company_name=job.company_name,
         location=job.location,
         positions=positions,
-        work_duration=work_duration
+        work_duration=work_duration,
+        logos=job.logos,
     )
 
 
