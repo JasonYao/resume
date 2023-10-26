@@ -1,9 +1,9 @@
 BIOGRAPHY = """Hey there!
-I'm Jason, a Software Engineer on Google's Search Feature Debugger team, helping to design and build world-class debugging and introspection tools for 10s of thousands of Google Search engineers.
+My name is Jason, a Senior Software Engineer working on the Google Search team, helping to design and build world-class debugging and introspection tools for 20k+ Search engineers.
 
 I got my BA in Computer Science from New York University, and am Canadian-born, Hong Kong-raised, and American-educated.
 
-Previously to Google, I was an engineer at Squarespace on their Domains team, helping to propose, design, and implement everything required for turning Squarespace into a full-fledged Domain Registrar, building in new features/resiliency layers/observability into the existing Domains and Squarespace Emails product, and creating the first automated Fraud Detection system for Domains at Squarespace.
+Previously to Google, I was an engineer at Squarespace on their Domains team, helping to propose, design, and implement everything required for turning Squarespace into a full-fledged Domain Registrar, building in new features/resiliency layers/observability into the existing Domains and Squarespace Emails product, and creating the first automated fraud detection system for Domains at Squarespace.
 
 I'm an all-purpose software engineer with lots of experience in web product engineering, dev-ops automation, and singing in the shower badly.
 
@@ -16,28 +16,28 @@ Let's talk!
 
 SUMMARY_DATA = {
     "address": {
-        "address_line_1": "180 Water Street",
-        "address_line_2": "Apt. 2217",
         "city": "New York",
         "zone_code": "NY",
         "country_code": "USA",
-        "postal_code": "10038",
+        "postal_code": "10004",
     },
     "personal_data": {
         "name": "Jason Yao",
-        "description": "Jason Yao is a Canadian-born, Hong Kong-raised, and American-educated software engineer currently working at Google in New York. He is an avid supporter of netizen and privacy rights through the EFF, and is a maintainer and contributor of multiple open source projects",
+        "description": "Jason Yao is a Canadian-born, Hong Kong-raised, and American-educated senior software engineer currently working at Google in New York. He is an avid supporter of netizen and privacy rights through the EFF, and is a maintainer and contributor of multiple open source projects",
         "image": "https://jasonyao.com/profile.jpg",
         "nationality": "CAN",
         "contact": {
             "email": "Hello@JasonYao.com",
             "phone": "+1 (949) 335-2639",
+            # Note: urls are case insensitive, but this looks better in title-case
+            # on the actual resume itself
             "url": "https://www.JasonYao.com",
-            "linkedin": "https://www.Linkedin.com/in/JasonYaoNYU",
+            "linkedin": "https://www.Linkedin.com/in/Tea-Gremlin",
             "github": "https://Github.com/JasonYao",
         },
     },
     "current_work_summary": {
-        "job_title": "Software Engineer",
+        "job_title": "Senior Software Engineer",
         "employer": "Google",
         "url": "https://en.wikipedia.org/wiki/Google",
         "type": "Corporation",
@@ -89,6 +89,7 @@ SUMMARY_DATA = {
                 "Java",
                 "Python",
                 "C++",
+                "Kotlin",
                 "TypeScript",
                 "C",
                 "Bash",
@@ -101,10 +102,11 @@ SUMMARY_DATA = {
                 "Spring/SpringBoot",
                 "Spring Reactor/WebFlux",
                 "Django",
-                "Flask",
                 "NodeJS",
-                "Express",
                 "Vue 3",
+                "Protobuf",
+                # "Flask",
+                # "Express",
             ],
             "Data Layer/Caches": [
                 "PostgreSQL",
@@ -113,6 +115,7 @@ SUMMARY_DATA = {
                 "Hibernate",
                 "JPA",
                 "R2DBC",
+                "Spanner",
             ],
             "Message Buses": [
                 "Kafka",
@@ -152,12 +155,20 @@ JOB_HISTORY = [
         "location": "New York, NY",
         "positions": [
             {
-                "title": "Software Engineer L4 (Google Search)",
-                "start_date": "2021-09-27",
+                "title": "Senior Software Engineer (L5)",
+                "start_date": "2023-11-01",
                 "end_date": None,
                 "descriptions": [
-                    "Proposed, designed, and lead team of 5 SWEs in implementation of a plan to improve Google Search debugging performance, leading to a **99.8% error rate reduction, and ~70% latency improvement**, and over 500 SWE-days saved in time per year",
-                    "Proposed, designed, and lead team of 5 SWEs in implementation on next generation service architecture enabling faster developer velocity and additional latency improvements"
+                    "Designing & leading implementation on Google's next generation debugging platform"
+                ]
+            },
+            {
+                "title": "Software Engineer (L4)",
+                "start_date": "2021-09-27",
+                "end_date": "2023-11-01",
+                "descriptions": [
+                    "Proposed, designed, and lead team of 5 SWEs in implementation of a plan to improve Google Search debugging performance, leading to a **99.8% error rate reduction, and ~70% latency improvement**, and over 25 SWE years saved per year",
+                    "Proposed, designed, and lead team of 5 SWEs in implementation on next generation platform architecture, enabling faster developer velocity and additional latency improvements"
                 ]
             }
         ]
@@ -192,7 +203,7 @@ JOB_HISTORY = [
                 "descriptions": [
                     "**Tech Lead** for a company-critical ETL service that **generated all fee data used by thousands of advertising bidders world-wide**",
                     "**Reduced client friction by over 90%**, and unlocked company's potential revenue substantially by enabling individual feature pricing",
-                    "**Increased team developer velocity by >300%** (based on story point completions before/after) by creating a command-line API interacting with service subsystems",
+                    #"**Increased team developer velocity by >300%** (based on story point completions before/after) by creating a command-line API interacting with service subsystems",
                     # "Continued assuming SDE II responsibilities, increasing team cohesion,technical ability, and positive feedback loop implementations",
                     # "Significantly increased visibility and insight into the service by building out monitoring and resiliency layers"
                 ]

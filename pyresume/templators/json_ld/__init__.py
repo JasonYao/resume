@@ -16,14 +16,18 @@ def convert_address(data: Address) -> dict:
     address_locality = data.city
     address_region = data.zone_code
     postal_code = data.postal_code
-    street_address = f"{data.address_line_1}, {data.address_line_2}"
-    return {
+
+    val_dict = {
         "@type": "PostalAddress",
         "addressLocality": address_locality,
         "addressRegion": address_region,
         "postalCode": postal_code,
-        "streetAddress": street_address
     }
+
+    if data.address_line_1 is not None and data.address_line_2 is not None:
+        street_address = f"{data.address_line_1}, {data.address_line_2}"
+        val_dict["streetAddress"] = street_address
+    return val_dict
 
 
 def convert_work_summary(work_summary: WorkSummary) -> dict:
