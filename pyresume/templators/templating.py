@@ -69,22 +69,28 @@ class Address:
     Representation of any address in the world, with fields specified
     from https://shopify.engineering/handling-addresses-from-all-around-the-world
     """
-    address_line_1: str
-    address_line_2: str
+    address_line_1: Optional[str]
+    address_line_2: Optional[str]
     zone_code: str
     postal_code: str
     city: str
     country_code: country_type
 
     def __dict__(self) -> dict:
-        return {
-            'address_line_1': self.address_line_1,
-            'address_line_2': self.address_line_2,
+        val_dict = {
             'zone_code': self.zone_code,
             'postal_code': self.postal_code,
             'city': self.city,
             'country_code': self.country_code.alpha_3
         }
+
+        if self.address_line_1 is not None:
+            val_dict['address_line_1'] = self.address_line_1
+
+        if self.address_line_2 is not None:
+            val_dict['address_line_2'] = self.address_line_2
+
+        return val_dict
 
 
 @dataclass(frozen=True, order=True)
