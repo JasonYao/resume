@@ -94,6 +94,12 @@ SUMMARY_DATA = {
                 "C",
                 "Bash",
             ],
+            "AI/ML": [
+                "PyTorch",
+                "TensorFlow",
+                "Diffusers",
+                # "Huggingface",
+            ],
             # "Big Data Tools": [
             #     "(Py)Spark + Yarn",
             #     "AWS EMR",
@@ -105,22 +111,21 @@ SUMMARY_DATA = {
                 "NodeJS",
                 "Vue 3",
                 "Protobuf",
+                "OpenAPI",
                 # "Flask",
                 # "Express",
             ],
-            "Data Layer/Caches": [
+            "Databases & Processing": [
                 "PostgreSQL",
                 "MongoDB",
+                "Spanner",
                 "Redis",
                 "Hibernate",
                 "JPA",
                 "R2DBC",
-                "Spanner",
-            ],
-            "Message Buses": [
                 "Kafka",
                 "AWS SQS",
-                "RabbitMQ",
+                # "RabbitMQ",
             ],
             "Observability": [
                 "Prometheus",
@@ -134,7 +139,7 @@ SUMMARY_DATA = {
                 "Kubernetes",
                 "Docker",
                 "Github Actions",
-                "DroneCD",
+                # "DroneCD",
                 "LaTeX",
                 "Consul",
             ]
@@ -159,7 +164,8 @@ JOB_HISTORY = [
                 "start_date": "2023-11-01",
                 "end_date": None,
                 "descriptions": [
-                    "Designing & leading implementation on Google's next generation horizontal debugging platform"
+                    "Designing & leading implementation on Google Search's next generation debugging platform",
+                    "Designed & lead implementation on adding debugging capabilities to next-gen Observability platform, **bringing generalized debugging capabilities to over 10k+ MAU engineers**",
                 ]
             },
             {
@@ -167,8 +173,8 @@ JOB_HISTORY = [
                 "start_date": "2021-09-27",
                 "end_date": "2023-11-01",
                 "descriptions": [
-                    "Proposed, designed, and lead team of 5 SWEs in implementation of a plan to improve Google Search debugging performance, leading to a **99.8% error rate reduction, and ~70% latency improvement**, and over 25 SWE years saved per year",
-                    "Proposed, designed, and lead team of 5 SWEs in implementation on next generation platform architecture, enabling faster developer velocity and additional latency improvements"
+                    "Proposed, designed, and lead team of 5 SWEs on project to improve Google Search debugging performance, leading to a **99.8% error rate reduction, and ~70% latency improvement**, and over 25 SWE years saved per year",
+                    "Proposed, designed, and lead team of 5 SWEs on next generation platform architecture, enabling faster developer velocity, reliability, and stability of owned services",
                 ]
             }
         ],
@@ -190,8 +196,8 @@ JOB_HISTORY = [
                     "Designed and built registrar TLS, EPP, and product features that **lowered domain registrations from ~30s to ~100ms (99.6% latency reduction)**",
                     "Designed and built robust backend services and systems for Squarespace Emails that **lowered error rates from ~40% to ~2%**, and **decreased customer support volume from ~60% to <1%**",
                     "Reduced company reliance on 3rd party vendors by building out registrar functionality in-house, lowering domain costs on average by ~20%, and **provided new uptime guarantee of 99.9% compared to old 3rd party's 95% uptime** for all domain actions",
-                    "Proposed, designed, and built the backend systems for a generic fraud detection system, increasing the number of identified fraudulently purchased domains by over 3.5 times baseline. Converted fraud detection model at Squarespace from _reactive to customer write-ins_ to _proactively identifying fraudulently purchased domains_",
-                    "Wired up deep observability metrics via Prometheus/Graphana, **providing useful technical and business dashboards and alerts in previously opaque systems running in production**"
+                    "Proposed, designed, and built the backend systems for a generic fraud detection system, **increasing the number of correctly-identified fraudulently purchased domains by over 3.5x baseline**. Converted fraud detection model at Squarespace from _reactive to customer write-ins_ to _proactively identifying fraudulently purchased domains_",
+                    # "Wired up deep observability metrics via Prometheus/Graphana, **providing useful technical and business dashboards and alerts in previously opaque systems running in production**"
                 ]
             }
         ],
