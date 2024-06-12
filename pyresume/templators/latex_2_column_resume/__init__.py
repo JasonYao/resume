@@ -157,7 +157,7 @@ class ResumeTex2ColumnTemplator(Templator):
             'graduation_date': latest_education.end_date.strftime("%b %Y"),
 
             # Left column - skills
-            'programming_skills': {skill_header: [escape_latex(skill) for skill in skills] for skill_header, skills in data.summaries.skills.programming.items()},
+            'programming_skills': {escape_latex(skill_header): [escape_latex(skill) for skill in skills] for skill_header, skills in data.summaries.skills.programming.items()},
             'languages': [language.name for language in data.summaries.skills.general.languages],
             'misc': data.summaries.skills.general.misc,
 
