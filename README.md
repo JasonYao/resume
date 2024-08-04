@@ -82,6 +82,30 @@ bin/test
 pytest
 ```
 
+## Local GitHub Actions Debugging
+By using the [act](https://github.com/nektos/act) library, we can execute the GitHub Actions CI/CD workflow
+locally, enabling us to quickly debug if any issues arise.
+
+Install by running:
+```sh
+brew install act
+```
+
+List detected workflows from repository root by running:
+```sh
+act -l
+```
+
+Dry-run by running:
+```sh
+act -n
+```
+
+Actually execute by running:
+```sh
+act
+```
+
 ## License
 This repo is licensed under the terms of the MIT license,
 a copy of which may be found [here](LICENSE)

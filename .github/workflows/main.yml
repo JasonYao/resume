@@ -35,18 +35,27 @@ jobs:
 
       # Sets up environment
       - name: Checkout repo code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
 
       - name: Python 3 setup
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.9' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+          python-version: '3.12.4' # Version range or exact version of a Python version to use, using SemVer's version range syntax
           architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+          cache: 'pip' # caching pip dependencies
+      # We install dev since we're running tests- if we're on our
+      # local and don't need to run tests, we can just do:
+      # pip install -r requirements-core.txt
+      #
+      # NOTE: In the 2024 Aug move to actions/setup-python@v5, there was a requirement to move dependencies
+      # to a requirements.txt file, so we move the core logic to requirements-core.txt, and do a nested recursive
+      # call from inside of requirements.txt
+      - run: pip install -r requirements.txt
 
       - name: Cache Texlive
         id: cache-texlive
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         env:
           cache-name: cache-texlive-dependencies
         with:
@@ -59,10 +68,14 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
-      #   fonts-font-awesome is for the resume pdf generation
-      #   ghostscript is for the .pdf -> .png conversion
+      # fonts-font-awesome is for the resume pdf generation
+      # ghostscript is for the .pdf -> .png conversion
+      # Attempting to directly install texlive-xetex doesn't work and clashes with the TexLive package manager, since it installs
+      # an older version which clashes in the PATH
+      # Shellcheck is a dependency in our testing step, and used to be included by default in previous *nix CI/CD environments, but as
+      # of the bump to v4 of these GitHub Action steps, now needs to be installed separately
       - name: Install dependencies
-        run: sudo apt-get -y install fonts-font-awesome ghostscript
+        run: sudo apt update && sudo apt -y install fonts-font-awesome ghostscript shellcheck
 
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
 

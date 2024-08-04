@@ -23,8 +23,6 @@ function start() {
     # really care
     cat /etc/ImageMagick-6/policy.xml
     sudo mv /etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/policy.xml.backup
-
-    install_python_dependencies
 }
 
 function install_texlive_package_manager() {
@@ -95,12 +93,15 @@ function install_tex_dependency_packages() {
     # NOTE:
     #   - Other additional packages should be added to the block to avoid
     #     multiple calls to tlmgr
-    #   - Package `ms` gives us `everyshi.sty`, which is a requirement
+    #   - Package `ms` gives us `everyshi.sty`, which is a requirement. Sometime in
+    # 2024, builds started breaking due to the ms package not being available. From
+    # https://ctan.org/pkg/ms?lang=en, it appears to that this is due to the package
+    # being split up, so this ms package is now replaced by everyshi (obsolete)
     #   - Package `collection-fontsrecommended` contains a lot of fonts,
     #     but we really just need `EU` and a few others
     #   - Package `fontawesome` and the binary from apt are both required
     info "TexLive: Installing dependencies"
-    tlmgr install                   \
+    if tlmgr install                   \
         datetime2                   \
         tracklang                   \
         collection-fontsrecommended \
@@ -108,7 +109,7 @@ function install_tex_dependency_packages() {
         fontawesome                 \
         titlesec                    \
         textpos                     \
-        ms                          \
+        everyshi                    \
         substr                      \
         isodate                     \
         fontspec                    \
@@ -120,8 +121,20 @@ function install_tex_dependency_packages() {
         pdfescape                   \
         letltxmacro                 \
         bitset                      \
-        xetex
-    success "TexLive: All dependencies installed"
+        xetex ; then
+        success "TexLive: All dependencies installed"
+    else
+        warn "TexLive: Failed to install dependencies, dumping out debug info"
+        warn "TexLive: output of /tmp/texlive/texmf-var/web2c/tlmgr.log is:"
+        cat /tmp/texlive/texmf-var/web2c/tlmgr.log
+
+        # Additional debug if more detailed logging is required
+        # warn "TexLive: Output of /tmp/texlive/texmf-var/web2c/tlmgr-commands.log is:"
+        # cat /tmp/texlive/texmf-var/web2c/tlmgr-commands.log
+        # warn "TexLive: Output of /tmp/texlive/texmf-var/web2c/xetex/xelatex.log is:"
+        # cat /tmp/texlive/texmf-var/web2c/xetex/xelatex.log
+        fail "TexLive: Failed to install dependencies, see above debug info"
+    fi
 }
 
 function update_cache_manifest() {
@@ -129,15 +142,5 @@ function update_cache_manifest() {
   tlmgr list --only-installed --data name,lcat-version > /tmp/texlive/package-manifest.txt
 }
 
-function install_python_dependencies() {
-    # Installs wheel since it throws a warning about falling back
-    #   to using the old setup.py if it's not installed
-    pip install wheel
-
-    # We install dev since we're running tests- if we're on our
-    #   local and don't need to run tests, we can just do
-    #   pip install -r requirements/common.txt
-    pip install -r requirements/dev.txt
-}
-
 start
+
