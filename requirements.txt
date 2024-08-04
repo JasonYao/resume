@@ -1,0 +1,11 @@
+# We have a full requirements.txt file here so that pip packages can be cached properly in GitHub Actions
+#
+# NOTE: This is the full runtime + dev requirements
+
+-r requirements-core.txt
+
+##
+# Dev requirements
+##
+pytest==8.3.2
+
