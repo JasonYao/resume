@@ -13,8 +13,7 @@ function start() {
     install_texlive_package_manager
 
     # Debugging information
-    info "Imagemagick version and delegate info"
-    convert --version
+    install_imagemagick
 
     # Imagemagick 6 hack for ubuntu 18.04+,
     # see https://askubuntu.com/a/1081907 for more information
@@ -140,6 +139,26 @@ function install_tex_dependency_packages() {
 function update_cache_manifest() {
   info "Updating cache manifest"
   tlmgr list --only-installed --data name,lcat-version > /tmp/texlive/package-manifest.txt
+}
+
+function install_imagemagick() {
+    info "Checking if imagemagick is installed"
+    if command -v convert > /dev/null 2>&1; then
+        # Previous to 2025-02-01, ubuntu-latest had imagemagick pre-installed,
+        # it looks like it got removed sometime between Jan 01 and Feb 01 2025
+        info "Imagemagick was found to be installed, version and delegate info:"
+        convert --version
+    else
+        info "Imagemagick was not found, installing now"
+        sudo apt update
+
+        if sudo apt install -y imagemagick ; then
+            info "Imagemagick was now installed, version and delegate info:"
+            convert --version
+        else
+            fail "Failed to install imagemagick"
+        fi
+    fi
 }
 
 start
