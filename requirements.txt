@@ -7,5 +7,9 @@
 ##
 # Dev requirements
 ##
-pytest==8.3.2
+pytest==8.3.4
 
+# Downstream reqs from pytest
+iniconfig==2.0.0
+packaging==24.2
+pluggy==1.5.0

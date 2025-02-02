@@ -5,19 +5,27 @@
 ##
 # Runtime requirements
 ##
-dacite==1.8.1
-iso-639==0.4.5
-Jinja2==3.1.4
+# Used to ease mapping from JSON to arbitrary dataclasses without
+# the need for explicit .fromDict() classes
+dacite==1.9.1
+
+# Primary templating engine used for this project
+Jinja2==3.1.5
+
+# Used to parse template data and have type-safe countries being slung around
+# (a bit of an overkill, but ¯\_(ツ)_/¯
 pycountry==24.6.1
-python-dateutil==2.9.0
 
-# Setup tools requirement is for iso-639, otherwise we get the following error:
+# Used for finding relative dates, though could probably be removed
+# in the future
+python-dateutil==2.9.0.post0
+
+# `setuptools` requirement is for iso-639, otherwise we get the following error:
 # "No module named pkg_resources"
-iniconfig==2.0.0
-MarkupSafe==2.1.5
-packaging==24.1
-pluggy==1.5.0
-setuptools==72.1.0
-six==1.16.0
-wheel==0.44.0
+MarkupSafe==3.0.2
+setuptools==75.8.0
+six==1.17.0
 
+# Used to parse and get access to type-safe languages
+# (a bit of an overkill, but ¯\_(ツ)_/¯
+iso-639==0.4.5
