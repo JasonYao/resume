@@ -23,7 +23,7 @@ python-dateutil==2.9.0.post0
 # `setuptools` requirement is for iso-639, otherwise we get the following error:
 # "No module named pkg_resources"
 MarkupSafe==3.0.2
-setuptools==75.8.0
+setuptools==78.1.1
 six==1.17.0
 
 # Used to parse and get access to type-safe languages
