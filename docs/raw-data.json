@@ -2,7 +2,6 @@
     "summaries": {
         "address": {
             "zone_code": "NY",
-            "postal_code": "10004",
             "city": "New York",
             "country_code": "USA"
         },
@@ -20,7 +19,7 @@
             }
         },
         "current_work_summary": {
-            "job_title": "Senior Software Engineer",
+            "job_title": "Tech Lead (Search Debug), Senior Software Engineer",
             "employer": "Google",
             "url": "https://en.wikipedia.org/wiki/Google",
             "type": "Corporation",
@@ -77,10 +76,10 @@
             },
             "programming": {
                 "Languages": [
+                    "Kotlin",
                     "Java",
                     "Python",
                     "C++",
-                    "Kotlin",
                     "TypeScript",
                     "C",
                     "Bash"
@@ -96,8 +95,8 @@
                     "Django",
                     "NodeJS",
                     "Vue 3",
-                    "Protobuf",
-                    "OpenAPI"
+                    "OpenAPI",
+                    "Protobuf"
                 ],
                 "Databases & Processing": [
                     "PostgreSQL",
@@ -134,16 +133,18 @@
             "location": "New York, NY",
             "positions": [
                 {
-                    "title": "Senior Software Engineer (L5)",
+                    "title": "Senior Software Engineer",
                     "start_date": "2023-11-01",
                     "end_date": null,
                     "descriptions": [
-                        "Designing & leading implementation on Google Search's next generation debugging platform",
-                        "Designed & lead implementation on adding debugging capabilities to next-gen Observability platform, **bringing generalized debugging capabilities to over 10k+ MAU engineers**"
+                        "**Tech lead for team of 10 engineers** enhancing debugging capabilities on Google Search's next-generation LLM-powered platforms, increasing productivity for 5k+ MAU engineers",
+                        "Designed and led implementation on Google Search's next generation debugging platform, resulting in entirely new debugging capabilities",
+                        "Led cross-team overhaul for underlying Google-wide debug logging service, **driving down read-after-write latencies from 35s+ to <5s (an >85.7% decrease)**",
+                        "Upskilled/mentored team members to be excellent individual contributors, recognized through promotions for team members"
                     ]
                 },
                 {
-                    "title": "Software Engineer (L4)",
+                    "title": "Software Engineer",
                     "start_date": "2021-09-27",
                     "end_date": "2023-11-01",
                     "descriptions": [
@@ -177,25 +178,6 @@
             "logos": {
                 "short": "logos/short/squarespace",
                 "long": "logos/long/squarespace"
-            }
-        },
-        {
-            "company_name": "MediaMath",
-            "location": "New York, NY",
-            "positions": [
-                {
-                    "title": "Software Engineer I & II",
-                    "start_date": "2017-07-03",
-                    "end_date": "2018-03-23",
-                    "descriptions": [
-                        "**Tech Lead** for a company-critical ETL service that **generated all fee data used by thousands of advertising bidders world-wide**",
-                        "**Reduced client friction by over 90%**, and unlocked company's potential revenue substantially by enabling individual feature pricing"
-                    ]
-                }
-            ],
-            "logos": {
-                "short": "logos/short/mediamath",
-                "long": "logos/long/mediamath"
             }
         }
     ],

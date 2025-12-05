@@ -5,7 +5,7 @@
         "@type": "PostalAddress",
         "addressLocality": "New York",
         "addressRegion": "NY",
-        "postalCode": "10004"
+        "postalCode": null
     },
     "name": "Jason Yao",
     "description": "Jason Yao is a Canadian-born, Hong Kong-raised, and American-educated senior software engineer currently working at Google in New York. He is an avid supporter of netizen and privacy rights through the EFF, and is a maintainer and contributor of multiple open source projects",
@@ -17,7 +17,7 @@
         "@type": "Country",
         "name": "CAN"
     },
-    "jobTitle": "Senior Software Engineer",
+    "jobTitle": "Tech Lead (Search Debug), Senior Software Engineer",
     "worksFor": {
         "@type": "OrganizationRole",
         "alumniOf": {
@@ -71,10 +71,10 @@
         }
     ],
     "knowsAbout": [
+        "Kotlin",
         "Java",
         "Python",
         "C++",
-        "Kotlin",
         "TypeScript",
         "C",
         "Bash",
@@ -86,8 +86,8 @@
         "Django",
         "NodeJS",
         "Vue 3",
-        "Protobuf",
         "OpenAPI",
+        "Protobuf",
         "PostgreSQL",
         "MongoDB",
         "Spanner",
