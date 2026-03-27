@@ -10,7 +10,7 @@
 dacite==1.9.1
 
 # Primary templating engine used for this project
-Jinja2==3.1.5
+Jinja2==3.1.6
 
 # Used to parse template data and have type-safe countries being slung around
 # (a bit of an overkill, but ¯\_(ツ)_/¯
