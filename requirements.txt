@@ -7,7 +7,7 @@
 ##
 # Dev requirements
 ##
-pytest==8.3.4
+pytest==9.0.3
 
 # Downstream reqs from pytest
 iniconfig==2.0.0
