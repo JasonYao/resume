@@ -35,27 +35,26 @@ jobs:
 
       # Sets up environment
       - name: Checkout repo code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
 
-      - name: Python 3 setup
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
-          python-version: '3.12.4' # Version range or exact version of a Python version to use, using SemVer's version range syntax
-          architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
-          cache: 'pip' # caching pip dependencies
+          # Install a specific version of uv.
+          version: "0.13.6"
+
+      - name: Set up Python
+        run: uv python install
+
       # We install dev since we're running tests- if we're on our
-      # local and don't need to run tests, we can just do:
-      # pip install -r requirements-core.txt
-      #
-      # NOTE: In the 2024 Aug move to actions/setup-python@v5, there was a requirement to move dependencies
-      # to a requirements.txt file, so we move the core logic to requirements-core.txt, and do a nested recursive
-      # call from inside of requirements.txt
-      - run: pip install -r requirements.txt
+      # local and don't need to run tests, we can just do uv sync
+      - name: Install Python dependencies
+        run: uv sync --locked --all-extras --dev
 
       - name: Cache Texlive
         id: cache-texlive
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         env:
           cache-name: cache-texlive-dependencies
         with:
