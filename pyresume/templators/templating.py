@@ -11,9 +11,8 @@ from typing import Union
 from dacite import Config
 # Dependency imports
 from dacite import from_dict
-from iso639 import languages
-from iso639.iso639 import _Language
 from pycountry import countries
+from pycountry import languages
 
 """
 Needed due to pycountries being stupid and having dynamic class names instead
@@ -22,14 +21,15 @@ don't work as type signatures when paired with dacite, so we do this check
 upon load so typing works properly
 """
 country_type = type(countries.get(alpha_3="CAN"))
+language_type = type(languages.get(alpha_2="en"))
 
 
 def load_country(raw_country: str) -> country_type:
   return countries.get(alpha_3=raw_country)
 
 
-def load_language(raw_language: str) -> _Language:
-  return languages.get(alpha2=raw_language.lower())
+def load_language(raw_language: str) -> language_type:
+  return languages.get(alpha_2=raw_language.lower())
 
 
 @dataclass(frozen=True, order=True)
@@ -233,13 +233,13 @@ class WorkSummary:
 
 @dataclass(frozen=True, order=True)
 class GeneralSkills:
-  languages: list[_Language]
+  languages: list[language_type]
   misc: str
 
   @staticmethod
   def create(data: dict) -> 'GeneralSkills':
     type_hooks = {
-      _Language: load_language
+      language_type: load_language
     }
     return from_dict(data_class=GeneralSkills, data=data, config=Config(type_hooks=type_hooks))
 

@@ -16,15 +16,6 @@ dependencies = [
     # Used for finding relative dates, though could probably be removed
     # in the future
     "python-dateutil",
-    # Used to parse and get access to type-safe language codes
-    # (a bit overkill, but ¯\_(ツ)_/¯)
-    "iso-639==0.4.5",
-    ######
-    # Transitive dependencies (kept here during uv migration, to delete later)
-    ######
-
-    # iso-639 uses pkg_resources to load its language data, which the latest setuptools no longer ships
-    "setuptools==75.8.0",
 ]
 
 [dependency-groups]
