@@ -245,7 +245,7 @@ class GeneralSkills:
 
   def __dict__(self) -> dict:
     return {
-      'languages': [language.alpha2 for language in self.languages],
+      'languages': [language.alpha_2 for language in self.languages],
       'misc': self.misc
     }
 
