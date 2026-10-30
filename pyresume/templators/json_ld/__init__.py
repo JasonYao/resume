@@ -1,7 +1,5 @@
 from json import dumps as json_dumps
 
-from iso639.iso639 import _Language
-
 from ..templating import Templator
 from ..templating import TemplateType
 from ..templating import TemplatedData
@@ -10,6 +8,7 @@ from ..templating import Address
 from ..templating import WorkSummary
 from ..templating import Education
 from ..templating import EducationalOrganizationType
+from ..templating import language_type
 
 
 def convert_address(data: Address) -> dict:
@@ -65,11 +64,11 @@ def convert_education_summary(education_summary: Education) -> dict:
     }
 
 
-def convert_language(language: _Language) -> dict:
+def convert_language(language: language_type) -> dict:
     return {
         "@type": "Language",
         "name": language.name,
-        "alternateName": language.alpha2
+        "alternateName": language.alpha_2
     }
 
 
