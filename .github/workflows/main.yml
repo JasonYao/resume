@@ -76,6 +76,11 @@ jobs:
       - name: Install dependencies
         run: sudo apt update && sudo apt -y install fonts-font-awesome ghostscript shellcheck
 
+      # Stops trusting eMudhra certs across the system store (apt/wget/tlmgr) and pip/certifi bundles,
+      # see https://github.com/actions/runner-images/issues/15018
+      - name: Distrust eMudhra certificates
+        run: bin/distrust_emudhra
+
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
 
       # Generates data output files
