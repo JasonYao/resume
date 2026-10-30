@@ -56,6 +56,10 @@ jobs:
       - name: Install Python dependencies
         run: uv sync --locked --all-extras --dev
 
+      # Python/uv bundles only exist once dependencies are installed, so lock those down too
+      - name: Secure CI/CD environment (post dependency install)
+        run: bin/lockdown
+
       - name: Cache Texlive
         id: cache-texlive
         uses: actions/cache@v6

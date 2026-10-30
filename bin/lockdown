@@ -16,39 +16,71 @@ set -euo pipefail
 # trustworthy after a private key breach. Details:
 #   - Hacker News: https://news.ycombinator.com/item?id=50177916
 #   - Mozilla incident: https://bugzilla.mozilla.org/show_bug.cgi?id=2083449&ref=scotthelme.co.uk
-#   - Write-up: https://emudhra.we-have-a-problem.com/
+#   - Write-up (incl. per-distro workarounds): https://emudhra.we-have-a-problem.com/
 #   - Site-wide runner policy: https://github.com/actions/runner-images/issues/15018
+#
+# The affected roots are the emSign roots, plus the Comodo AAA Services root
+# (CN "AAA Certificate Services"), which cross-signs some of the compromised intermediates.
 #
 # When the set of distrusted CAs changes, update this script (not the workflow).
 #
-# Covers every trust store used in CI:
-#   - The ubuntu runner system store (/etc/ssl/certs), which is used by
-#     apt, curl, wget and therefore the TexLive package manager (tlmgr)
-#   - The certifi bundles used by pip/python (requests), including the
-#     copy vendored inside pip itself
-#   - uv, which ships its own bundled roots unless told to use the system store
+# Flow, per trust store:
+#   1. Check and log whether the store still trusts the distrusted certs
+#   2. Only if it does, remediate that store
+#   3. Verify every store again, then verify live TLS handshakes against the
+#      compromised intermediates (see the "probe" hosts below)
+#
+# Trust stores covered:
+#   system  The ubuntu runner store (/etc/ssl/certs), used by apt, curl, wget and
+#           therefore the TexLive package manager (tlmgr)
+#   python  certifi cacert.pem bundles used by pip/requests, including pip's vendored copy
+#   java    The OpenJDK keystore, which is NOT refreshed with the system store
+#           (https://bugs.debian.org/1069251)
+#   uv      Bundles its own roots unless told to use the system store (UV_NATIVE_TLS)
 #
 # Usage:
-#   bin/lockdown [apply]         Removes the certificates
-#   bin/lockdown verify          Fails if any store still trusts them
+#   bin/lockdown [apply]         Check, remediate where needed, then verify
+#   bin/lockdown check           Logs per-store trust state, fails if any store trusts them
+#   bin/lockdown verify          check + live probes
 #   bin/lockdown env             Only exports the trust-store environment variables
 #   bin/lockdown filter <bundle.pem>
 #                                Rewrites a PEM bundle in place, minus distrusted certs
+#
+# Overrides (mainly for tests): SYSTEM_BUNDLE, JAVA_KEYSTORE, PYTHON_BUNDLE_ROOTS (space-separated dirs)
 ##
 
 # shellcheck source=bin/utils.sh
 source "$(dirname "$0")/utils.sh"
 
 SYSTEM_BUNDLE="${SYSTEM_BUNDLE:-/etc/ssl/certs/ca-certificates.crt}"
-EMUDHRA_PATTERN='emudhra|emsign'
+JAVA_KEYSTORE="${JAVA_KEYSTORE:-/etc/ssl/certs/java/cacerts}"
+JAVA_KEYSTORE_PASSWORD="${JAVA_KEYSTORE_PASSWORD:-changeit}"
+PYTHON_BUNDLE_ROOTS="${PYTHON_BUNDLE_ROOTS:-${VIRTUAL_ENV:-.venv} . ${HOME}/.local/share/uv}"
+
+# Matched against a certificate's subject/issuer, case-insensitive
+DISTRUSTED_CERT_PATTERN='emudhra|emsign|AAA Certificate Services'
+# Matched against /etc/ca-certificates.conf entries and java keystore aliases
+DISTRUSTED_NAME_PATTERN='emudhra|emsign|comodo_aaa_services|aaa certificate services|comodoaaa'
+
+# Hosts serving certs from the compromised intermediates. A handshake must FAIL (curl exit 60).
+# The noct hosts serve certs never logged to Certificate Transparency, which many
+# non-browser clients (including curl) accept, so they are the riskier case.
+PROBE_HOSTS=(
+    dv-g3b-emudhra.we-have-a-problem.com
+    dv-g3b-aaa-emudhra.we-have-a-problem.com
+    dv-g3b-noct-emudhra.we-have-a-problem.com
+    dv-g3b-aaa-noct-emudhra.we-have-a-problem.com
+)
+
+STORES=(system python java)
 
 function is_distrusted() {
     local info
     info="$(printf '%s' "$1" | openssl x509 -noout -subject -issuer 2>/dev/null)" || return 1
-    grep -qiE "${EMUDHRA_PATTERN}" <<< "${info}"
+    grep -qiE "${DISTRUSTED_CERT_PATTERN}" <<< "${info}"
 }
 
-# Prints the PEM blocks of a bundle (stdin) that do NOT belong to eMudhra
+# Prints the PEM blocks of a bundle (stdin) that are NOT distrusted
 function filter_bundle() {
     local block="" line
     while IFS= read -r line || [ -n "${line}" ]; do
@@ -67,7 +99,7 @@ function filter_bundle() {
     return 0
 }
 
-function count_emudhra_certs() {
+function count_distrusted_in_bundle() {
     local bundle="$1" block="" line count=0
     while IFS= read -r line || [ -n "${line}" ]; do
         case "${line}" in
@@ -85,11 +117,6 @@ function count_emudhra_certs() {
     echo "${count}"
 }
 
-function python_bundles() {
-    # certifi bundles in the project venv (pip/requests) and pip's vendored copy
-    find "${VIRTUAL_ENV:-.venv}" . -maxdepth 8 -type f -name cacert.pem 2>/dev/null | sort -u || true
-}
-
 function filter_file() {
     local bundle="$1" tmp
     tmp="$(mktemp)"
@@ -98,26 +125,85 @@ function filter_file() {
     rm -f "${tmp}"
 }
 
-function apply_system() {
-    info "System: Distrusting eMudhra certificates"
-    local conf=/etc/ca-certificates.conf cert
-    if [ -d /usr/share/ca-certificates ] && [ -f "${conf}" ]; then
-        while IFS= read -r cert; do
-            cert="${cert#/usr/share/ca-certificates/}"
-            sudo sed -i "s|^${cert}\$|!${cert}|" "${conf}"
-        done < <(find /usr/share/ca-certificates -type f -iname '*emsign*' -o -type f -iname '*emudhra*')
-        sudo update-ca-certificates --fresh > /dev/null
+# Logs the state of a single bundle, returns 1 if it still trusts distrusted certs
+function check_bundle() {
+    local label="$1" bundle="$2" remaining
+    remaining="$(count_distrusted_in_bundle "${bundle}")"
+    if [ "${remaining}" -ne 0 ]; then
+        warn "${label}: ${bundle} STILL TRUSTS ${remaining} distrusted certificate(s)"
+        return 1
     fi
-    success "System: eMudhra certificates are no longer trusted"
+    success "${label}: ${bundle} does not trust the distrusted certificates"
 }
 
-function apply_python() {
+# ---- system ----------------------------------------------------------------
+
+function check_system() {
+    [ -f "${SYSTEM_BUNDLE}" ] || { info "system: ${SYSTEM_BUNDLE} not found, skipping"; return 0; }
+    check_bundle "system" "${SYSTEM_BUNDLE}"
+}
+
+function remediate_system() {
+    # See https://emudhra.we-have-a-problem.com/#linux
+    info "system: Blacklisting the distrusted roots in /etc/ca-certificates.conf"
+    sudo sed -i -E "/^!/! s#^(.*(${DISTRUSTED_NAME_PATTERN}).*\.crt)\$#!\1#I" /etc/ca-certificates.conf
+    sudo update-ca-certificates --fresh > /dev/null
+}
+
+# ---- python (pip, requests, uv-managed pythons) ----------------------------
+
+function python_bundles() {
+    # shellcheck disable=SC2086 # Intentional word-splitting of the roots list
+    find ${PYTHON_BUNDLE_ROOTS} -maxdepth 8 -type f -name cacert.pem 2>/dev/null | sort -u || true
+}
+
+function check_python() {
+    local bundle status=0 found=0
+    while IFS= read -r bundle; do
+        found=1
+        check_bundle "python" "${bundle}" || status=1
+    done < <(python_bundles)
+    [ "${found}" -eq 1 ] || info "python: No certifi bundles found yet (re-run after dependencies are installed)"
+    return "${status}"
+}
+
+function remediate_python() {
     local bundle
     while IFS= read -r bundle; do
-        info "Python: Filtering ${bundle}"
+        info "python: Filtering ${bundle}"
         filter_file "${bundle}"
     done < <(python_bundles)
 }
+
+# ---- java ------------------------------------------------------------------
+
+function java_trusted_aliases() {
+    keytool -list -keystore "${JAVA_KEYSTORE}" -storepass "${JAVA_KEYSTORE_PASSWORD}" 2>/dev/null \
+        | grep -iE "${DISTRUSTED_NAME_PATTERN}" || true
+}
+
+function check_java() {
+    if [ ! -f "${JAVA_KEYSTORE}" ] || ! command -v keytool > /dev/null 2>&1; then
+        info "java: No keystore at ${JAVA_KEYSTORE} (or no keytool), skipping"
+        return 0
+    fi
+    local aliases
+    aliases="$(java_trusted_aliases)"
+    if [ -n "${aliases}" ]; then
+        warn "java: ${JAVA_KEYSTORE} STILL TRUSTS $(wc -l <<< "${aliases}") distrusted certificate(s)"
+        return 1
+    fi
+    success "java: ${JAVA_KEYSTORE} does not trust the distrusted certificates"
+}
+
+function remediate_java() {
+    # Debian's ca-certificates-java doesn't refresh an existing keystore, so recreate it
+    info "java: Recreating ${JAVA_KEYSTORE} from the system store"
+    sudo rm -f "${JAVA_KEYSTORE}"
+    sudo update-ca-certificates --fresh > /dev/null
+}
+
+# ---- environment -----------------------------------------------------------
 
 function export_env() {
     # Points pip, requests, uv (native TLS) and tlmgr (wget/curl/LWP) at the filtered system store
@@ -130,26 +216,60 @@ function export_env() {
     return 0
 }
 
-function verify() {
-    local bundle remaining status=0
-    for bundle in "${SYSTEM_BUNDLE}" $(python_bundles); do
-        [ -f "${bundle}" ] || continue
-        remaining="$(count_emudhra_certs "${bundle}")"
-        if [ "${remaining}" -ne 0 ]; then
-            warn "Verify: ${bundle} still trusts ${remaining} eMudhra certificate(s)"
-            status=1
+# ---- orchestration ---------------------------------------------------------
+
+function check_all() {
+    local store status=0
+    for store in "${STORES[@]}"; do
+        "check_${store}" || status=1
+    done
+    return "${status}"
+}
+
+function remediate_where_needed() {
+    local store
+    for store in "${STORES[@]}"; do
+        if "check_${store}"; then
+            info "${store}: Nothing to remediate"
         else
-            success "Verify: ${bundle} contains no eMudhra certificates"
+            "remediate_${store}"
         fi
+    done
+}
+
+# A handshake against the compromised intermediates must fail with a certificate error (curl exit 60)
+function probe_hosts() {
+    local host code status=0
+    if ! command -v curl > /dev/null 2>&1; then
+        warn "probe: curl not found, skipping live probes"
+        return 0
+    fi
+    for host in "${PROBE_HOSTS[@]}"; do
+        code=0
+        curl --silent --show-error --max-time 20 --output /dev/null "https://${host}/" 2> /dev/null || code=$?
+        case "${code}" in
+            60) success "probe: https://${host}/ was rejected (certificate not trusted)" ;;
+            0) warn "probe: https://${host}/ was ACCEPTED, the compromised intermediates are still trusted"; status=1 ;;
+            *) warn "probe: https://${host}/ was inconclusive (curl exit ${code}, likely network)" ;;
+        esac
     done
     return "${status}"
 }
 
 function start() {
     case "${1:-apply}" in
-        apply) apply_system; apply_python; export_env; verify || fail "eMudhra certificates are still trusted" ;;
+        apply)
+            remediate_where_needed
+            export_env
+            check_all || fail "Distrusted certificates are still trusted after remediation"
+            probe_hosts || fail "Live probes still trust the compromised intermediates"
+            ;;
+        check) check_all || fail "Distrusted certificates are still trusted" ;;
+        verify)
+            check_all || fail "Distrusted certificates are still trusted"
+            probe_hosts || fail "Live probes still trust the compromised intermediates"
+            ;;
         env) export_env ;;
-        verify) verify || fail "eMudhra certificates are still trusted" ;;
         filter) filter_file "${2:?bundle path required}" ;;
         *) fail "Unknown command: $1" ;;
     esac
