@@ -31,7 +31,7 @@ function lint() {
 }
 
 function run_tests() {
-    pytest
+    uv run pytest
 }
 
 start

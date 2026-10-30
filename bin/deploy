@@ -28,10 +28,12 @@ function start() {
     else
         info "Deployment: Skipping deployment of the resume due to not meeting deployment conditions, uploading artifacts for remote sharing"
 
+        # Skipping artifact upload, Migrate to https://github.com/actions/upload-artifact
         for file_name in "${files_to_upload_to_remote[@]}"
         do
-            curl -F "file=@${file_name}" https://file.io | jq '.link'
-            success "Upload: Uploaded ${file_name} for sharing (useful for seeing the generated output from PR builder runners)"
+        #    curl -F "file=@${file_name}" https://file.io | jq '.link'
+        #    success "Upload: Uploaded ${file_name} for sharing (useful for seeing the generated output from PR builder runners)"
+        info "Skipping uploading ${file_name} for sharing until after we've migrated in issue #60"
         done
     fi
 }
