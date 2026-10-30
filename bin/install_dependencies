@@ -20,8 +20,10 @@ function start() {
     # In theory we can replace <policy domain="coder" rights="none" pattern="PDF" />
     # with <policy domain="coder" rights="read|write" pattern="PDF" />, but also I don't
     # really care
-    cat /etc/ImageMagick-6/policy.xml
-    sudo mv /etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/policy.xml.backup
+    #
+    # 2026 Oct 30 update: Swapped ImageMagick-6 with ImageMagick-7
+    cat /etc/ImageMagick-7/policy.xml
+    sudo mv /etc/ImageMagick-7/policy.xml /etc/ImageMagick-7/policy.xml.backup
 }
 
 function install_texlive_package_manager() {
@@ -162,4 +164,3 @@ function install_imagemagick() {
 }
 
 start
-

@@ -26,7 +26,7 @@ function start() {
 
 function generate_outputs() {
     info "Generating output formats"
-    if python main.py ; then
+    if uv run python main.py ; then
       success "Successfully generated output formats"
     else
       fail "Failed to generate output formats"
