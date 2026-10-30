@@ -92,6 +92,8 @@ jobs:
       - name: Deploy
         run: bin/deploy ${{ steps.extract_branch.outputs.branch }}
 
+      # The master branch is already ignored at the top of this workflow (branches-ignore), so this
+      # only needs to exclude source, which deploys via bin/deploy instead
       - name: Upload generated resume artifacts
         if: steps.extract_branch.outputs.branch != 'source'
         uses: actions/upload-artifact@v7
