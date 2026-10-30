@@ -91,3 +91,13 @@ jobs:
 
       - name: Deploy
         run: bin/deploy ${{ steps.extract_branch.outputs.branch }}
+
+      - name: Upload generated resume artifacts
+        if: steps.extract_branch.outputs.branch != 'source'
+        uses: actions/upload-artifact@v4
+        with:
+          name: resume
+          path: |
+            Resume_Jason_Yao.pdf
+            Resume_Jason_Yao.png
+          if-no-files-found: error
