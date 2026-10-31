@@ -36,11 +36,11 @@ NOTE: We follow advice from http://eosrei.net/articles/2015/11/latex-templates-p
 env = Environment(
     loader=PackageLoader("pyresume.templators.latex_2_column_resume"),
     autoescape=select_autoescape(),
-    block_start_string='\BLOCK{',
+    block_start_string=r'\BLOCK{',
     block_end_string='}',
-    variable_start_string='\VAR{',
+    variable_start_string=r'\VAR{',
     variable_end_string='}',
-    comment_start_string='\#{',
+    comment_start_string=r'\#{',
     comment_end_string='}',
     line_statement_prefix='%%',
     line_comment_prefix='%#',
@@ -69,8 +69,8 @@ def escape_latex(unescaped_sequence: Union[str, dict]) -> Union[str, dict]:
         .replace("%", "\\%")\
         .replace("~", "\\textasciitilde")\
         .replace("LaTeX", "\\LaTeX")
-    escaped_bolded_text = sub("\*\*.*?\*\*", lambda matched_text: f"\\textbf{{{matched_text.group(0).replace('**', '')}}}", escaped_latex_key_characters)
-    escaped_italicized_text = sub("\_.*?\_", lambda matched_text: f"\\textit{{{matched_text.group(0).replace('_', '')}}}", escaped_bolded_text)
+    escaped_bolded_text = sub(r"\*\*.*?\*\*", lambda matched_text: f"\\textbf{{{matched_text.group(0).replace('**', '')}}}", escaped_latex_key_characters)
+    escaped_italicized_text = sub(r"\_.*?\_", lambda matched_text: f"\\textit{{{matched_text.group(0).replace('_', '')}}}", escaped_bolded_text)
     return escaped_italicized_text
 
 
