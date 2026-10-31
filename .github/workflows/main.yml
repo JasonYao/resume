@@ -86,7 +86,7 @@ jobs:
       # Shellcheck is a dependency in our testing step, and used to be included by default in previous *nix CI/CD environments, but as
       # of the bump to v4 of these GitHub Action steps, now needs to be installed separately
       - name: Install dependencies
-        run: sudo apt update && sudo apt -y install fonts-font-awesome ghostscript shellcheck
+        run: sudo apt-get update && sudo apt-get -y install fonts-font-awesome ghostscript shellcheck
 
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
 

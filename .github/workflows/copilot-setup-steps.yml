@@ -51,7 +51,7 @@ jobs:
             ${{ runner.os }}-
 
       - name: Install dependencies
-        run: sudo apt update && sudo apt -y install fonts-font-awesome ghostscript shellcheck
+        run: sudo apt-get update && sudo apt-get -y install fonts-font-awesome ghostscript shellcheck
 
       - name: Install TexLive and ImageMagick dependencies
         run: source bin/install_dependencies
