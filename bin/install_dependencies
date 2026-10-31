@@ -207,19 +207,9 @@ function install_tex_dependency_packages() {
     # Changelog:
     # - 2026/10/30: Swapped from fontawesome (which pulled in 4.6.3.1 from 2016/05/15)
     #   to fontawesome7
-    #   - The first block of packages is installed by install-tl itself, but when a mirror
-    #     serves a corrupt archive install-tl still "succeeds" and tlmgr then skips the package
-    #     as "forcibly removed" (e.g. graphics, which provides keyval.sty). Listing them here
-    #     lets the missing-package retry below repair them
     info "TexLive: Installing dependencies"
     if tlmgr_install_missing_packages \
-        latex                       \
-        latex-lab                   \
-        firstaid                    \
-        tagpdf                      \
         graphics                    \
-        tools                       \
-        amsmath                     \
         datetime2                   \
         tracklang                   \
         collection-fontsrecommended \
@@ -232,6 +222,7 @@ function install_tex_dependency_packages() {
         isodate                     \
         fontspec                    \
         metalogo                    \
+        xunicode                    \
         xltxtra                     \
         realscripts                 \
         etoolbox                    \
@@ -241,7 +232,7 @@ function install_tex_dependency_packages() {
         letltxmacro                 \
         bitset                      \
         xetex \
-        && verify_tex_files keyval.sty amsmath.sty array.sty fontspec.sty metalogo.sty ; then
+        && verify_tex_files keyval.sty fontspec.sty metalogo.sty xunicode.sty ; then
         success "TexLive: All dependencies installed"
     else
         warn "TexLive: Failed to install dependencies, dumping out debug info"
