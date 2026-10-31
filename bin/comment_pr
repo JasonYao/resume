@@ -22,8 +22,39 @@ if [[ -z "${pull_number}" ]]; then
     exit 0
 fi
 
-artifact_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts"
-comment_body="$(printf '<!-- resume-preview -->\n[Download the generated resume PDF and PNG](%s)' "${artifact_url}")"
+function upload_attachment() {
+    local file_name="$1"
+    local content_type="$2"
+    local response
+    local status
+
+    echo "Uploading ${file_name} as a pull request attachment." >&2
+    if ! response="$(curl --silent --show-error \
+        --request POST \
+        --header "Authorization: token ${GITHUB_UPLOAD_TOKEN}" \
+        --header "Accept: application/vnd.github+json" \
+        --header "X-GitHub-Api-Version: 2022-11-28" \
+        --header "Content-Type: application/octet-stream" \
+        --data-binary "@${file_name}" \
+        --write-out $'\n%{http_code}' \
+        "https://uploads.github.com/user-attachments/assets?name=${file_name}&content_type=${content_type}&repository_id=${GITHUB_REPOSITORY_ID}")"; then
+        echo "Attachment upload failed for ${file_name}: ${response}" >&2
+        return 1
+    fi
+
+    status="${response##*$'\n'}"
+    response="${response%$'\n'*}"
+    if [[ "${status}" != 201 ]]; then
+        echo "Attachment upload failed for ${file_name} (HTTP ${status}): ${response}" >&2
+        return 1
+    fi
+
+    jq -er '.url' <<< "${response}"
+}
+
+png_url="$(upload_attachment Resume_Jason_Yao.png image/png)"
+pdf_url="$(upload_attachment Resume_Jason_Yao.pdf application/pdf)"
+comment_body="$(printf '<!-- resume-preview -->\n![Generated resume preview](%s)\n\n[Download the generated PDF](%s)' "${png_url}" "${pdf_url}")"
 comment_payload="$(jq -n --arg body "${comment_body}" '{body: $body}')"
 echo "Looking up the existing preview comment on pull request #${pull_number}."
 comments="$(curl --silent --show-error --fail-with-body \
