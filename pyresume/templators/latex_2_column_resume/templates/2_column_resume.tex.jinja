@@ -3,10 +3,11 @@
 
 \begin{document}
 
-    \BLOCK{include 'top_section/template.tex.jinja'}
-
-
-    \BLOCK{include 'left_column/template.tex.jinja'}
-    \hfill%
-    \BLOCK{include 'right_column/template.tex.jinja'}
+    \resumecompose{
+        \BLOCK{include 'top_section/template.tex.jinja'}
+    }{
+        \BLOCK{include 'left_column/template.tex.jinja'}
+        \hfill%
+        \BLOCK{include 'right_column/template.tex.jinja'}
+    }
 \end{document}

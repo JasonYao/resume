@@ -34,7 +34,11 @@
 \usepackage{datetime2}
 \usepackage{graphicx} % Used to render company logos
 \usepackage{tikz}
-\usepackage{eso-pic}
+\pgfdeclarelayer{resumeBackground}
+\pgfdeclarelayer{resumeHeader}
+\pgfdeclarelayer{resumeColumns}
+\pgfdeclarelayer{resumeForeground}
+\pgfsetlayers{resumeBackground,resumeHeader,resumeColumns,main,resumeForeground}
 \graphicspath{{assets}}
 
 % Color definitions
@@ -64,26 +68,49 @@
   }
 }
 
-\newcommand{\floralwatermark}{%
-  \begin{tikzpicture}[remember picture,overlay]
-    \begin{scope}[opacity=0.08]
-      \ifnum\value{page}=1
-        \foreach \y in {4.5,9,13.5,18,22.5,27} {
-          \floralwatermarkrow{\y}
-        }
-      \else
-        \foreach \y in {1.5,6,10.5,15,19.5,24,28.5} {
-          \floralwatermarkrow{\y}
-        }
-      \fi
-    \end{scope}
-  \end{tikzpicture}
+\newcommand{\drawfloralwatermark}{%
+  \begin{scope}[opacity=0.08]
+    \ifnum\value{page}=1
+      \foreach \y in {4.5,9,13.5,18,22.5,27} {
+        \floralwatermarkrow{\y}
+      }
+    \else
+      \foreach \y in {1.5,6,10.5,15,19.5,24,28.5} {
+        \floralwatermarkrow{\y}
+      }
+    \fi
+  \end{scope}
 }
 
-\AtBeginDocument{%
-  \if@cv@floralwatermark
-    \AddToShipoutPictureBG{\floralwatermark}
-  \fi
+\newsavebox{\resumeHeaderBox}
+\newsavebox{\resumeColumnsBox}
+\newcommand{\resumeForegroundContent}{}
+\newcommand{\resumecompose}[2]{%
+  \sbox{\resumeHeaderBox}{\begin{minipage}{\textwidth}#1\end{minipage}}%
+  \sbox{\resumeColumnsBox}{%
+    \begin{minipage}{\textwidth}%
+      \vspace*{\dimexpr\ht\resumeHeaderBox+\dp\resumeHeaderBox+1em\relax}%
+      \noindent#2%
+    \end{minipage}%
+  }%
+  \begin{tikzpicture}[remember picture,overlay]
+    \begin{pgfonlayer}{resumeBackground}
+      \if@cv@floralwatermark
+        \drawfloralwatermark
+      \fi
+    \end{pgfonlayer}
+    \begin{pgfonlayer}{resumeHeader}
+      \node[anchor=north west,inner sep=0pt] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
+      \node[anchor=south west,inner sep=0pt] at ([xshift=1.5cm,yshift=1.5cm]current page.south west) {\includegraphics[width=2.75cm]{watermarks/totoro}};
+    \end{pgfonlayer}
+    \begin{pgfonlayer}{resumeColumns}
+      \node[anchor=north west,inner sep=0pt] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeColumnsBox}};
+    \end{pgfonlayer}
+    \begin{pgfonlayer}{resumeForeground}
+      \resumeForegroundContent
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  \null\vfill\clearpage
 }
 
 % Set main fonts

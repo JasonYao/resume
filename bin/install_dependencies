@@ -278,7 +278,6 @@ function install_tex_dependency_packages() {
         xcolor                      \
         fontawesome7                \
         pgf                         \
-        eso-pic                     \
         titlesec                    \
         textpos                     \
         everyshi                    \
