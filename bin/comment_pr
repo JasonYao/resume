@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+echo "Looking up the open pull request for ${GITHUB_REF_NAME}."
+pulls="$(curl --silent --show-error --fail-with-body \
+    --oauth2-bearer "${GITHUB_TOKEN}" \
+    --header "Accept: application/vnd.github+json" \
+    --get \
+    --data-urlencode "state=open" \
+    --data-urlencode "head=${GITHUB_REPOSITORY_OWNER}:${GITHUB_REF_NAME}" \
+    --data-urlencode "per_page=100" \
+    "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/pulls")"
+pull_number="$(jq -r \
+    --arg ref "${GITHUB_REF_NAME}" \
+    --arg repository "${GITHUB_REPOSITORY}" \
+    '[.[] | select(.head.ref == $ref and .head.repo != null and .head.repo.full_name == $repository)][0].number // empty' \
+    <<< "${pulls}")"
+
+if [[ -z "${pull_number}" ]]; then
+    echo "No open pull request found for ${GITHUB_REF_NAME}; skipping preview comment."
+    exit 0
+fi
+
+function upload_attachment() {
+    local file_name="$1"
+    local content_type="$2"
+    local response
+    local status
+
+    echo "Uploading ${file_name} as a pull request attachment." >&2
+    if ! response="$(curl --silent --show-error \
+        --request POST \
+        --header "Authorization: token ${GITHUB_UPLOAD_TOKEN}" \
+        --header "Accept: application/vnd.github+json" \
+        --header "X-GitHub-Api-Version: 2022-11-28" \
+        --header "Content-Type: application/octet-stream" \
+        --data-binary "@${file_name}" \
+        --write-out $'\n%{http_code}' \
+        "https://uploads.github.com/user-attachments/assets?name=${file_name}&content_type=${content_type}&repository_id=${GITHUB_REPOSITORY_ID}")"; then
+        echo "Attachment upload failed for ${file_name}: ${response}" >&2
+        return 1
+    fi
+
+    status="${response##*$'\n'}"
+    response="${response%$'\n'*}"
+    if [[ "${status}" != 201 ]]; then
+        echo "Attachment upload failed for ${file_name} (HTTP ${status}): ${response}" >&2
+        return 1
+    fi
+
+    jq -er '.url' <<< "${response}"
+}
+
+png_url=""
+notices=()
+
+if ! png_url="$(upload_attachment Resume_Jason_Yao.png image/png)"; then
+    echo "::warning::Could not upload the resume preview image; check that DEPLOY_ACCESS_TOKEN is a valid repository-scoped personal access token."
+    notices+=("The preview image attachment could not be uploaded. Download the generated files from the workflow artifact.")
+fi
+
+if [[ -n "${png_url}" ]]; then
+    preview_markdown="![Generated resume preview](${png_url})"
+else
+    preview_markdown="[Download the generated resume PDF and PNG from this workflow](${ARTIFACT_URL})"
+fi
+
+pdf_markdown="[Download the generated PDF from the workflow artifact](${ARTIFACT_URL})"
+notices+=("GitHub does not allow PDF attachments here, so the PDF is available in the workflow artifact.")
+
+notice_markdown=""
+if [[ "${#notices[@]}" -gt 0 ]]; then
+    notice_markdown="$(printf '\n\n> %s' "${notices[@]}")"
+fi
+
+comment_body="$(printf '<!-- resume-preview -->\n%s\n\n%s%s' "${preview_markdown}" "${pdf_markdown}" "${notice_markdown}")"
+comment_payload="$(jq -n --arg body "${comment_body}" '{body: $body}')"
+
+echo "Creating a new preview comment on pull request #${pull_number}."
+curl --silent --show-error --fail-with-body \
+    --request POST \
+    --oauth2-bearer "${GITHUB_TOKEN}" \
+    --header "Accept: application/vnd.github+json" \
+    --header "Content-Type: application/json" \
+    --data "${comment_payload}" \
+    "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/issues/${pull_number}/comments" > /dev/null
