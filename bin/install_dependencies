@@ -255,18 +255,18 @@ function update_cache_manifest() {
 
 function install_imagemagick() {
     info "Checking if imagemagick is installed"
-    if command -v convert > /dev/null 2>&1; then
+    if command -v magick > /dev/null 2>&1 || command -v convert > /dev/null 2>&1; then
         # Previous to 2025-02-01, ubuntu-latest had imagemagick pre-installed,
         # it looks like it got removed sometime between Jan 01 and Feb 01 2025
         info "Imagemagick was found to be installed, version and delegate info:"
-        convert --version
+        (magick --version || convert --version)
     else
         info "Imagemagick was not found, installing now"
         sudo apt update
 
         if sudo apt install -y imagemagick ; then
             info "Imagemagick was now installed, version and delegate info:"
-            convert --version
+            (magick --version || convert --version)
         else
             fail "Failed to install imagemagick"
         fi
