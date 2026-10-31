@@ -81,7 +81,7 @@ curl https://www.jasonyao.com/resume/biography.txt
 
 ## Usage
 
-To generate the pdf from the command-line:
+### To generate the pdf from the command-line
 
 ```sh
 bin/build
@@ -89,7 +89,7 @@ bin/build
 xelatex Resume_Jason_Yao.tex
 ```
 
-## ATS Parsing Checks
+### ATS Parsing Checks
 
 After building the PDF, run all configured text extractors and compare their
 text against expected fields in `raw-data.json`:
@@ -120,6 +120,14 @@ bin/ats_score --included-tiers 1
 ```
 
 CI installs the `ats-1-local-ml-based` group and runs both tiers on every build.
+
+### To generate previews of each resume layer for development:
+
+```sh
+bin/build dev
+```
+
+The floral decoration is part of the header layer, beginning at the bottom right. The development build uses the default filenames and also writes `Resume_Jason_Yao_layer_*.png` for the four composition layers.
 
 ## Testing
 

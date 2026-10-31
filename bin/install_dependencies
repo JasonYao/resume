@@ -277,6 +277,7 @@ function install_tex_dependency_packages() {
         collection-fontsrecommended \
         xcolor                      \
         fontawesome7                \
+        pgf                         \
         titlesec                    \
         textpos                     \
         everyshi                    \

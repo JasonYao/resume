@@ -97,7 +97,12 @@ jobs:
         run: bin/test
 
       - name: Build
-        run: bin/build
+        run: |
+          if [[ "${GITHUB_REF}" == "refs/heads/source" ]]; then
+            bin/build
+          else
+            bin/build dev
+          fi
 
       - name: Score PDF parsing
         # Tier 0 took about 1 second in CI run 230; tier 1 has not yet been measured in CI.
@@ -140,6 +145,7 @@ jobs:
           path: |
             Resume_Jason_Yao.pdf
             Resume_Jason_Yao.png
+            Resume_Jason_Yao_layer_*.png
           if-no-files-found: error
 
       - name: Comment generated resume on pull request
