@@ -62,7 +62,7 @@ function generate_thumbnail() {
     absolute_base_file_name=$1
     info "Thumbnail Build: Generating image thumbnail now"
 
-    if magick -flatten -density 300 "${absolute_base_file_name}.pdf[0]" "${absolute_base_file_name}.png" ; then
+    if magick -density 300 "${absolute_base_file_name}.pdf[0]" -flatten "${absolute_base_file_name}.png" ; then
         success "Thumbnail Build: Generated the new image thumbnail"
     else
         fail "Thumbnail Build: Failed to generate the new image thumbnail"
