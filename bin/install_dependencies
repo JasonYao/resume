@@ -95,7 +95,7 @@ function configure_imagemagick_policy() {
   <policy domain="coder" rights="none" pattern="*"/>
   <!-- Allow only the formats the build uses: read the PDF produced by
        LaTeX and write the PNG preview. Adding more formats widens the
-       attack surface; removing either breaks bin/build's convert call. -->
+       attack surface; removing either breaks bin/build's magick call. -->
   <policy domain="coder" rights="read|write" pattern="{PDF,PNG}"/>
 </policymap>
 POLICY
@@ -324,7 +324,7 @@ function install_imagemagick() {
     local apt_version="8:${version//-/.}*"
 
     info "Checking if imagemagick is installed"
-    if ! command -v convert > /dev/null 2>&1; then
+    if ! command -v magick > /dev/null 2>&1; then
         info "Imagemagick was not found, installing version $version now"
         sudo apt update
 
@@ -336,9 +336,9 @@ function install_imagemagick() {
     # Previous to 2025-02-01, ubuntu-latest had imagemagick pre-installed,
     # it looks like it got removed sometime between Jan 01 and Feb 01 2025
     info "Imagemagick is installed, version and delegate info:"
-    convert --version
+    magick --version
 
-    if ! convert --version | grep -q "ImageMagick ${version} "; then
+    if ! magick --version | grep -q "ImageMagick ${version} "; then
         fail "Expected ImageMagick ${version}, update the pin (and review the security policy) if this is intentional"
     fi
 }
