@@ -30,10 +30,7 @@ jobs:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
 
-      - name: Extracts the current branch name
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
-      - run: echo "🔎 The name of your branch is ${{ steps.extract_branch.outputs.branch }} and your repository is ${{ github.repository }}."
+      - run: echo "🔎 The name of your branch is ${{ github.ref_name }} and your repository is ${{ github.repository }}."
 
       # Sets up environment
       - name: Checkout repo code
@@ -91,7 +88,7 @@ jobs:
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
 
       # Generates data output files
-      - name: Installs texlive and python dependencies
+      - name: Installs TeX Live and ImageMagick dependencies
         # We source here since texlive manager state is required
         run: source bin/install_dependencies
 
@@ -103,7 +100,7 @@ jobs:
 
       # Deployment of source to master happens in the deploy job below, which is the only place SOURCE_DEPLOY_PAT is available
       - name: Stage build output for deployment
-        if: steps.extract_branch.outputs.branch == 'source'
+        if: github.ref == 'refs/heads/source'
         uses: actions/upload-artifact@v7
         with:
           name: build-output
@@ -119,7 +116,7 @@ jobs:
       # only needs to exclude source, which deploys via bin/deploy instead
       - name: Upload generated resume artifacts
         id: upload-resume
-        if: steps.extract_branch.outputs.branch != 'source'
+        if: github.ref != 'refs/heads/source'
         uses: actions/upload-artifact@v7
         with:
           name: resume
@@ -129,7 +126,7 @@ jobs:
           if-no-files-found: error
 
       - name: Comment generated resume on pull request
-        if: github.event_name == 'push' && steps.extract_branch.outputs.branch != 'source'
+        if: github.event_name == 'push' && github.ref != 'refs/heads/source'
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GITHUB_UPLOAD_TOKEN: ${{ secrets.DEPLOY_ACCESS_TOKEN }}
