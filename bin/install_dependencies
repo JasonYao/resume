@@ -100,14 +100,18 @@ function install_tex_dependency_packages() {
     # being split up, so this ms package is now replaced by everyshi (obsolete)
     #   - Package `collection-fontsrecommended` contains a lot of fonts,
     #     but we really just need `EU` and a few others
-    #   - Package `fontawesome` and the binary from apt are both required
+    #   - Package `fontawesome5` and the binary from apt are both required
+    #
+    # Changelog:
+    # - 2026/10/30: Swapped from fontawesome (which pulled in 4.6.3.1 from 2016/05/15)
+    #   to fontawesome7
     info "TexLive: Installing dependencies"
     if tlmgr install                   \
         datetime2                   \
         tracklang                   \
         collection-fontsrecommended \
         xcolor                      \
-        fontawesome                 \
+        fontawesome7                \
         titlesec                    \
         textpos                     \
         everyshi                    \
