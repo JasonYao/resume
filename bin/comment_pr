@@ -54,14 +54,11 @@ function upload_attachment() {
 
 artifact_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts"
 png_url=""
-pdf_url=""
+notices=()
 
 if ! png_url="$(upload_attachment Resume_Jason_Yao.png image/png)"; then
     echo "::warning::Could not upload the resume preview image; check that DEPLOY_ACCESS_TOKEN is a valid repository-scoped personal access token."
-fi
-
-if ! pdf_url="$(upload_attachment Resume_Jason_Yao.pdf application/pdf)"; then
-    echo "::warning::Could not upload the resume PDF; check that DEPLOY_ACCESS_TOKEN is a valid repository-scoped personal access token."
+    notices+=("The preview image attachment could not be uploaded. Download the generated files from the workflow artifact.")
 fi
 
 if [[ -n "${png_url}" ]]; then
@@ -70,13 +67,15 @@ else
     preview_markdown="[Download the generated resume PDF and PNG from this workflow](${artifact_url})"
 fi
 
-if [[ -n "${pdf_url}" ]]; then
-    pdf_markdown="[Download the generated PDF](${pdf_url})"
-else
-    pdf_markdown="[Download the generated PDF](${artifact_url})"
+pdf_markdown="[Download the generated PDF from the workflow artifact](${artifact_url})"
+notices+=("GitHub does not allow PDF attachments here, so the PDF is available in the workflow artifact.")
+
+notice_markdown=""
+if [[ "${#notices[@]}" -gt 0 ]]; then
+    notice_markdown="$(printf '\n\n> %s' "${notices[@]}")"
 fi
 
-comment_body="$(printf '<!-- resume-preview -->\n%s\n\n%s' "${preview_markdown}" "${pdf_markdown}")"
+comment_body="$(printf '<!-- resume-preview -->\n%s\n\n%s%s' "${preview_markdown}" "${pdf_markdown}" "${notice_markdown}")"
 comment_payload="$(jq -n --arg body "${comment_body}" '{body: $body}')"
 echo "Looking up the existing preview comment on pull request #${pull_number}."
 comments="$(curl --silent --show-error --fail-with-body \
