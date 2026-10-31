@@ -16,13 +16,15 @@ on:
 env:
   GIT_AUTHOR_NAME: "Jason Yao"
   GIT_AUTHOR_EMAIL: "Hello@JasonYao.com"
-  DEPLOY_ACCESS_TOKEN: ${{ secrets.DEPLOY_ACCESS_TOKEN }}
   BRANCH_REF_NAME: ${{ github.head_ref }}
   SHA_COMMIT_HASH: ${{ github.sha }}
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       # Deploy pipeline metadata
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
@@ -99,12 +101,24 @@ jobs:
       - name: Build
         run: bin/build
 
-      - name: Deploy
-        run: bin/deploy ${{ steps.extract_branch.outputs.branch }}
+      # Deployment of source to master happens in the deploy job below, which is the only place SOURCE_DEPLOY_PAT is available
+      - name: Stage build output for deployment
+        if: steps.extract_branch.outputs.branch == 'source'
+        uses: actions/upload-artifact@v7
+        with:
+          name: build-output
+          path: |
+            Resume_Jason_Yao.pdf
+            Resume_Jason_Yao.png
+            json-schema.json
+            raw-data.json
+            biography.txt
+          if-no-files-found: error
 
       # The master branch is already ignored at the top of this workflow (branches-ignore), so this
       # only needs to exclude source, which deploys via bin/deploy instead
       - name: Upload generated resume artifacts
+        id: upload-resume
         if: steps.extract_branch.outputs.branch != 'source'
         uses: actions/upload-artifact@v7
         with:
@@ -113,3 +127,41 @@ jobs:
             Resume_Jason_Yao.pdf
             Resume_Jason_Yao.png
           if-no-files-found: error
+
+      - name: Comment generated resume on pull request
+        if: github.event_name == 'push' && steps.extract_branch.outputs.branch != 'source'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_UPLOAD_TOKEN: ${{ secrets.DEPLOY_ACCESS_TOKEN }}
+          GITHUB_REPOSITORY_ID: ${{ github.repository_id }}
+          ARTIFACT_URL: ${{ steps.upload-resume.outputs.artifact-url }}
+        run: bin/comment_pr
+
+  # Only the source branch can use the deploy environment (restricted by its deployment branch policy), so
+  # SOURCE_DEPLOY_PAT, which can push to master, is never exposed to other branches
+  deploy:
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/source'
+    runs-on: ubuntu-latest
+    environment: deploy
+    permissions:
+      contents: read
+    env:
+      GIT_AUTHOR_NAME: "Jason Yao"
+      GIT_AUTHOR_EMAIL: "Hello@JasonYao.com"
+      DEPLOY_ACCESS_TOKEN: ${{ secrets.SOURCE_DEPLOY_PAT }}
+      SHA_COMMIT_HASH: ${{ github.sha }}
+    steps:
+      # Credentials are not persisted so that the push in bin/deploy authenticates with SOURCE_DEPLOY_PAT, not GITHUB_TOKEN
+      - name: Checkout repo code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Download build output
+        uses: actions/download-artifact@v8
+        with:
+          name: build-output
+
+      - name: Deploy
+        run: bin/deploy source
