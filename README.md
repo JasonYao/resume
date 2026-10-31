@@ -58,7 +58,7 @@ curl https://www.jasonyao.com/resume/biography.txt
 
 1. We use Python 3 for pre-processing and templating of data
 2. [LaTeX](https://www.latex-project.org), and in particular
-   [Xe(La)TeX](http://xetex.sourceforge.net/) is used to
+   [XeLaTeX](http://xetex.sourceforge.net/) is used to
    actually generate the PDF version of the resume, which
    is used for its UTF-8 goodness and implicit access to
    system-wide fonts.
@@ -127,6 +127,24 @@ Actually execute by running:
 ```sh
 act
 ```
+
+## Repo PAT Setup
+
+The repo has 2 PATs setup:
+
+1. `DEPLOY_ACCESS_TOKEN`
+    - Kind: `Repo-level secret`
+    - Permissions:
+        - read-only: `content`
+        - read-write: `pull-requests`
+    - Usage: Used by all non-source and non-master branches to be able to upload the generated artifacts as a PR
+      comment:
+2. `SOURCE_DEPLOY_PAT`
+    - Kind: `Environment-level secret`
+    - Environment: `deploy`
+    - Permissions:
+        - read-write: `content`
+    - Usage: To "deploy" from the `source` branch to the `master` branch by making a new commit and pushing to `master`.
 
 ## License
 
