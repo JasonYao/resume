@@ -62,6 +62,6 @@ jobs:
       - name: Verify build tools
         run: |
           xelatex --version
-          magick --version || convert --version
+          magick --version
           kpsewhich keyval.sty
           uv run python -c "import pyresume"
