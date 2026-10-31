@@ -68,7 +68,6 @@ def escape_latex(unescaped_sequence: Union[str, dict]) -> Union[str, dict]:
     escaped_latex_key_characters = unescaped_sequence.replace("&", "\\&")\
         .replace("%", "\\%")\
         .replace("~", "\\textasciitilde")\
-        .replace("LaTeX", "\\LaTeX")
     escaped_bolded_text = sub(r"\*\*.*?\*\*", lambda matched_text: f"\\textbf{{{matched_text.group(0).replace('**', '')}}}", escaped_latex_key_characters)
     escaped_italicized_text = sub(r"\_.*?\_", lambda matched_text: f"\\textit{{{matched_text.group(0).replace('_', '')}}}", escaped_bolded_text)
     return escaped_italicized_text

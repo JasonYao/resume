@@ -272,6 +272,7 @@ function install_tex_dependency_packages() {
     if tlmgr_install_missing_packages \
         graphics                    \
         datetime2                   \
+        datetime2-english           \
         tracklang                   \
         collection-fontsrecommended \
         xcolor                      \
@@ -290,6 +291,7 @@ function install_tex_dependency_packages() {
         xkeyval                     \
         datenumber                  \
         pdfescape                   \
+        bookmark                    \
         letltxmacro                 \
         bitset                      \
         xetex \

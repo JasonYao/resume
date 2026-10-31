@@ -17,15 +17,16 @@
 
 % Package Imports
 \usepackage[hmargin=1.5cm, vmargin=1.5cm]{geometry}
-\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage[dvipsnames]{xcolor}
 \usepackage{titlesec}
 \usepackage[unicode=true]{hyperref}
+\usepackage{bookmark}
 \usepackage[absolute]{textpos}
 \usepackage[UKenglish]{babel}
 \usepackage[UKenglish]{isodate}
 \usepackage{fontspec,xltxtra,xunicode}
 \usepackage{fontawesome7}
-\pagenumbering{gobble}
+\pagestyle{empty}
 \usepackage{datetime2}
 \usepackage{graphicx} % Used to render company logos
 \graphicspath{{assets}}
@@ -39,6 +40,7 @@
 % Set main fonts
 \defaultfontfeatures{Mapping=tex-text}
 \setmainfont[
+  AutoFakeSlant=0.2,
   Color=primary,
   Path = fonts/IM_Fell_Great_Primer/,
   Scale=1.09,
@@ -62,22 +64,22 @@
 
 % Section formatting
 \titleformat{\section}{\color{headings}
-\scshape\fontspec[Path = fonts/Arbutus_Slab/]{ArbutusSlab-Regular}\fontsize{18pt}{24pt}\selectfont \raggedright\uppercase}{} {0em}{}[{\titlerule[0.8pt]}]
+\fontspec[Path = fonts/Arbutus_Slab/]{ArbutusSlab-Regular}\fontsize{18pt}{24pt}\selectfont \raggedright\uppercase}{} {0em}{}[{\titlerule[0.8pt]}]
 \titlespacing{\section}{0pt}{0pt}{5pt}
 
 % Subsection formatting
 \titleformat{\subsection}{\color{subheadings}
-\fontspec[Path = fonts/Lora/]{Lora-Bold}\fontsize{14pt}{14pt}\selectfont\bfseries}{}{0em}{}
+\fontspec[Path = fonts/Lora/]{Lora-Bold}\fontsize{14pt}{14pt}\selectfont}{}{0em}{}
 \titlespacing{\subsection}{0pt}{\parskip}{-\parskip}
 
 % Subsubsection formatting
 \titleformat{\subsubsection}{\color{subheadings}
-\fontspec[Path = fonts/Lora/]{Lora-Bold}\fontsize{12pt}{12pt}\selectfont\bfseries}{}{1em}{}
+\fontspec[Path = fonts/Lora/]{Lora-Bold}\fontsize{12pt}{12pt}\selectfont}{}{1em}{}
 \titlespacing{\subsubsection}{0pt}{\parskip}{-\parskip}
 
 % Grouped logic section formatting
 \newcommand{\runsubsection}[1]{\color{subheadings}
-\fontspec[Path = fonts/Lora/]{Lora-Bold}\fontsize{12pt}{12pt}\selectfont\bfseries {#1} \normalfont}
+\fontspec[Path = fonts/Lora/]{Lora-Bold}\fontsize{12pt}{12pt}\selectfont {#1} \normalfont}
 
 % Gives the years & months difference between two dates
 % Initial base code from: https://tex.stackexchange.com/questions/14518/difference-between-two-dates/14519#14519
@@ -133,7 +135,7 @@
 % New position command
 \newcommand{\position}[2]{
 	\subsubsection{
-		{#1}\hfill{\normalfont #2}
+		\texorpdfstring{{#1}\hfill{\normalfont #2}}{#1 -- #2}
 	}
 }
 
@@ -141,7 +143,7 @@
 \renewcommand\thesubsubsection{}
 
 % Descriptors command
-\newcommand{\descript}[1]{\color{subheadings}\raggedright\scshape\fontspec[Path = fonts/IM_Fell_Great_Primer/]{IMFeGPrm28P}\fontsize{11pt}{13pt}\selectfont {#1 \\} \normalfont}
+\newcommand{\descript}[1]{\color{subheadings}\raggedright\fontspec[Path = fonts/IM_Fell_Great_Primer/]{IMFeGPrm28P}\fontsize{11pt}{13pt}\selectfont {#1 \\} \normalfont}
 
 % Location command
 \newcommand{\location}[1]{\color{primary}\raggedright\fontspec[Path = fonts/IM_Fell_Great_Primer/]{IMFeGPrm28P}\fontsize{11pt}{12pt}\selectfont {#1\\} \normalfont}
@@ -150,7 +152,7 @@
 \newcommand{\sectionsep}[0]{\vspace{8pt}}
 
 % Bullet Lists with fewer gaps command
-\newenvironment{tightemize}{\vspace{-\topsep}\begin{itemize}\itemsep1pt \parskip0pt \parsep0pt}{\end{itemize}\vspace{-\topsep}}
+\newenvironment{tightemize}{\vspace{-\topsep}\begin{itemize}\raggedright\itemsep1pt \parskip0pt \parsep0pt}{\end{itemize}\vspace{-\topsep}}
 
 % Sets up hyperlink coloring
 \hypersetup{colorlinks=true,urlcolor=blue} % Turns the hyperlinks blue
