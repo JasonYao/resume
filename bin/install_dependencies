@@ -12,9 +12,9 @@ source "bin/utils.sh"
 # Ordered list of TeX Live repositories. Some CTAN mirrors have been seen serving
 # certificates we don't trust, so every network step is retried against the others
 tlnet_mirrors=(
+    "https://ctan.math.illinois.edu/systems/texlive/tlnet"
     "https://mirror.ctan.org/systems/texlive/tlnet"
     "https://mirrors.mit.edu/CTAN/systems/texlive/tlnet"
-    "https://ctan.math.illinois.edu/systems/texlive/tlnet"
     "https://mirrors.rit.edu/CTAN/systems/texlive/tlnet"
     "https://mirror.las.iastate.edu/CTAN/systems/texlive/tlnet"
     "https://mirrors.kernel.org/ctan/systems/texlive/tlnet"
