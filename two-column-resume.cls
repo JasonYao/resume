@@ -24,7 +24,7 @@
 \usepackage[UKenglish]{babel}
 \usepackage[UKenglish]{isodate}
 \usepackage{fontspec,xltxtra,xunicode}
-\usepackage{fontawesome}
+\usepackage{fontawesome7}
 \pagenumbering{gobble}
 \usepackage{datetime2}
 \usepackage{graphicx} % Used to render company logos
