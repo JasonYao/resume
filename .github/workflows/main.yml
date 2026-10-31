@@ -72,8 +72,8 @@ jobs:
         with:
           path: |
             /tmp/texlive
-            $HOME/.texlive
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('/tmp/texlive/package-manifest.txt') }}
+            ~/.texlive
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('bin/install_dependencies') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
