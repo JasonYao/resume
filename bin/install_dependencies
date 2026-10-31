@@ -328,6 +328,8 @@ function install_imagemagick() {
         info "Imagemagick was not found, installing version $version now"
         sudo apt-get update
 
+        # GitHub-hosted runners exclude manpages by default; keep them so
+        # ImageMagick's update-alternatives registrations have their target files.
         if ! sudo apt-get -o 'Dpkg::Options::=--path-include=/usr/share/man/*' install -y "imagemagick=${apt_version}" ; then
             fail "Failed to install imagemagick $version"
         fi
