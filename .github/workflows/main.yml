@@ -91,7 +91,7 @@ jobs:
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
 
       # Generates data output files
-      - name: Installs texlive and python dependencies
+      - name: Installs TeX Live and ImageMagick dependencies
         # We source here since texlive manager state is required
         run: source bin/install_dependencies
 
