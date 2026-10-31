@@ -2,7 +2,8 @@
 
 set -euo pipefail
 
-pulls="$(curl --silent --show-error --fail \
+echo "Looking up the open pull request for ${GITHUB_REF_NAME}."
+pulls="$(curl --silent --show-error --fail-with-body \
     --oauth2-bearer "${GITHUB_TOKEN}" \
     --header "Accept: application/vnd.github+json" \
     --get \
@@ -24,7 +25,8 @@ fi
 artifact_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts"
 comment_body="$(printf '<!-- resume-preview -->\n[Download the generated resume PDF and PNG](%s)' "${artifact_url}")"
 comment_payload="$(jq -n --arg body "${comment_body}" '{body: $body}')"
-comments="$(curl --silent --show-error --fail \
+echo "Looking up the existing preview comment on pull request #${pull_number}."
+comments="$(curl --silent --show-error --fail-with-body \
     --oauth2-bearer "${GITHUB_TOKEN}" \
     --header "Accept: application/vnd.github+json" \
     "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/issues/${pull_number}/comments?per_page=100")"
@@ -33,7 +35,8 @@ comment_id="$(jq -r \
     <<< "${comments}")"
 
 if [[ -n "${comment_id}" ]]; then
-    curl --silent --show-error --fail \
+    echo "Updating preview comment #${comment_id} on pull request #${pull_number}."
+    curl --silent --show-error --fail-with-body \
         --request PATCH \
         --oauth2-bearer "${GITHUB_TOKEN}" \
         --header "Accept: application/vnd.github+json" \
@@ -41,7 +44,8 @@ if [[ -n "${comment_id}" ]]; then
         --data "${comment_payload}" \
         "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/issues/comments/${comment_id}" > /dev/null
 else
-    curl --silent --show-error --fail \
+    echo "Creating preview comment on pull request #${pull_number}."
+    curl --silent --show-error --fail-with-body \
         --request POST \
         --oauth2-bearer "${GITHUB_TOKEN}" \
         --header "Accept: application/vnd.github+json" \
