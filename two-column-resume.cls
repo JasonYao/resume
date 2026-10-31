@@ -50,7 +50,7 @@
       \fill[rotate around={\angle:(0,0)}] (0,0.12) ellipse [x radius=0.07cm,y radius=0.16cm];
     }
     \fill[floralblue!70] (0,0) circle [radius=0.045cm];
-    \draw[line width=0.3pt] (0,-0.05) .. controls (0.03,-0.2) and (-0.03,-0.35) (0,-0.5);
+    \draw[line width=0.3pt] (0,-0.05) .. controls (0.03,-0.2) and (-0.03,-0.35) .. (0,-0.5);
     \fill[rotate around={-35:(0,-0.22)}] (0,-0.22) ellipse [x radius=0.06cm,y radius=0.14cm];
     \fill[rotate around={35:(0,-0.36)}] (0,-0.36) ellipse [x radius=0.06cm,y radius=0.14cm];
   \end{scope}
