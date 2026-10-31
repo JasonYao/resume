@@ -1,0 +1,259 @@
+#!/usr/bin/env bash
+
+# Bash strict mode:
+#   -e          exit immediately if any command fails
+#   -u          treat unset variables as errors
+#   -o pipefail a pipeline fails if any command in it fails, not just the last
+set -euo pipefail
+
+##
+# Locks down the CI/CD environment's trust stores, so every later step makes
+# appropriately secured network calls. This should run as early as possible.
+#
+# 2026 Oct: eMudhra (emSign) certificate private key breach
+#
+# eMudhra (emSign) root and intermediate certificates are no longer considered
+# trustworthy after a private key breach. Details:
+#   - Hacker News: https://news.ycombinator.com/item?id=50177916
+#   - Mozilla incident: https://bugzilla.mozilla.org/show_bug.cgi?id=2083449&ref=scotthelme.co.uk
+#   - Write-up (incl. per-distro workarounds): https://emudhra.we-have-a-problem.com/
+#   - Site-wide runner policy: https://github.com/actions/runner-images/issues/15018
+#
+# The affected roots are the emSign roots, plus the Comodo AAA Services root
+# (CN "AAA Certificate Services"), which cross-signs some of the compromised intermediates.
+#
+# When the set of distrusted CAs changes, update this script (not the workflow).
+#
+# Flow, per trust store:
+#   1. Check and log whether the store still trusts the distrusted certs
+#   2. Only if it does, remediate that store
+#   3. Verify every store again, then verify live TLS handshakes against the
+#      compromised intermediates (see the "probe" hosts below)
+#
+# Trust stores covered:
+#   system  The ubuntu runner store (/etc/ssl/certs), used by apt, curl, wget and
+#           therefore the TexLive package manager (tlmgr)
+#   python  certifi cacert.pem bundles used by pip/requests, including pip's vendored copy.
+#           New bundles show up as dependencies/pythons get installed, so run this again after
+#           each install step to neutralize them, even if an env variable is misread or unused
+#   uv      Has no cert files to filter (roots are compiled in) so it is pointed at the system store
+#           via UV_SYSTEM_CERTS, and the certifi bundles of the pythons it installs are filtered
+#
+# Usage:
+#   bin/lockdown [apply]         Check, remediate where needed, then verify
+#   bin/lockdown check [store...] Logs per-store trust state, fails if any store trusts them
+#   bin/lockdown verify          check + live probes
+#   bin/lockdown env             Only exports the trust-store environment variables
+#   bin/lockdown filter <bundle.pem>
+#                                Rewrites a PEM bundle in place, minus distrusted certs
+#
+# Overrides (mainly for tests): SYSTEM_BUNDLE, PYTHON_BUNDLE_ROOTS (space-separated dirs)
+##
+
+# shellcheck source=bin/utils.sh
+source "$(dirname "$0")/utils.sh"
+
+SYSTEM_BUNDLE="${SYSTEM_BUNDLE:-/etc/ssl/certs/ca-certificates.crt}"
+# The project venv, plus uv's python install dir (setup-uv relocates it to $RUNNER_TEMP via
+# UV_PYTHON_INSTALL_DIR) and cache dir, plus uv's default data dir, where uv-managed pythons
+# bring their own pip with a vendored certifi bundle
+PYTHON_BUNDLE_ROOTS="${PYTHON_BUNDLE_ROOTS:-${VIRTUAL_ENV:-.venv} . ${UV_PYTHON_INSTALL_DIR:-} ${UV_CACHE_DIR:-} ${XDG_DATA_HOME:-${HOME}/.local/share}/uv}"
+
+# Matched against a certificate's subject/issuer, case-insensitive
+DISTRUSTED_CERT_PATTERN='emudhra|emsign|AAA Certificate Services'
+# Matched against /etc/ca-certificates.conf entries
+DISTRUSTED_NAME_PATTERN='emudhra|emsign|comodo_aaa_services|aaa certificate services|comodoaaa'
+
+# Hosts serving certs from the compromised intermediates. A handshake must FAIL (curl exit 60).
+# The noct hosts serve certs never logged to Certificate Transparency, which many
+# non-browser clients (including curl) accept, so they are the riskier case.
+PROBE_HOSTS=(
+    dv-g3b-emudhra.we-have-a-problem.com
+    dv-g3b-aaa-emudhra.we-have-a-problem.com
+    dv-g3b-noct-emudhra.we-have-a-problem.com
+    dv-g3b-aaa-noct-emudhra.we-have-a-problem.com
+)
+
+STORES=(system python)
+
+function is_distrusted() {
+    local info
+    info="$(printf '%s' "$1" | openssl x509 -noout -subject -issuer 2>/dev/null)" || return 1
+    grep -qiE "${DISTRUSTED_CERT_PATTERN}" <<< "${info}"
+}
+
+# Prints the PEM blocks of a bundle (stdin) that are NOT distrusted
+function filter_bundle() {
+    local block="" line
+    while IFS= read -r line || [ -n "${line}" ]; do
+        case "${line}" in
+            *"BEGIN CERTIFICATE"*) block="${line}"$'\n' ;;
+            *"END CERTIFICATE"*)
+                block+="${line}"$'\n'
+                if ! is_distrusted "${block}"; then
+                    printf '%s' "${block}"
+                fi
+                block=""
+                ;;
+            *) [ -n "${block}" ] && block+="${line}"$'\n' ;;
+        esac
+    done
+    return 0
+}
+
+function count_distrusted_in_bundle() {
+    local bundle="$1" block="" line count=0
+    while IFS= read -r line || [ -n "${line}" ]; do
+        case "${line}" in
+            *"BEGIN CERTIFICATE"*) block="${line}"$'\n' ;;
+            *"END CERTIFICATE"*)
+                block+="${line}"$'\n'
+                if is_distrusted "${block}"; then
+                    count=$((count + 1))
+                fi
+                block=""
+                ;;
+            *) [ -n "${block}" ] && block+="${line}"$'\n' ;;
+        esac
+    done < "${bundle}"
+    echo "${count}"
+}
+
+function filter_file() {
+    local bundle="$1" tmp
+    tmp="$(mktemp)"
+    filter_bundle < "${bundle}" > "${tmp}"
+    cat "${tmp}" > "${bundle}"
+    rm -f "${tmp}"
+}
+
+# Logs the state of a single bundle, returns 1 if it still trusts distrusted certs
+function check_bundle() {
+    local label="$1" bundle="$2" remaining
+    remaining="$(count_distrusted_in_bundle "${bundle}")"
+    if [ "${remaining}" -ne 0 ]; then
+        warn "${label}: ${bundle} STILL TRUSTS ${remaining} distrusted certificate(s)"
+        return 1
+    fi
+    success "${label}: ${bundle} does not trust the distrusted certificates"
+}
+
+# --fresh rehashes /etc/ssl/certs, and warns about the previously generated bundle
+# ("rehash: warning: skipping ca-certificates.crt") if it is still present
+function rebuild_system_store() {
+    sudo rm -f "${SYSTEM_BUNDLE}"
+    sudo update-ca-certificates --fresh > /dev/null
+}
+
+# ---- system ----------------------------------------------------------------
+
+function check_system() {
+    [ -f "${SYSTEM_BUNDLE}" ] || { info "system: ${SYSTEM_BUNDLE} not found, skipping"; return 0; }
+    check_bundle "system" "${SYSTEM_BUNDLE}"
+}
+
+function remediate_system() {
+    # See https://emudhra.we-have-a-problem.com/#linux
+    info "system: Blacklisting the distrusted roots in /etc/ca-certificates.conf"
+    sudo sed -i -E "/^!/! s#^(.*(${DISTRUSTED_NAME_PATTERN}).*\.crt)\$#!\1#I" /etc/ca-certificates.conf
+    rebuild_system_store
+}
+
+# ---- python (pip, requests, uv-managed pythons) ----------------------------
+
+function python_bundles() {
+    # shellcheck disable=SC2086 # Intentional word-splitting of the roots list
+    find ${PYTHON_BUNDLE_ROOTS} -maxdepth 10 -type f -name cacert.pem 2>/dev/null | sort -u || true
+}
+
+function check_python() {
+    local bundle status=0 found=0
+    while IFS= read -r bundle; do
+        found=1
+        check_bundle "python" "${bundle}" || status=1
+    done < <(python_bundles)
+    [ "${found}" -eq 1 ] || info "python: No certifi bundles found (they are created per python install, so this is expected before python is installed)"
+    return "${status}"
+}
+
+function remediate_python() {
+    local bundle
+    while IFS= read -r bundle; do
+        info "python: Filtering ${bundle}"
+        filter_file "${bundle}"
+    done < <(python_bundles)
+}
+
+# ---- environment -----------------------------------------------------------
+
+function export_env() {
+    # Points pip, requests, uv (system certs) and tlmgr (wget/curl/LWP) at the filtered system store
+    local vars=(SSL_CERT_FILE="${SYSTEM_BUNDLE}" REQUESTS_CA_BUNDLE="${SYSTEM_BUNDLE}" PIP_CERT="${SYSTEM_BUNDLE}" CURL_CA_BUNDLE="${SYSTEM_BUNDLE}" UV_SYSTEM_CERTS=true)
+    local v
+    for v in "${vars[@]}"; do
+        export "${v?}"
+        [ -n "${GITHUB_ENV:-}" ] && echo "${v}" >> "${GITHUB_ENV}"
+    done
+    return 0
+}
+
+# ---- orchestration ---------------------------------------------------------
+
+function check_all() {
+    local store status=0
+    for store in "${@:-${STORES[@]}}"; do
+        "check_${store}" || status=1
+    done
+    return "${status}"
+}
+
+function remediate_where_needed() {
+    local store
+    for store in "${STORES[@]}"; do
+        if "check_${store}"; then
+            info "${store}: Nothing to remediate"
+        else
+            "remediate_${store}"
+        fi
+    done
+}
+
+# A handshake against the compromised intermediates must fail with a certificate error (curl exit 60)
+function probe_hosts() {
+    local host code status=0
+    if ! command -v curl > /dev/null 2>&1; then
+        warn "probe: curl not found, skipping live probes"
+        return 0
+    fi
+    for host in "${PROBE_HOSTS[@]}"; do
+        code=0
+        curl --silent --show-error --max-time 20 --output /dev/null "https://${host}/" 2> /dev/null || code=$?
+        case "${code}" in
+            60) success "probe: https://${host}/ was rejected (certificate not trusted)" ;;
+            0) warn "probe: https://${host}/ was ACCEPTED, the compromised intermediates are still trusted"; status=1 ;;
+            *) warn "probe: https://${host}/ was inconclusive (curl exit ${code}, likely network)" ;;
+        esac
+    done
+    return "${status}"
+}
+
+function start() {
+    case "${1:-apply}" in
+        apply)
+            remediate_where_needed
+            export_env
+            check_all || fail "Distrusted certificates are still trusted after remediation"
+            probe_hosts || fail "Live probes still trust the compromised intermediates"
+            ;;
+        check) shift; check_all "$@" || fail "Distrusted certificates are still trusted" ;;
+        verify)
+            check_all || fail "Distrusted certificates are still trusted"
+            probe_hosts || fail "Live probes still trust the compromised intermediates"
+            ;;
+        env) export_env ;;
+        filter) filter_file "${2:?bundle path required}" ;;
+        *) fail "Unknown command: $1" ;;
+    esac
+}
+
+start "$@"
