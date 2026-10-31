@@ -22,8 +22,11 @@ function start() {
     # really care
     #
     # 2026 Oct 30 update: Swapped ImageMagick-6 with ImageMagick-7
-    cat /etc/ImageMagick-7/policy.xml
-    sudo mv /etc/ImageMagick-7/policy.xml /etc/ImageMagick-7/policy.xml.backup
+    local policy="/etc/ImageMagick-7/policy.xml"
+    if [ -f "$policy" ]; then
+        cat "$policy"
+        sudo mv "$policy" "$policy.backup"
+    fi
 }
 
 function install_texlive_package_manager() {
