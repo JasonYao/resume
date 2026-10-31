@@ -19,7 +19,7 @@
 \usepackage[hmargin=1.5cm, vmargin=1.5cm]{geometry}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{titlesec}
-\usepackage[unicode=true]{hyperref}
+\usepackage[unicode=true,pdfpagelabels=false]{hyperref}
 \usepackage{bookmark}
 \usepackage[absolute]{textpos}
 \usepackage[UKenglish]{babel}
