@@ -124,6 +124,54 @@ function tlmgr_with_mirrors() {
     return 1
 }
 
+# Prints the names of the given packages that are not installed
+function missing_tex_packages() {
+    local installed pkg
+    installed="$(tlmgr list --only-installed --data name)"
+    for pkg in "$@"; do
+        if ! grep -qxF "${pkg}" <<< "${installed}"; then
+            echo "${pkg}"
+        fi
+    done
+}
+
+# Installs the given packages, retrying only the ones still missing against
+# each mirror in turn, since individual packages can fail from a given mirror
+# while the rest succeed. --reinstall is required to repair packages that
+# install-tl left behind as "forcibly removed"
+function tlmgr_install_missing_packages() {
+    local mirror
+    local -a missing
+    for mirror in "${tlnet_mirrors[@]}"; do
+        mapfile -t missing < <(missing_tex_packages "$@")
+        if [ "${#missing[@]}" -eq 0 ]; then
+            return 0
+        fi
+        info "TexLive: Installing ${#missing[@]} missing package(s) from ${mirror}: ${missing[*]}"
+        if ! tlmgr --repository "${mirror}" install --reinstall "${missing[@]}"; then
+            warn "TexLive: Some packages failed using ${mirror}, retrying only the missing ones on the next mirror"
+        fi
+    done
+
+    mapfile -t missing < <(missing_tex_packages "$@")
+    if [ "${#missing[@]}" -ne 0 ]; then
+        warn "TexLive: Packages still missing after every mirror: ${missing[*]}"
+        return 1
+    fi
+}
+
+# Fails if any of the given files can't be found by TeX, catching broken installs early
+function verify_tex_files() {
+    local file ok=0
+    for file in "$@"; do
+        if [ -z "$(kpsewhich "${file}")" ]; then
+            warn "TexLive: ${file} could not be found"
+            ok=1
+        fi
+    done
+    return "${ok}"
+}
+
 function update_texlive_package_manager() {
     # Update the TL install but add nothing new
     info "TexLive: Updating to the latest version"
@@ -159,8 +207,19 @@ function install_tex_dependency_packages() {
     # Changelog:
     # - 2026/10/30: Swapped from fontawesome (which pulled in 4.6.3.1 from 2016/05/15)
     #   to fontawesome7
+    #   - The first block of packages is installed by install-tl itself, but when a mirror
+    #     serves a corrupt archive install-tl still "succeeds" and tlmgr then skips the package
+    #     as "forcibly removed" (e.g. graphics, which provides keyval.sty). Listing them here
+    #     lets the missing-package retry below repair them
     info "TexLive: Installing dependencies"
-    if tlmgr_with_mirrors install      \
+    if tlmgr_install_missing_packages \
+        latex                       \
+        latex-lab                   \
+        firstaid                    \
+        tagpdf                      \
+        graphics                    \
+        tools                       \
+        amsmath                     \
         datetime2                   \
         tracklang                   \
         collection-fontsrecommended \
@@ -180,7 +239,8 @@ function install_tex_dependency_packages() {
         pdfescape                   \
         letltxmacro                 \
         bitset                      \
-        xetex ; then
+        xetex \
+        && verify_tex_files keyval.sty amsmath.sty array.sty fontspec.sty ; then
         success "TexLive: All dependencies installed"
     else
         warn "TexLive: Failed to install dependencies, dumping out debug info"
