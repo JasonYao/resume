@@ -57,7 +57,7 @@
     \hfill
 	% To increase the amount of space available for the links, increment the below's em value
     \raggedleft{\parbox[b]{15em}{\color{headings}\fontspec[Path = fonts/IM_Fell_Great_Primer/]{IMFeGPrm28P}\fontsize{11pt}{14pt}\selectfont #2}}
-   	\vspace{2.2em}
+    \vspace{1em}
 }
 
 % Section formatting
