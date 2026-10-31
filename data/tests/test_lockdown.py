@@ -108,15 +108,15 @@ def test_env_points_uv_and_pip_at_system_store(tmp_path):
   assert _lockdown("env", GITHUB_ENV=str(github_env)).returncode == 0
 
   exported = github_env.read_text().splitlines()
-  assert "UV_NATIVE_TLS=true" in exported
+  assert "UV_SYSTEM_CERTS=true" in exported
   assert any(line.startswith("SSL_CERT_FILE=") for line in exported)
   assert any(line.startswith("PIP_CERT=") for line in exported)
 
 
 # The tests below run against the real stores, after bin/lockdown has been applied by the workflow
 @ci_only
-def test_ci_system_store_does_not_trust_distrusted_certs():
-  result = subprocess_run([str(SCRIPT), "check"], capture_output=True, text=True, env={k: v for k, v in os_environ.items() if k not in ISOLATED_ENV})
+def test_ci_system_and_java_stores_do_not_trust_distrusted_certs():
+  result = subprocess_run([str(SCRIPT), "check", "system", "java"], capture_output=True, text=True, env={k: v for k, v in os_environ.items() if k not in ISOLATED_ENV})
   assert result.returncode == 0, result.stdout + result.stderr
 
 

@@ -48,6 +48,11 @@ jobs:
           # Install a specific version of uv.
           version: "0.13.6"
 
+      # Re-run now that setup-uv has set UV_PYTHON_INSTALL_DIR/UV_CACHE_DIR, so uv's python download and
+      # any pre-existing python bundles are covered before uv installs python
+      - name: Secure CI/CD environment (uv)
+        run: bin/lockdown
+
       - name: Set up Python
         run: uv python install
 
@@ -55,10 +60,6 @@ jobs:
       # local and don't need to run tests, we can just do uv sync
       - name: Install Python dependencies
         run: uv sync --locked --all-extras --dev
-
-      # Python/uv bundles only exist once dependencies are installed, so lock those down too
-      - name: Secure CI/CD environment (post dependency install)
-        run: bin/lockdown
 
       - name: Cache Texlive
         id: cache-texlive

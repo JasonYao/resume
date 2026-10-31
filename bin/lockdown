@@ -36,11 +36,11 @@ set -euo pipefail
 #   python  certifi cacert.pem bundles used by pip/requests, including pip's vendored copy
 #   java    The OpenJDK keystore, which is NOT refreshed with the system store
 #           (https://bugs.debian.org/1069251)
-#   uv      Bundles its own roots unless told to use the system store (UV_NATIVE_TLS)
+#   uv      Bundles its own roots unless told to use the system store (UV_SYSTEM_CERTS)
 #
 # Usage:
 #   bin/lockdown [apply]         Check, remediate where needed, then verify
-#   bin/lockdown check           Logs per-store trust state, fails if any store trusts them
+#   bin/lockdown check [store...] Logs per-store trust state, fails if any store trusts them
 #   bin/lockdown verify          check + live probes
 #   bin/lockdown env             Only exports the trust-store environment variables
 #   bin/lockdown filter <bundle.pem>
@@ -55,7 +55,10 @@ source "$(dirname "$0")/utils.sh"
 SYSTEM_BUNDLE="${SYSTEM_BUNDLE:-/etc/ssl/certs/ca-certificates.crt}"
 JAVA_KEYSTORE="${JAVA_KEYSTORE:-/etc/ssl/certs/java/cacerts}"
 JAVA_KEYSTORE_PASSWORD="${JAVA_KEYSTORE_PASSWORD:-changeit}"
-PYTHON_BUNDLE_ROOTS="${PYTHON_BUNDLE_ROOTS:-${VIRTUAL_ENV:-.venv} . ${HOME}/.local/share/uv}"
+# The project venv, plus uv's python install dir (setup-uv relocates it to $RUNNER_TEMP via
+# UV_PYTHON_INSTALL_DIR) and cache dir, plus uv's default data dir, where uv-managed pythons
+# bring their own pip with a vendored certifi bundle
+PYTHON_BUNDLE_ROOTS="${PYTHON_BUNDLE_ROOTS:-${VIRTUAL_ENV:-.venv} . ${UV_PYTHON_INSTALL_DIR:-} ${UV_CACHE_DIR:-} ${XDG_DATA_HOME:-${HOME}/.local/share}/uv}"
 
 # Matched against a certificate's subject/issuer, case-insensitive
 DISTRUSTED_CERT_PATTERN='emudhra|emsign|AAA Certificate Services'
@@ -136,6 +139,13 @@ function check_bundle() {
     success "${label}: ${bundle} does not trust the distrusted certificates"
 }
 
+# --fresh rehashes /etc/ssl/certs, and warns about the previously generated bundle
+# ("rehash: warning: skipping ca-certificates.crt") if it is still present
+function rebuild_system_store() {
+    sudo rm -f "${SYSTEM_BUNDLE}"
+    sudo update-ca-certificates --fresh > /dev/null
+}
+
 # ---- system ----------------------------------------------------------------
 
 function check_system() {
@@ -147,14 +157,14 @@ function remediate_system() {
     # See https://emudhra.we-have-a-problem.com/#linux
     info "system: Blacklisting the distrusted roots in /etc/ca-certificates.conf"
     sudo sed -i -E "/^!/! s#^(.*(${DISTRUSTED_NAME_PATTERN}).*\.crt)\$#!\1#I" /etc/ca-certificates.conf
-    sudo update-ca-certificates --fresh > /dev/null
+    rebuild_system_store
 }
 
 # ---- python (pip, requests, uv-managed pythons) ----------------------------
 
 function python_bundles() {
     # shellcheck disable=SC2086 # Intentional word-splitting of the roots list
-    find ${PYTHON_BUNDLE_ROOTS} -maxdepth 8 -type f -name cacert.pem 2>/dev/null | sort -u || true
+    find ${PYTHON_BUNDLE_ROOTS} -maxdepth 10 -type f -name cacert.pem 2>/dev/null | sort -u || true
 }
 
 function check_python() {
@@ -163,7 +173,7 @@ function check_python() {
         found=1
         check_bundle "python" "${bundle}" || status=1
     done < <(python_bundles)
-    [ "${found}" -eq 1 ] || info "python: No certifi bundles found yet (re-run after dependencies are installed)"
+    [ "${found}" -eq 1 ] || info "python: No certifi bundles found yet (uv-managed pythons are installed later; set UV_SYSTEM_CERTS so uv itself uses the system store)"
     return "${status}"
 }
 
@@ -200,14 +210,14 @@ function remediate_java() {
     # Debian's ca-certificates-java doesn't refresh an existing keystore, so recreate it
     info "java: Recreating ${JAVA_KEYSTORE} from the system store"
     sudo rm -f "${JAVA_KEYSTORE}"
-    sudo update-ca-certificates --fresh > /dev/null
+    rebuild_system_store
 }
 
 # ---- environment -----------------------------------------------------------
 
 function export_env() {
-    # Points pip, requests, uv (native TLS) and tlmgr (wget/curl/LWP) at the filtered system store
-    local vars=(SSL_CERT_FILE="${SYSTEM_BUNDLE}" REQUESTS_CA_BUNDLE="${SYSTEM_BUNDLE}" PIP_CERT="${SYSTEM_BUNDLE}" CURL_CA_BUNDLE="${SYSTEM_BUNDLE}" UV_NATIVE_TLS=true)
+    # Points pip, requests, uv (system certs) and tlmgr (wget/curl/LWP) at the filtered system store
+    local vars=(SSL_CERT_FILE="${SYSTEM_BUNDLE}" REQUESTS_CA_BUNDLE="${SYSTEM_BUNDLE}" PIP_CERT="${SYSTEM_BUNDLE}" CURL_CA_BUNDLE="${SYSTEM_BUNDLE}" UV_SYSTEM_CERTS=true)
     local v
     for v in "${vars[@]}"; do
         export "${v?}"
@@ -220,7 +230,7 @@ function export_env() {
 
 function check_all() {
     local store status=0
-    for store in "${STORES[@]}"; do
+    for store in "${@:-${STORES[@]}}"; do
         "check_${store}" || status=1
     done
     return "${status}"
@@ -264,7 +274,7 @@ function start() {
             check_all || fail "Distrusted certificates are still trusted after remediation"
             probe_hosts || fail "Live probes still trust the compromised intermediates"
             ;;
-        check) check_all || fail "Distrusted certificates are still trusted" ;;
+        check) shift; check_all "$@" || fail "Distrusted certificates are still trusted" ;;
         verify)
             check_all || fail "Distrusted certificates are still trusted"
             probe_hosts || fail "Live probes still trust the compromised intermediates"
