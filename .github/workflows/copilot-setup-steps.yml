@@ -12,6 +12,7 @@ on:
 jobs:
   copilot-setup-steps:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
     steps:
@@ -42,8 +43,8 @@ jobs:
         with:
           path: |
             /tmp/texlive
-            $HOME/.texlive
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('/tmp/texlive/package-manifest.txt') }}
+            ~/.texlive
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('bin/install_dependencies') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
@@ -54,3 +55,13 @@ jobs:
 
       - name: Install TexLive and ImageMagick dependencies
         run: source bin/install_dependencies
+
+      - name: Add TexLive to PATH
+        run: echo "/tmp/texlive/bin/x86_64-linux" >> "$GITHUB_PATH"
+
+      - name: Verify build tools
+        run: |
+          xelatex --version
+          convert --version
+          kpsewhich keyval.sty
+          uv run python -c "import pyresume"

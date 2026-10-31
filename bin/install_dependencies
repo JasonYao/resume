@@ -9,6 +9,17 @@ set -e # Fails on the first error
 
 source "bin/utils.sh"
 
+# Ordered list of TeX Live repositories. Some CTAN mirrors have been seen serving
+# certificates we don't trust, so every network step is retried against the others
+tlnet_mirrors=(
+    "https://ctan.math.illinois.edu/systems/texlive/tlnet"
+    "https://mirror.ctan.org/systems/texlive/tlnet"
+    "https://mirrors.mit.edu/CTAN/systems/texlive/tlnet"
+    "https://mirrors.rit.edu/CTAN/systems/texlive/tlnet"
+    "https://mirror.las.iastate.edu/CTAN/systems/texlive/tlnet"
+    "https://mirrors.kernel.org/ctan/systems/texlive/tlnet"
+)
+
 function start() {
     install_texlive_package_manager
 
@@ -22,8 +33,11 @@ function start() {
     # really care
     #
     # 2026 Oct 30 update: Swapped ImageMagick-6 with ImageMagick-7
-    cat /etc/ImageMagick-7/policy.xml
-    sudo mv /etc/ImageMagick-7/policy.xml /etc/ImageMagick-7/policy.xml.backup
+    local policy="/etc/ImageMagick-7/policy.xml"
+    if [ -f "$policy" ]; then
+        cat "$policy"
+        sudo mv "$policy" "$policy.backup"
+    fi
 }
 
 function install_texlive_package_manager() {
@@ -55,8 +69,7 @@ function bootstrap_texlive_package_manager() {
         info "TexLive: Could not be found in cache, downloading and installing now"
 
         # Obtain TeX Live
-        wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
-        tar -xzf install-tl-unx.tar.gz
+        download_install_tl
 
         # Technically this'll only work until 2100 AD,
         # but I'm willing to take the risk that I'll be
@@ -65,7 +78,7 @@ function bootstrap_texlive_package_manager() {
         cd install-tl-20* || exit
 
         # Install a minimal system
-        ./install-tl --profile=../bin/texlive.profile
+        run_install_tl
 
         cd ..
         success "TexLive: Minimal texlive version was installed"
@@ -74,10 +87,97 @@ function bootstrap_texlive_package_manager() {
     fi
 }
 
+function download_install_tl() {
+    local mirror
+    for mirror in "${tlnet_mirrors[@]}"; do
+        info "TexLive: Downloading the installer from ${mirror}"
+        if wget "${mirror}/install-tl-unx.tar.gz" && tar -xzf install-tl-unx.tar.gz; then
+            return 0
+        fi
+        warn "TexLive: Failed to fetch the installer from ${mirror}, trying the next mirror"
+        rm -f install-tl-unx.tar.gz
+    done
+    fail "TexLive: Failed to download the installer from every mirror"
+}
+
+function run_install_tl() {
+    local mirror
+    for mirror in "${tlnet_mirrors[@]}"; do
+        if ./install-tl --profile=../bin/texlive.profile -repository "${mirror}"; then
+            return 0
+        fi
+        warn "TexLive: Installer failed using ${mirror}, trying the next mirror"
+    done
+    fail "TexLive: Failed to run the installer against every mirror"
+}
+
+# Runs tlmgr with the given arguments, retrying against each mirror in turn
+# until one succeeds
+function tlmgr_with_mirrors() {
+    local mirror
+    for mirror in "${tlnet_mirrors[@]}"; do
+        if tlmgr --repository "${mirror}" "$@"; then
+            return 0
+        fi
+        warn "TexLive: 'tlmgr $*' failed using ${mirror}, trying the next mirror"
+    done
+    return 1
+}
+
+# Prints the names of the given packages that are not installed
+function missing_tex_packages() {
+    local installed pkg
+    installed="$(tlmgr list --only-installed --data name)"
+    for pkg in "$@"; do
+        if ! grep -qxF "${pkg}" <<< "${installed}"; then
+            echo "${pkg}"
+        fi
+    done
+}
+
+# Installs the given packages, retrying only the ones still missing against
+# each mirror in turn, since individual packages can fail from a given mirror
+# while the rest succeed. --reinstall is required to repair packages that
+# install-tl left behind as "forcibly removed"
+function tlmgr_install_missing_packages() {
+    local mirror
+    local -a missing
+    for mirror in "${tlnet_mirrors[@]}"; do
+        mapfile -t missing < <(missing_tex_packages "$@")
+        if [ "${#missing[@]}" -eq 0 ]; then
+            return 0
+        fi
+        info "TexLive: Installing ${#missing[@]} missing package(s) from ${mirror}: ${missing[*]}"
+        if ! tlmgr --repository "${mirror}" install --reinstall "${missing[@]}"; then
+            warn "TexLive: Some packages failed using ${mirror}, retrying only the missing ones on the next mirror"
+        fi
+    done
+
+    mapfile -t missing < <(missing_tex_packages "$@")
+    if [ "${#missing[@]}" -ne 0 ]; then
+        warn "TexLive: Packages still missing after every mirror: ${missing[*]}"
+        return 1
+    fi
+}
+
+# Fails if any of the given files can't be found by TeX, catching broken installs early
+function verify_tex_files() {
+    local file ok=0
+    for file in "$@"; do
+        if [ -z "$(kpsewhich "${file}")" ]; then
+            warn "TexLive: ${file} could not be found"
+            ok=1
+        fi
+    done
+    return "${ok}"
+}
+
 function update_texlive_package_manager() {
     # Update the TL install but add nothing new
     info "TexLive: Updating to the latest version"
-    tlmgr update --self --all --no-auto-install
+    if ! tlmgr_with_mirrors update --self --all --no-auto-install; then
+        fail "TexLive: Failed to update from every mirror"
+    fi
     success "TexLive: Updated to the latest version"
 }
 
@@ -85,7 +185,9 @@ function verify_texlive_package_manager() {
     # Just including texlua so the cache check above works
     # Needed for any use of texlua even if not testing LuaTeX
     info "TexLive: Checking for the installed luatex"
-    tlmgr install luatex
+    if ! tlmgr_with_mirrors install luatex; then
+        fail "TexLive: Failed to install luatex from every mirror"
+    fi
     success "TexLive: Luatex was found"
 }
 
@@ -106,7 +208,8 @@ function install_tex_dependency_packages() {
     # - 2026/10/30: Swapped from fontawesome (which pulled in 4.6.3.1 from 2016/05/15)
     #   to fontawesome7
     info "TexLive: Installing dependencies"
-    if tlmgr install                   \
+    if tlmgr_install_missing_packages \
+        graphics                    \
         datetime2                   \
         tracklang                   \
         collection-fontsrecommended \
@@ -118,6 +221,8 @@ function install_tex_dependency_packages() {
         substr                      \
         isodate                     \
         fontspec                    \
+        metalogo                    \
+        xunicode                    \
         xltxtra                     \
         realscripts                 \
         etoolbox                    \
@@ -126,7 +231,8 @@ function install_tex_dependency_packages() {
         pdfescape                   \
         letltxmacro                 \
         bitset                      \
-        xetex ; then
+        xetex \
+        && verify_tex_files keyval.sty fontspec.sty metalogo.sty xunicode.sty ; then
         success "TexLive: All dependencies installed"
     else
         warn "TexLive: Failed to install dependencies, dumping out debug info"
