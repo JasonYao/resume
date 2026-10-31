@@ -9,6 +9,10 @@
 \ProvidesClass{two-column-resume}[]
 \NeedsTeXFormat{LaTeX2e}
 \DeclareOption{print}{\def\@cv@print{}}
+\newif\if@cv@floralinline
+\newif\if@cv@floralwatermark
+\DeclareOption{floral-inline}{\@cv@floralinlinetrue}
+\DeclareOption{floral-watermark}{\@cv@floralwatermarktrue}
 \DeclareOption*{%
   \PassOptionsToClass{\CurrentOption}{article}
 }
@@ -28,6 +32,8 @@
 \pagenumbering{gobble}
 \usepackage{datetime2}
 \usepackage{graphicx} % Used to render company logos
+\usepackage{tikz}
+\usepackage{eso-pic}
 \graphicspath{{assets}}
 
 % Color definitions
@@ -35,6 +41,49 @@
 \definecolor{primary}{HTML}{000000}
 \definecolor{headings}{HTML}{0E0E0F}
 \definecolor{subheadings}{HTML}{1A1C1E}
+\definecolor{floralblue}{HTML}{2456C4}
+
+\newcommand{\drawfloral}[1]{%
+  \begin{scope}[scale=#1,draw=floralblue!70,fill=floralblue!18]
+    \foreach \angle in {0,72,144,216,288} {
+      \fill[rotate around={\angle:(0,0)}] (0,0.12) ellipse [x radius=0.07cm,y radius=0.16cm];
+    }
+    \fill[floralblue!70] (0,0) circle [radius=0.045cm];
+    \draw[line width=0.3pt] (0,-0.05) .. controls (0.03,-0.2) and (-0.03,-0.35) .. (0,-0.5);
+    \fill[rotate around={-35:(0,-0.22)}] (0,-0.22) ellipse [x radius=0.06cm,y radius=0.14cm];
+    \fill[rotate around={35:(0,-0.36)}] (0,-0.36) ellipse [x radius=0.06cm,y radius=0.14cm];
+  \end{scope}
+}
+
+\newcommand{\floralwatermarkrow}[1]{%
+  \foreach \x in {1.5,6,10.5,15,19} {
+    \begin{scope}[shift={([xshift=\x cm,yshift=-#1 cm]current page.north west)}]
+      \drawfloral{1}
+    \end{scope}
+  }
+}
+
+\newcommand{\floralwatermark}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \begin{scope}[opacity=0.08]
+      \ifnum\value{page}=1
+        \foreach \y in {4.5,9,13.5,18,22.5,27} {
+          \floralwatermarkrow{\y}
+        }
+      \else
+        \foreach \y in {1.5,6,10.5,15,19.5,24,28.5} {
+          \floralwatermarkrow{\y}
+        }
+      \fi
+    \end{scope}
+  \end{tikzpicture}
+}
+
+\AtBeginDocument{%
+  \if@cv@floralwatermark
+    \AddToShipoutPictureBG{\floralwatermark}
+  \fi
+}
 
 % Set main fonts
 \defaultfontfeatures{Mapping=tex-text}
@@ -147,7 +196,14 @@
 \newcommand{\location}[1]{\color{primary}\raggedright\fontspec[Path = fonts/IM_Fell_Great_Primer/]{IMFeGPrm28P}\fontsize{11pt}{12pt}\selectfont {#1\\} \normalfont}
 
 % Section seperators command
-\newcommand{\sectionsep}[0]{\vspace{8pt}}
+\newcommand{\sectionsep}[0]{%
+  \if@cv@floralinline
+    \par\vspace{2pt}
+    \noindent\hfill\begin{tikzpicture}[baseline=-0.5ex]\drawfloral{0.45}\end{tikzpicture}\hfill\par\vspace{2pt}
+  \else
+    \vspace{8pt}
+  \fi
+}
 
 % Bullet Lists with fewer gaps command
 \newenvironment{tightemize}{\vspace{-\topsep}\begin{itemize}\itemsep1pt \parskip0pt \parsep0pt}{\end{itemize}\vspace{-\topsep}}
