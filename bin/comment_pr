@@ -52,7 +52,6 @@ function upload_attachment() {
     jq -er '.url' <<< "${response}"
 }
 
-artifact_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts"
 png_url=""
 notices=()
 
@@ -64,10 +63,10 @@ fi
 if [[ -n "${png_url}" ]]; then
     preview_markdown="![Generated resume preview](${png_url})"
 else
-    preview_markdown="[Download the generated resume PDF and PNG from this workflow](${artifact_url})"
+    preview_markdown="[Download the generated resume PDF and PNG from this workflow](${ARTIFACT_URL})"
 fi
 
-pdf_markdown="[Download the generated PDF from the workflow artifact](${artifact_url})"
+pdf_markdown="[Download the generated PDF from the workflow artifact](${ARTIFACT_URL})"
 notices+=("GitHub does not allow PDF attachments here, so the PDF is available in the workflow artifact.")
 
 notice_markdown=""
@@ -77,31 +76,12 @@ fi
 
 comment_body="$(printf '<!-- resume-preview -->\n%s\n\n%s%s' "${preview_markdown}" "${pdf_markdown}" "${notice_markdown}")"
 comment_payload="$(jq -n --arg body "${comment_body}" '{body: $body}')"
-echo "Looking up the existing preview comment on pull request #${pull_number}."
-comments="$(curl --silent --show-error --fail-with-body \
+
+echo "Creating a new preview comment on pull request #${pull_number}."
+curl --silent --show-error --fail-with-body \
+    --request POST \
     --oauth2-bearer "${GITHUB_TOKEN}" \
     --header "Accept: application/vnd.github+json" \
-    "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/issues/${pull_number}/comments?per_page=100")"
-comment_id="$(jq -r \
-    '[.[] | select(.user.login == "github-actions[bot]" and ((.body // "") | contains("<!-- resume-preview -->")))][0].id // empty' \
-    <<< "${comments}")"
-
-if [[ -n "${comment_id}" ]]; then
-    echo "Updating preview comment #${comment_id} on pull request #${pull_number}."
-    curl --silent --show-error --fail-with-body \
-        --request PATCH \
-        --oauth2-bearer "${GITHUB_TOKEN}" \
-        --header "Accept: application/vnd.github+json" \
-        --header "Content-Type: application/json" \
-        --data "${comment_payload}" \
-        "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/issues/comments/${comment_id}" > /dev/null
-else
-    echo "Creating preview comment on pull request #${pull_number}."
-    curl --silent --show-error --fail-with-body \
-        --request POST \
-        --oauth2-bearer "${GITHUB_TOKEN}" \
-        --header "Accept: application/vnd.github+json" \
-        --header "Content-Type: application/json" \
-        --data "${comment_payload}" \
-        "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/issues/${pull_number}/comments" > /dev/null
-fi
+    --header "Content-Type: application/json" \
+    --data "${comment_payload}" \
+    "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/issues/${pull_number}/comments" > /dev/null
