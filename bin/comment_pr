@@ -21,24 +21,8 @@ if [[ -z "${pull_number}" ]]; then
     exit 0
 fi
 
-function upload_attachment() {
-    local file_name="$1"
-    local content_type="$2"
-    local response
-
-    response="$(curl --silent --show-error --fail-with-body \
-        --request POST \
-        --oauth2-bearer "${GITHUB_UPLOAD_TOKEN}" \
-        --header "Accept: application/json" \
-        --header "Content-Type: application/octet-stream" \
-        --data-binary "@${file_name}" \
-        "https://uploads.github.com/user-attachments/assets?name=${file_name}&content_type=${content_type}&repository_id=${GITHUB_REPOSITORY_ID}")"
-    jq -er '.url' <<< "${response}"
-}
-
-png_url="$(upload_attachment Resume_Jason_Yao.png image/png)"
-pdf_url="$(upload_attachment Resume_Jason_Yao.pdf application/pdf)"
-comment_body="$(printf '<!-- resume-preview -->\n![Generated resume preview](%s)\n\n[Download the generated PDF](%s)' "${png_url}" "${pdf_url}")"
+artifact_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts"
+comment_body="$(printf '<!-- resume-preview -->\n[Download the generated resume PDF and PNG](%s)' "${artifact_url}")"
 comment_payload="$(jq -n --arg body "${comment_body}" '{body: $body}')"
 comments="$(curl --silent --show-error --fail \
     --oauth2-bearer "${GITHUB_TOKEN}" \

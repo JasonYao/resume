@@ -122,6 +122,4 @@ jobs:
         if: github.event_name == 'push' && steps.extract_branch.outputs.branch != 'source'
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          GITHUB_UPLOAD_TOKEN: ${{ secrets.DEPLOY_ACCESS_TOKEN }}
-          GITHUB_REPOSITORY_ID: ${{ github.repository_id }}
         run: bin/comment_pr
