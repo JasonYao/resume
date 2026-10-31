@@ -231,6 +231,7 @@ function install_tex_dependency_packages() {
         substr                      \
         isodate                     \
         fontspec                    \
+        metalogo                    \
         xltxtra                     \
         realscripts                 \
         etoolbox                    \
@@ -240,7 +241,7 @@ function install_tex_dependency_packages() {
         letltxmacro                 \
         bitset                      \
         xetex \
-        && verify_tex_files keyval.sty amsmath.sty array.sty fontspec.sty ; then
+        && verify_tex_files keyval.sty amsmath.sty array.sty fontspec.sty metalogo.sty ; then
         success "TexLive: All dependencies installed"
     else
         warn "TexLive: Failed to install dependencies, dumping out debug info"
