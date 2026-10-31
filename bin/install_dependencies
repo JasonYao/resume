@@ -326,9 +326,9 @@ function install_imagemagick() {
     info "Checking if imagemagick is installed"
     if ! command -v magick > /dev/null 2>&1; then
         info "Imagemagick was not found, installing version $version now"
-        sudo apt update
+        sudo apt-get update
 
-        if ! sudo apt install -y "imagemagick=${apt_version}" ; then
+        if ! sudo apt-get -o 'Dpkg::Options::=--path-include=/usr/share/man/*' install -y "imagemagick=${apt_version}" ; then
             fail "Failed to install imagemagick $version"
         fi
     fi
