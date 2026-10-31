@@ -31,32 +31,74 @@ function start() {
 
 function configure_imagemagick_policy() {
     # Replaces the default (open) policy with a restrictive one that only
-    # allows what the build needs: reading PDFs and writing PNGs
-    local policy_dir
-    for policy_dir in /etc/ImageMagick-7 /etc/ImageMagick-6; do
-        if [ -d "$policy_dir" ]; then
-            info "Writing ImageMagick security policy to $policy_dir/policy.xml"
-            sudo tee "$policy_dir/policy.xml" > /dev/null <<'POLICY'
+    # allows what the build needs: reading PDFs and writing PNGs.
+    #
+    # Policies are tied to the ImageMagick major version (the policy.xml
+    # format and the available coders/delegates differ), so this only
+    # supports ImageMagick 7, which is pinned in install_imagemagick
+    local policy_dir="/etc/ImageMagick-7"
+    if [ ! -d "$policy_dir" ]; then
+        fail "Could not find the ImageMagick 7 configuration directory: $policy_dir"
+    fi
+
+    info "Writing ImageMagick security policy to $policy_dir/policy.xml"
+    sudo tee "$policy_dir/policy.xml" > /dev/null <<'POLICY'
 <policymap>
+  <!-- Max pixel cache held in RAM. Once exceeded, pixels spill to disk.
+       256MiB is plenty for a single-page resume render. A higher value
+       (or unlimited) lets a hostile/corrupt file exhaust RAM and crash the
+       runner (denial of service); a lower one only makes rendering slower
+       by spilling to disk earlier. -->
   <policy domain="resource" name="memory" value="256MiB"/>
+  <!-- Max memory-mapped file size for the pixel cache. Same trade-off as
+       "memory": a larger value allows more address space to be consumed by
+       a malicious image, a smaller value forces more disk-backed caching. -->
   <policy domain="resource" name="map" value="512MiB"/>
+  <!-- Max width * height of an image held in memory. Larger images go to
+       disk. 256MP is far above a 300 DPI letter page (~8.4MP); a much larger
+       value would let decompression-bomb style images (tiny file, huge
+       canvas) consume excessive resources. -->
   <policy domain="resource" name="area" value="256MP"/>
+  <!-- Max disk space for the pixel cache; exceeding it aborts the operation.
+       1GiB bounds the damage of a decompression bomb filling the runner's
+       disk, while being well above what one rendered page needs. Unlimited
+       would risk disk exhaustion. -->
   <policy domain="resource" name="disk" value="1GiB"/>
+  <!-- Max image width. 32KP rejects absurdly wide images (a common
+       resource-exhaustion vector) while allowing normal pages; raising it
+       only widens the denial-of-service surface. -->
   <policy domain="resource" name="width" value="32KP"/>
+  <!-- Max image height; same reasoning as width. -->
   <policy domain="resource" name="height" value="32KP"/>
+  <!-- Max wall-clock seconds a single operation may run before it is
+       aborted. 120s is generous for one page; unlimited would let a
+       pathological input hang the CI job (denial of service). -->
   <policy domain="resource" name="time" value="120"/>
+  <!-- Block the URL delegate so ImageMagick can't fetch remote resources.
+       Allowing it would enable server-side request forgery style fetches
+       (e.g. cloud metadata endpoints) from crafted input files. -->
   <policy domain="delegate" rights="none" pattern="URL"/>
+  <!-- Block the HTTPS delegate; same SSRF/data-exfiltration reasoning as
+       URL. Leaving it open lets a crafted file make outbound requests. -->
   <policy domain="delegate" rights="none" pattern="HTTPS"/>
+  <!-- Block the HTTP delegate; same reasoning as URL, and additionally
+       unencrypted. -->
   <policy domain="delegate" rights="none" pattern="HTTP"/>
+  <!-- Block indirect reads (@file lists). Allowing them lets a crafted
+       filename read arbitrary local files and leak their contents into the
+       output (local file disclosure). -->
   <policy domain="path" rights="none" pattern="@*"/>
+  <!-- Default-deny every coder (file format). Formats such as SVG, MVG, MSL,
+       EPHEMERAL, and TEXT have historically had code-execution and
+       file-read vulnerabilities (e.g. ImageTragick); denying by default
+       means unlisted formats can never be processed, even by mistake. -->
   <policy domain="coder" rights="none" pattern="*"/>
+  <!-- Allow only the formats the build uses: read the PDF produced by
+       LaTeX and write the PNG preview. Adding more formats widens the
+       attack surface; removing either breaks bin/build's convert call. -->
   <policy domain="coder" rights="read|write" pattern="{PDF,PNG}"/>
 </policymap>
 POLICY
-            return
-        fi
-    done
-    fail "Could not find an ImageMagick configuration directory"
 }
 
 function install_texlive_package_manager() {
@@ -273,22 +315,31 @@ function update_cache_manifest() {
 }
 
 function install_imagemagick() {
+    # Pinned so that a random ImageMagick update can't break the security
+    # policy (which is version specific) or the build.
+    #
+    # [Version Bump] 2026 Oct 31: To 7.1.2-18, next version bump: on-or-after 2027 Apr 30
+    local version="7.1.2-18"
+    # Debian/Ubuntu package versions look like 8:7.1.2.18+dfsg1-1
+    local apt_version="8:${version//-/.}*"
+
     info "Checking if imagemagick is installed"
-    if command -v convert > /dev/null 2>&1; then
-        # Previous to 2025-02-01, ubuntu-latest had imagemagick pre-installed,
-        # it looks like it got removed sometime between Jan 01 and Feb 01 2025
-        info "Imagemagick was found to be installed, version and delegate info:"
-        convert --version
-    else
-        info "Imagemagick was not found, installing now"
+    if ! command -v convert > /dev/null 2>&1; then
+        info "Imagemagick was not found, installing version $version now"
         sudo apt update
 
-        if sudo apt install -y imagemagick ; then
-            info "Imagemagick was now installed, version and delegate info:"
-            convert --version
-        else
-            fail "Failed to install imagemagick"
+        if ! sudo apt install -y "imagemagick=${apt_version}" ; then
+            fail "Failed to install imagemagick $version"
         fi
+    fi
+
+    # Previous to 2025-02-01, ubuntu-latest had imagemagick pre-installed,
+    # it looks like it got removed sometime between Jan 01 and Feb 01 2025
+    info "Imagemagick is installed, version and delegate info:"
+    convert --version
+
+    if ! convert --version | grep -q "ImageMagick ${version} "; then
+        fail "Expected ImageMagick ${version}, update the pin (and review the security policy) if this is intentional"
     fi
 }
 
