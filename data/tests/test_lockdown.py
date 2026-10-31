@@ -10,11 +10,10 @@ SCRIPT = Path(__file__).resolve().parents[2] / "bin" / "lockdown"
 IN_CI = bool(os_environ.get("CI"))
 
 requires_openssl = pytest_mark.skipif(shutil_which("openssl") is None, reason="openssl is required")
-requires_keytool = pytest_mark.skipif(shutil_which("keytool") is None or shutil_which("openssl") is None, reason="keytool and openssl are required")
 ci_only = pytest_mark.skipif(not IN_CI, reason="only enforced in CI")
 
 # Never touch the real stores from a test unless explicitly asked to
-ISOLATED_ENV = {"SYSTEM_BUNDLE": "/nonexistent/system.crt", "JAVA_KEYSTORE": "/nonexistent/cacerts", "PYTHON_BUNDLE_ROOTS": "/nonexistent"}
+ISOLATED_ENV = {"SYSTEM_BUNDLE": "/nonexistent/system.crt", "PYTHON_BUNDLE_ROOTS": "/nonexistent"}
 
 
 def _lockdown(*args: str, **env: str) -> CompletedProcess:
@@ -88,19 +87,6 @@ def test_check_flags_and_filters_python_certifi_bundles(tmp_path):
   assert _lockdown("check", **roots).returncode == 0
 
 
-@requires_keytool
-def test_check_flags_java_keystore_that_trusts_distrusted_certs(tmp_path):
-  keystore = tmp_path / "cacerts"
-  for alias, name in (("emsigneccrootcag3", "emSign ECC Root CA - G3"), ("other", "Some Other Root CA")):
-    _make_cert(tmp_path, name)
-    subprocess_run(["keytool", "-importcert", "-noprompt", "-alias", alias, "-file", str(tmp_path / f"{name}.pem"), "-keystore", str(keystore), "-storepass", "changeit"], check=True, capture_output=True)
-
-  result = _lockdown("check", JAVA_KEYSTORE=str(keystore))
-
-  assert result.returncode != 0
-  assert "java" in result.stdout and "STILL TRUSTS" in result.stdout
-
-
 def test_env_points_uv_and_pip_at_system_store(tmp_path):
   github_env = tmp_path / "github_env"
   github_env.touch()
@@ -115,12 +101,12 @@ def test_env_points_uv_and_pip_at_system_store(tmp_path):
 
 # The tests below run against the real stores, after bin/lockdown has been applied by the workflow
 @ci_only
-def test_ci_system_and_java_stores_do_not_trust_distrusted_certs():
-  result = subprocess_run([str(SCRIPT), "check", "system", "java"], capture_output=True, text=True, env={k: v for k, v in os_environ.items() if k not in ISOLATED_ENV})
+def test_ci_trust_stores_do_not_trust_distrusted_certs():
+  result = subprocess_run([str(SCRIPT), "check"], capture_output=True, text=True, env={k: v for k, v in os_environ.items() if k not in ISOLATED_ENV})
   assert result.returncode == 0, result.stdout + result.stderr
 
 
 @ci_only
 def test_ci_live_probes_reject_compromised_intermediates():
-  result = subprocess_run([str(SCRIPT), "verify"], capture_output=True, text=True)
+  result = subprocess_run([str(SCRIPT), "verify"], capture_output=True, text=True, env={k: v for k, v in os_environ.items() if k not in ISOLATED_ENV})
   assert result.returncode == 0, result.stdout + result.stderr

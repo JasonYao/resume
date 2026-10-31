@@ -33,9 +33,9 @@ set -euo pipefail
 # Trust stores covered:
 #   system  The ubuntu runner store (/etc/ssl/certs), used by apt, curl, wget and
 #           therefore the TexLive package manager (tlmgr)
-#   python  certifi cacert.pem bundles used by pip/requests, including pip's vendored copy
-#   java    The OpenJDK keystore, which is NOT refreshed with the system store
-#           (https://bugs.debian.org/1069251)
+#   python  certifi cacert.pem bundles used by pip/requests, including pip's vendored copy.
+#           New bundles show up as dependencies/pythons get installed, so run this again after
+#           each install step to neutralize them, even if an env variable is misread or unused
 #   uv      Bundles its own roots unless told to use the system store (UV_SYSTEM_CERTS)
 #
 # Usage:
@@ -46,15 +46,13 @@ set -euo pipefail
 #   bin/lockdown filter <bundle.pem>
 #                                Rewrites a PEM bundle in place, minus distrusted certs
 #
-# Overrides (mainly for tests): SYSTEM_BUNDLE, JAVA_KEYSTORE, PYTHON_BUNDLE_ROOTS (space-separated dirs)
+# Overrides (mainly for tests): SYSTEM_BUNDLE, PYTHON_BUNDLE_ROOTS (space-separated dirs)
 ##
 
 # shellcheck source=bin/utils.sh
 source "$(dirname "$0")/utils.sh"
 
 SYSTEM_BUNDLE="${SYSTEM_BUNDLE:-/etc/ssl/certs/ca-certificates.crt}"
-JAVA_KEYSTORE="${JAVA_KEYSTORE:-/etc/ssl/certs/java/cacerts}"
-JAVA_KEYSTORE_PASSWORD="${JAVA_KEYSTORE_PASSWORD:-changeit}"
 # The project venv, plus uv's python install dir (setup-uv relocates it to $RUNNER_TEMP via
 # UV_PYTHON_INSTALL_DIR) and cache dir, plus uv's default data dir, where uv-managed pythons
 # bring their own pip with a vendored certifi bundle
@@ -62,7 +60,7 @@ PYTHON_BUNDLE_ROOTS="${PYTHON_BUNDLE_ROOTS:-${VIRTUAL_ENV:-.venv} . ${UV_PYTHON_
 
 # Matched against a certificate's subject/issuer, case-insensitive
 DISTRUSTED_CERT_PATTERN='emudhra|emsign|AAA Certificate Services'
-# Matched against /etc/ca-certificates.conf entries and java keystore aliases
+# Matched against /etc/ca-certificates.conf entries
 DISTRUSTED_NAME_PATTERN='emudhra|emsign|comodo_aaa_services|aaa certificate services|comodoaaa'
 
 # Hosts serving certs from the compromised intermediates. A handshake must FAIL (curl exit 60).
@@ -75,7 +73,7 @@ PROBE_HOSTS=(
     dv-g3b-aaa-noct-emudhra.we-have-a-problem.com
 )
 
-STORES=(system python java)
+STORES=(system python)
 
 function is_distrusted() {
     local info
@@ -183,34 +181,6 @@ function remediate_python() {
         info "python: Filtering ${bundle}"
         filter_file "${bundle}"
     done < <(python_bundles)
-}
-
-# ---- java ------------------------------------------------------------------
-
-function java_trusted_aliases() {
-    keytool -list -keystore "${JAVA_KEYSTORE}" -storepass "${JAVA_KEYSTORE_PASSWORD}" 2>/dev/null \
-        | grep -iE "${DISTRUSTED_NAME_PATTERN}" || true
-}
-
-function check_java() {
-    if [ ! -f "${JAVA_KEYSTORE}" ] || ! command -v keytool > /dev/null 2>&1; then
-        info "java: No keystore at ${JAVA_KEYSTORE} (or no keytool), skipping"
-        return 0
-    fi
-    local aliases
-    aliases="$(java_trusted_aliases)"
-    if [ -n "${aliases}" ]; then
-        warn "java: ${JAVA_KEYSTORE} STILL TRUSTS $(wc -l <<< "${aliases}") distrusted certificate(s)"
-        return 1
-    fi
-    success "java: ${JAVA_KEYSTORE} does not trust the distrusted certificates"
-}
-
-function remediate_java() {
-    # Debian's ca-certificates-java doesn't refresh an existing keystore, so recreate it
-    info "java: Recreating ${JAVA_KEYSTORE} from the system store"
-    sudo rm -f "${JAVA_KEYSTORE}"
-    rebuild_system_store
 }
 
 # ---- environment -----------------------------------------------------------

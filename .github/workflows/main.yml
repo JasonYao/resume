@@ -61,6 +61,10 @@ jobs:
       - name: Install Python dependencies
         run: uv sync --locked --all-extras --dev
 
+      # Python installs (and uv sync) add new certifi bundles (e.g. pip's vendored copy), so neutralize them too
+      - name: Secure CI/CD environment (post Python install)
+        run: bin/lockdown
+
       - name: Cache Texlive
         id: cache-texlive
         uses: actions/cache@v6
