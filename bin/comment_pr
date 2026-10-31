@@ -28,7 +28,7 @@ function upload_attachment() {
 
     response="$(curl --silent --show-error --fail-with-body \
         --request POST \
-        --oauth2-bearer "${GITHUB_TOKEN}" \
+        --oauth2-bearer "${GITHUB_UPLOAD_TOKEN}" \
         --header "Accept: application/json" \
         --header "Content-Type: application/octet-stream" \
         --data-binary "@${file_name}" \
