@@ -26,18 +26,37 @@ function start() {
     # Debugging information
     install_imagemagick
 
-    # Imagemagick 6 hack for ubuntu 18.04+,
-    # see https://askubuntu.com/a/1081907 for more information
-    # In theory we can replace <policy domain="coder" rights="none" pattern="PDF" />
-    # with <policy domain="coder" rights="read|write" pattern="PDF" />, but also I don't
-    # really care
-    #
-    # 2026 Oct 30 update: Swapped ImageMagick-6 with ImageMagick-7
-    local policy="/etc/ImageMagick-7/policy.xml"
-    if [ -f "$policy" ]; then
-        cat "$policy"
-        sudo mv "$policy" "$policy.backup"
-    fi
+    configure_imagemagick_policy
+}
+
+function configure_imagemagick_policy() {
+    # Replaces the default (open) policy with a restrictive one that only
+    # allows what the build needs: reading PDFs and writing PNGs
+    local policy_dir
+    for policy_dir in /etc/ImageMagick-7 /etc/ImageMagick-6; do
+        if [ -d "$policy_dir" ]; then
+            info "Writing ImageMagick security policy to $policy_dir/policy.xml"
+            sudo tee "$policy_dir/policy.xml" > /dev/null <<'POLICY'
+<policymap>
+  <policy domain="resource" name="memory" value="256MiB"/>
+  <policy domain="resource" name="map" value="512MiB"/>
+  <policy domain="resource" name="area" value="256MP"/>
+  <policy domain="resource" name="disk" value="1GiB"/>
+  <policy domain="resource" name="width" value="32KP"/>
+  <policy domain="resource" name="height" value="32KP"/>
+  <policy domain="resource" name="time" value="120"/>
+  <policy domain="delegate" rights="none" pattern="URL"/>
+  <policy domain="delegate" rights="none" pattern="HTTPS"/>
+  <policy domain="delegate" rights="none" pattern="HTTP"/>
+  <policy domain="path" rights="none" pattern="@*"/>
+  <policy domain="coder" rights="none" pattern="*"/>
+  <policy domain="coder" rights="read|write" pattern="{PDF,PNG}"/>
+</policymap>
+POLICY
+            return
+        fi
+    done
+    fail "Could not find an ImageMagick configuration directory"
 }
 
 function install_texlive_package_manager() {
