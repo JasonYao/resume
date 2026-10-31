@@ -89,6 +89,15 @@ bin/build
 xelatex Resume_Jason_Yao.tex
 ```
 
+To generate either floral variant instead:
+
+```sh
+bin/build inline     # Delft-blue ornaments between sections
+bin/build watermark  # faint floral watermark, clear of the first-page header
+```
+
+Each variant writes its own PDF and thumbnail, leaving the default output unchanged.
+
 ## Testing
 
 To run the automated tests:
