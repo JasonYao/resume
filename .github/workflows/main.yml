@@ -48,11 +48,6 @@ jobs:
           # Install a specific version of uv.
           version: "0.13.6"
 
-      # Re-run now that setup-uv has set UV_PYTHON_INSTALL_DIR/UV_CACHE_DIR, so uv's python download and
-      # any pre-existing python bundles are covered before uv installs python
-      - name: Secure CI/CD environment (uv)
-        run: bin/lockdown
-
       - name: Set up Python
         run: uv python install
 
@@ -61,7 +56,9 @@ jobs:
       - name: Install Python dependencies
         run: uv sync --locked --all-extras --dev
 
-      # Python installs (and uv sync) add new certifi bundles (e.g. pip's vendored copy), so neutralize them too
+      # certifi bundles are per python install (e.g. pip's vendored copy inside each uv-managed python), so they only
+      # exist once python is installed, and uv itself ships no cert files. Neutralize them now, so they are safe
+      # even if an env variable is misread or no longer honored
       - name: Secure CI/CD environment (post Python install)
         run: bin/lockdown
 

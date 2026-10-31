@@ -36,7 +36,8 @@ set -euo pipefail
 #   python  certifi cacert.pem bundles used by pip/requests, including pip's vendored copy.
 #           New bundles show up as dependencies/pythons get installed, so run this again after
 #           each install step to neutralize them, even if an env variable is misread or unused
-#   uv      Bundles its own roots unless told to use the system store (UV_SYSTEM_CERTS)
+#   uv      Has no cert files to filter (roots are compiled in) so it is pointed at the system store
+#           via UV_SYSTEM_CERTS, and the certifi bundles of the pythons it installs are filtered
 #
 # Usage:
 #   bin/lockdown [apply]         Check, remediate where needed, then verify
@@ -171,7 +172,7 @@ function check_python() {
         found=1
         check_bundle "python" "${bundle}" || status=1
     done < <(python_bundles)
-    [ "${found}" -eq 1 ] || info "python: No certifi bundles found yet (uv-managed pythons are installed later; set UV_SYSTEM_CERTS so uv itself uses the system store)"
+    [ "${found}" -eq 1 ] || info "python: No certifi bundles found (they are created per python install, so this is expected before python is installed)"
     return "${status}"
 }
 
