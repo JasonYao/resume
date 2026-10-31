@@ -13,6 +13,21 @@ source "$(dirname "$0")/utils.sh"
 base_file_name="Resume_Jason_Yao"
 tex_file_name="${base_file_name}.tex"
 
+floral_variant="${1:-default}"
+case "${floral_variant}" in
+    default)
+        output_file_name="${base_file_name}"
+        latex_options=""
+        ;;
+    inline|watermark)
+        output_file_name="${base_file_name}_${floral_variant}"
+        latex_options="\\PassOptionsToClass{floral-${floral_variant}}{two-column-resume}"
+        ;;
+    *)
+        fail "Usage: $0 [inline|watermark]"
+        ;;
+esac
+
 function start() {
     generate_outputs
 
@@ -21,7 +36,7 @@ function start() {
     # We use the absolute path here because
     # imagemagick 6 throws exceptions with a
     # relative path
-    generate_thumbnail "$(pwd)/${base_file_name}"
+    generate_thumbnail "$(pwd)/${output_file_name}"
 }
 
 function generate_outputs() {
@@ -50,7 +65,7 @@ function generate_pdf_once() {
     export PATH=/tmp/texlive/bin/x86_64-linux:$PATH
 
     info "Build ${count}: Generating resume document now"
-    if xelatex "${input_tex_file_name}" ; then
+    if xelatex -jobname="${output_file_name}" "${latex_options}\\input{${input_tex_file_name}}" ; then
         success "Build ${count}: Generated the new resume document"
     else
         fail "Build ${count}: Failed to generate the new resume document"
