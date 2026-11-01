@@ -17,10 +17,10 @@
     local rects, col, foot, spill, fx1 = original_regions(g, layout)
     local padding = 0.2
     local totoro_center_x = 0.75 + 0.17 * (g.ph - 3.0)
-    local totoro_left = g.ph - (totoro_center_x + 2.75 / 2 + padding)
-    local totoro_right = g.ph - (totoro_center_x - 2.75 / 2 - padding)
-    local totoro_bottom = 1.5 + 0.3 - padding
-    local totoro_top = 1.5 + 0.3 + 2.75 + padding
+    local totoro_y_min = g.ph - (totoro_center_x + 2.75 / 2 + padding)
+    local totoro_y_max = g.ph - (totoro_center_x - 2.75 / 2 - padding)
+    local totoro_x_min = 1.5 + 0.3 - padding
+    local totoro_x_max = 1.5 + 0.3 + 2.75 + padding
     local flower_regions = {}
     local function add(rect)
       if rect[1] < rect[3] and rect[2] < rect[4] then
@@ -29,10 +29,10 @@
     end
     for _, rect in ipairs(rects) do
       if rect == col then
-        add({ rect[1], rect[2], rect[3], totoro_bottom })
-        add({ rect[1], totoro_top, rect[3], rect[4] })
-        add({ rect[1], totoro_bottom, totoro_left, totoro_top })
-        add({ totoro_right, totoro_bottom, rect[3], totoro_top })
+        add({ rect[1], rect[2], totoro_x_min, rect[4] })
+        add({ totoro_x_max, rect[2], rect[3], rect[4] })
+        add({ totoro_x_min, rect[2], totoro_x_max, totoro_y_min })
+        add({ totoro_x_min, totoro_y_max, totoro_x_max, rect[4] })
       else
         add(rect)
       end

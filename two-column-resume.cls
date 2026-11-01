@@ -182,10 +182,11 @@
     \sbox{\resumeLinksContentBox}{%
 	% To increase the amount of space available for the links, increment the below's em value
     \raggedleft{\resumePreviewLinks{\parbox[b]{15em}{\color{headings}\fontspec[Path = fonts/IM_Fell_Great_Primer/]{IMFeGPrm28P}\fontsize{11pt}{14pt}\selectfont #2}}}}%
+    \vspace*{0.5em}%
     \noindent\hspace*{\dimexpr(\textwidth-\wd\resumeLinksContentBox-\wd\resumeNameContentBox-1.5cm)/2\relax}%
     \raisebox{\dimexpr(\ht\resumeLinksContentBox+\dp\resumeLinksContentBox-\ht\resumeNameContentBox-\dp\resumeNameContentBox)/2+0.4em\relax}{\usebox{\resumeNameContentBox}}%
     \hfill\usebox{\resumeLinksContentBox}%
-    \vspace{1em}%
+    \vspace{0.5em}%
 }
 
 % Section formatting
