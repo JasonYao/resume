@@ -57,6 +57,12 @@
 \definecolor{subheadings}{HTML}{1A1C1E}
 \providecommand{\resumeFlowerLayerPdf}{florilegium_layer.pdf}
 \def\resumeFlowerClipHeight{22.1cm}
+\tikzset{resumePreviewBox/.style={draw=red,line width=0.5pt}}
+\newcommand{\resumeDrawPreviewBounds}[1]{%
+  \ifx\resumeLayerPreview\resumeCompositeLayer\else
+    \draw[red,line width=0.5pt] #1;
+  \fi
+}
 
 \newsavebox{\resumeHeaderBox}
 \newsavebox{\resumeColumnsBox}
@@ -69,29 +75,39 @@
       \noindent#2%
     \end{minipage}%
   }%
+  \ifx\resumeLayerPreview\resumeCompositeLayer
+    \def\resumePreviewBoxStyle{}%
+  \else
+    \def\resumePreviewBoxStyle{resumePreviewBox}%
+  \fi
   \begin{tikzpicture}[remember picture,overlay]
     \begin{pgfonlayer}{resumeBackground}
       \resumeiflayer{\resumeBackgroundLayer}{%
+        \resumeDrawPreviewBounds{(current page.south west) rectangle (current page.north east)}%
       }
     \end{pgfonlayer}
     \begin{pgfonlayer}{resumeHeader}
       \resumeiflayer{\resumeHeaderLayer}{%
         \begin{scope}
           \clip (current page.south west) rectangle ([yshift=\resumeFlowerClipHeight]current page.south east);
-          \node[anchor=south west,inner sep=0pt] at ([yshift=-1cm]current page.south west) {
+          \node[anchor=south west,inner sep=0pt] at (current page.south west) {
             \includegraphics[angle=90]{\resumeFlowerLayerPdf}};
         \end{scope}
-        \node[anchor=north west,inner sep=0pt] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
-        \node[anchor=south west,inner sep=0pt] at ([xshift=1.5cm,yshift=1.5cm]current page.south west) {\includegraphics[width=2.75cm]{watermarks/totoro}};
+        \resumeDrawPreviewBounds{(current page.south west) rectangle ([yshift=\resumeFlowerClipHeight]current page.south east)}%
+        \node[anchor=north west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
+        \node[anchor=south west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=1.5cm]current page.south west) {\includegraphics[width=2.75cm]{watermarks/totoro}};
       }
     \end{pgfonlayer}
     \begin{pgfonlayer}{resumeColumns}
       \resumeiflayer{\resumeColumnsLayer}{%
-        \node[anchor=north west,inner sep=0pt] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeColumnsBox}};
+        \node[anchor=north west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeColumnsBox}};
       }
     \end{pgfonlayer}
     \begin{pgfonlayer}{resumeForeground}
-      \resumeiflayer{\resumeForegroundLayer}{\resumeForegroundContent}
+      \resumeiflayer{\resumeForegroundLayer}{%
+        \resumeForegroundContent
+        \resumeDrawPreviewBounds{(current page.south west) rectangle (current page.north east)}%
+      }
     \end{pgfonlayer}
   \end{tikzpicture}
   \null\vfill\clearpage
