@@ -14,23 +14,19 @@ base_file_name="Resume_Jason_Yao"
 tex_file_name="${base_file_name}.tex"
 dev_mode=false
 
-floral_variant="${1:-default}"
-case "${floral_variant}" in
+build_mode="${1:-default}"
+case "${build_mode}" in
     default)
         output_file_name="${base_file_name}"
-        latex_options="\\PassOptionsToClass{floral-inline}{two-column-resume}"
+        latex_options=""
         ;;
     dev)
         output_file_name="${base_file_name}"
-        latex_options="\\PassOptionsToClass{floral-inline}{two-column-resume}"
+        latex_options=""
         dev_mode=true
         ;;
-    inline|watermark)
-        output_file_name="${base_file_name}_${floral_variant}"
-        latex_options="\\PassOptionsToClass{floral-${floral_variant}}{two-column-resume}"
-        ;;
     *)
-        fail "Usage: $0 [dev|inline|watermark]"
+        fail "Usage: $0 [dev]"
         ;;
 esac
 

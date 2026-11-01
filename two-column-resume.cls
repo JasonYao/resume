@@ -9,10 +9,6 @@
 \ProvidesClass{two-column-resume}[]
 \NeedsTeXFormat{LaTeX2e}
 \DeclareOption{print}{\def\@cv@print{}}
-\newif\if@cv@floralinline
-\newif\if@cv@floralwatermark
-\DeclareOption{floral-inline}{\@cv@floralinlinetrue}
-\DeclareOption{floral-watermark}{\@cv@floralwatermarktrue}
 \DeclareOption*{%
   \PassOptionsToClass{\CurrentOption}{article}
 }
@@ -64,34 +60,22 @@
 \newcommand{\drawfloral}[1]{%
   \begin{scope}[scale=#1,draw=floralblue!70,fill=floralblue!18]
     \foreach \angle in {0,72,144,216,288} {
-      \fill[rotate around={\angle:(0,0)}] (0,0.12) ellipse [x radius=0.07cm,y radius=0.16cm];
+      \fill[rotate around={\angle:(0,0.62)}] (0,0.74) ellipse [x radius=0.07cm,y radius=0.16cm];
     }
-    \fill[floralblue!70] (0,0) circle [radius=0.045cm];
-    \draw[line width=0.3pt] (0,-0.05) .. controls (0.03,-0.2) and (-0.03,-0.35) .. (0,-0.5);
-    \fill[rotate around={-35:(0,-0.22)}] (0,-0.22) ellipse [x radius=0.06cm,y radius=0.14cm];
-    \fill[rotate around={35:(0,-0.36)}] (0,-0.36) ellipse [x radius=0.06cm,y radius=0.14cm];
+    \fill[floralblue!70] (0,0.62) circle [radius=0.045cm];
+    \draw[line width=0.3pt] (0,0) .. controls (0.03,0.15) and (-0.03,0.3) .. (0,0.5);
+    \fill[rotate around={-35:(0,0.28)}] (0,0.28) ellipse [x radius=0.06cm,y radius=0.14cm];
+    \fill[rotate around={35:(0,0.14)}] (0,0.14) ellipse [x radius=0.06cm,y radius=0.14cm];
   \end{scope}
 }
 
-\newcommand{\floralwatermarkrow}[1]{%
-  \foreach \x in {1.5,6,10.5,15,19} {
-    \begin{scope}[shift={([xshift=\x cm,yshift=-#1 cm]current page.north west)}]
-      \drawfloral{1}
-    \end{scope}
-  }
-}
-
-\newcommand{\drawfloralwatermark}{%
-  \begin{scope}[opacity=0.08]
-    \ifnum\value{page}=1
-      \foreach \y in {4.5,9,13.5,18,22.5,27} {
-        \floralwatermarkrow{\y}
-      }
-    \else
-      \foreach \y in {1.5,6,10.5,15,19.5,24,28.5} {
-        \floralwatermarkrow{\y}
-      }
-    \fi
+\newcommand{\drawresumeFlowers}{%
+  \begin{scope}[opacity=0.2]
+    \foreach \x/\y/\scale in {1.6/1.5/0.85,1.1/5/0.7,1.8/8.5/0.8,1.2/12/0.65,1.7/15.5/0.8,1.1/19/0.7,1.7/22.5/0.85} {
+      \begin{scope}[shift={([xshift=-\x cm,yshift=\y cm]current page.south east)}]
+        \drawfloral{\scale}
+      \end{scope}
+    }
   \end{scope}
 }
 
@@ -109,15 +93,13 @@
   \begin{tikzpicture}[remember picture,overlay]
     \begin{pgfonlayer}{resumeBackground}
       \resumeiflayer{\resumeBackgroundLayer}{%
-        \if@cv@floralwatermark
-          \drawfloralwatermark
-        \fi
       }
     \end{pgfonlayer}
     \begin{pgfonlayer}{resumeHeader}
       \resumeiflayer{\resumeHeaderLayer}{%
         \node[anchor=north west,inner sep=0pt] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
         \node[anchor=south west,inner sep=0pt] at ([xshift=1.5cm,yshift=1.5cm]current page.south west) {\includegraphics[width=2.75cm]{watermarks/totoro}};
+        \drawresumeFlowers
       }
     \end{pgfonlayer}
     \begin{pgfonlayer}{resumeColumns}
@@ -245,12 +227,7 @@
 
 % Section seperators command
 \newcommand{\sectionsep}[0]{%
-  \if@cv@floralinline
-    \par\vspace{2pt}
-    \noindent\hfill\begin{tikzpicture}[baseline=-0.5ex]\drawfloral{0.45}\end{tikzpicture}\hfill\par\vspace{2pt}
-  \else
-    \vspace{8pt}
-  \fi
+  \vspace{8pt}
 }
 
 % Bullet Lists with fewer gaps command

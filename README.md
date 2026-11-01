@@ -89,15 +89,13 @@ bin/build
 xelatex Resume_Jason_Yao.tex
 ```
 
-To generate either floral variant instead:
+To generate previews of each resume layer for development:
 
 ```sh
-bin/build inline     # Delft-blue ornaments between sections
-bin/build watermark  # faint floral watermark, clear of the first-page header
-bin/build dev        # default resume plus individual layer PNGs for debugging
+bin/build dev
 ```
 
-The inline and watermark variants write separately named PDFs and thumbnails. The development build uses the default filenames and also writes `Resume_Jason_Yao_layer_*.png` for the four composition layers.
+The floral decoration is part of the header layer, beginning at the bottom right. The development build uses the default filenames and also writes `Resume_Jason_Yao_layer_*.png` for the four composition layers.
 
 ## Testing
 
