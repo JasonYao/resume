@@ -478,6 +478,14 @@ function M.page(g)
   local cx = g.colright * 0.47
   local amp = g.colright * 0.2
   local mains, mainev = {}, {}
+  local terminal_bloom_size = min(1.75, g.colright * 0.27)
+  local terminal_bloom_clearance = 0.15
+  local terminal_bloom_extent = 1.15 -- radial allowance for the full petal footprint
+  local stem_step = 0.25
+  if obstacle then
+    local available_size = max(0, (col[4] + 0.3 - obstacle[4] - terminal_bloom_clearance - stem_step) / (2 * terminal_bloom_extent))
+    terminal_bloom_size = min(terminal_bloom_size, available_size)
+  end
   local tops = { g.ph - 2.6, g.ph * layout.range(0.6, 0.72), g.ph * layout.range(0.36, 0.48) }
   for k = 1, NSTEM do
     local f = ink.fbm1(layout, 2)
@@ -498,6 +506,13 @@ function M.page(g)
       end
       pts[#pts + 1] = { x, y }
       y = y + 0.25
+    end
+    if k == 1 and obstacle and terminal_bloom_size > 0 then
+      local bloom_radius = terminal_bloom_extent * terminal_bloom_size
+      local bloom_top = obstacle[4] + bloom_radius + terminal_bloom_clearance - 0.2
+      while pts[#pts][2] < bloom_top do
+        pts[#pts + 1] = { pts[#pts][1], pts[#pts][2] + stem_step }
+      end
     end
     mains[k] = pts
     mainev[k] = event({ kind = "stem", phase = "stems" })
@@ -574,14 +589,16 @@ function M.page(g)
   local counts = {}
   for _, m in ipairs(motifs) do counts[m.name] = 0 end
   do
-    local p, q = mains[1][#mains[1]], mains[1][#mains[1] - 2]
-    local hx, hy = norm(p[1] - q[1], p[2] - q[2])
-    local s = min(1.75, g.colright * 0.27)
-    local fx, fy = p[1] + hx * 0.2, p[2] + hy * 0.2
-    event({ kind = "bloom", parent = mainev[1], at = 1, size = s })
-    place(L_BLOOM, fx, fy, 90, function() F.flower(rng.fork(), s) end)
-    disc(fx, fy, 1.05 * s, 0.85)
-    blooms[#blooms + 1] = { fx, fy, s }
+    if terminal_bloom_size > 0 then
+      local p, q = mains[1][#mains[1]], mains[1][#mains[1] - 2]
+      local hx, hy = norm(p[1] - q[1], p[2] - q[2])
+      local s = terminal_bloom_size
+      local fx, fy = p[1] + hx * 0.2, p[2] + hy * 0.2
+      event({ kind = "bloom", parent = mainev[1], at = 1, size = s })
+      place(L_BLOOM, fx, fy, 90, function() F.flower(rng.fork(), s) end)
+      disc(fx, fy, 1.05 * s, 0.85)
+      blooms[#blooms + 1] = { fx, fy, s }
+    end
     for k = 2, NSTEM do
       local pts = mains[k]
       local p2, q2 = pts[#pts], pts[#pts - 2]
