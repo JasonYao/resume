@@ -1,11 +1,12 @@
 % Generated with Florilegium's grown composition:
 % https://github.com/kevinraymond/florilegium/tree/5c9bd05ad7ad0ed7b0bfb0cfa2adc1720406e63b
 \documentclass[10pt]{article}
-\usepackage[letterpaper,landscape,left=15mm,right=68mm,top=45mm,bottom=15mm,headsep=8mm]{geometry}
+\usepackage[letterpaper,landscape,left=15mm,right=30mm,top=45mm,bottom=15mm,headsep=8mm]{geometry}
 \pagestyle{empty}
 
 % Seed is a positive integer; density is 0.05-1; intensity is 0-1.
-% Landscape growth rotated counterclockwise becomes a bottom-right horizontal row.
+% The 30 mm right margin gives Florilegium a ~5 cm growth column. Rotating it
+% counterclockwise places the seeded, greedily filled garden along the page bottom.
 \def\florilegiumseed{1}
 \usepackage[grown,density=1,intensity=0.8]{florilegium}
 \directlua{florilegium.head = function() end}

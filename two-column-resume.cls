@@ -55,9 +55,14 @@
 \definecolor{primary}{HTML}{000000}
 \definecolor{headings}{HTML}{0E0E0F}
 \definecolor{subheadings}{HTML}{1A1C1E}
+\definecolor{resumeLeftColumn}{HTML}{009E73}
+\definecolor{resumeRightColumn}{HTML}{D55E00}
+\definecolor{resumeEducation}{HTML}{56B4E9}
+\definecolor{resumeSkills}{HTML}{CC79A7}
+\definecolor{resumeExperience}{HTML}{E69F00}
 \providecommand{\resumeFlowerLayerPdf}{florilegium_layer.pdf}
-\def\resumeFlowerClipHeight{10.1cm}
-\def\resumeFlowerVerticalOffset{-12cm}
+\def\resumeFlowerClipHeight{5.05cm}
+\def\resumeFlowerVerticalOffset{0cm}
 \tikzset{resumePreviewBox/.style={draw=red,line width=0.5pt}}
 \newcommand{\resumeDrawPreviewBounds}[1]{%
   \ifx\resumeLayerPreview\resumeCompositeLayer\else
@@ -74,7 +79,7 @@
       ([yshift=\resumeFlowerClipHeight]current page.south west),
       ([yshift=\resumeFlowerClipHeight]current page.south east)
     } {
-      \draw[orange,->] (resumeFlowerCenter) -- node[midway,fill=white,inner sep=1pt,font=\scriptsize,text=orange] {11.9 cm} \corner;
+      \draw[orange,->] (resumeFlowerCenter) -- node[midway,fill=white,inner sep=1pt,font=\scriptsize,text=orange] {11.1 cm} \corner;
     }
   \fi
 }
@@ -90,6 +95,17 @@
     #1%
   \else
     \tikz[baseline=(resumeLinks.base)]\node[draw=blue,line width=0.5pt,inner sep=0pt,outer sep=0pt] (resumeLinks) {#1};
+  \fi
+}
+\newcommand{\resumePreviewContentBox}[2]{%
+  \ifx\resumeLayerPreview\resumeColumnsLayer
+    \begingroup
+      \setlength{\fboxsep}{0pt}%
+      \setlength{\fboxrule}{0.5pt}%
+      \color{#1}\fbox{\vbox{\hsize=\dimexpr\linewidth-1pt\relax\color{primary}#2}}%
+    \endgroup
+  \else
+    #2%
   \fi
 }
 
@@ -126,7 +142,7 @@
         \end{scope}
         \resumeDrawFlowerBounds
         \node[anchor=north west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
-        \node[anchor=south west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=1.5cm]current page.south west) {\includegraphics[width=2.75cm]{watermarks/totoro}};
+        \node[anchor=south,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=\dimexpr0.75cm+0.17\textwidth\relax,yshift=1.5cm]current page.south west) {\includegraphics[width=2.75cm]{watermarks/totoro}};
       }
     \end{pgfonlayer}
     \begin{pgfonlayer}{resumeColumns}

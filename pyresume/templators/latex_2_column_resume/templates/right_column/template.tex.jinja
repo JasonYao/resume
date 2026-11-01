@@ -1,9 +1,11 @@
 % Right Column
+\resumePreviewContentBox{resumeRightColumn}{%
 \begin{minipage}[t]{0.65\textwidth}
 
 %
 % Experience
 %
+\resumePreviewContentBox{resumeExperience}{%
 \section{Experience}
 
 \BLOCK{for employer in employers}
@@ -19,6 +21,7 @@
         \sectionsep
     \BLOCK{endfor}
 \BLOCK{endfor}
+}
 
 %\workplace{Ivy Tech Capital}{Beijing, China}{\protect\diffdates{2016}{06}{2016}{08}}
 %\position{Software Engineer Intern}{Jun. 2016 – Aug. 2016}
@@ -91,3 +94,4 @@
 
 % * Repo access available upon request
 \end{minipage}
+}
