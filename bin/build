@@ -15,7 +15,6 @@ tex_file_name="${base_file_name}.tex"
 dev_mode=false
 florilegium_commit="5c9bd05ad7ad0ed7b0bfb0cfa2adc1720406e63b"
 florilegium_source_dir="/tmp/florilegium-${florilegium_commit}"
-florilegium_layer_file="florilegium_layer.pdf"
 
 build_mode="${1:-default}"
 case "${build_mode}" in
