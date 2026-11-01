@@ -27,23 +27,12 @@
       math.min(row[3], 1.5 + 0.3 + 2.75 + padding),
       math.min(row[4], totoro_y_max),
     }
-    local flower_regions = {}
-    local function add(rect)
-      if rect[1] < rect[3] and rect[2] < rect[4] then
-        table.insert(flower_regions, rect)
-      end
-    end
-    local stem_obstacle
+    local masks = {}
     if obstacle[1] < obstacle[3] and obstacle[2] < obstacle[4] then
-      stem_obstacle = obstacle
-      add({ row[1], row[2], obstacle[1], row[4] })
-      add({ obstacle[3], row[2], row[3], row[4] })
-      add({ obstacle[1], row[2], obstacle[3], obstacle[2] })
-      add({ obstacle[1], obstacle[4], obstacle[3], row[4] })
-    else
-      add(row)
+      masks[1] = obstacle
     end
-    return flower_regions, row, foot, nil, math.min(fx1, flower_row_max_x), stem_obstacle
+    local flower_regions = growth.subtract_regions({ row }, masks)
+    return flower_regions, row, foot, nil, math.min(fx1, flower_row_max_x), masks
   end
 }
 

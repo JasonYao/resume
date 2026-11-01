@@ -166,6 +166,30 @@ M.theme(nil)
 -- ---------------------------------------------------------------- region
 -- rects = { {x0,y0,x1,y1}, ... }, a union; shared edges count as open
 local function inside(r, x, y) return x > r[1] and x < r[3] and y > r[2] and y < r[4] end
+function M.in_regions(rects, x, y)
+  for _, r in ipairs(rects) do if inside(r, x, y) then return true end end
+  return false
+end
+function M.subtract_regions(rects, masks)
+  local result = rects
+  for _, mask in ipairs(masks) do
+    local next_result = {}
+    for _, r in ipairs(result) do
+      local x0, y0 = max(r[1], mask[1]), max(r[2], mask[2])
+      local x1, y1 = min(r[3], mask[3]), min(r[4], mask[4])
+      if x0 >= x1 or y0 >= y1 then
+        next_result[#next_result + 1] = r
+      else
+        if r[2] < y0 then next_result[#next_result + 1] = { r[1], r[2], r[3], y0 } end
+        if y1 < r[4] then next_result[#next_result + 1] = { r[1], y1, r[3], r[4] } end
+        if r[1] < x0 then next_result[#next_result + 1] = { r[1], y0, x0, y1 } end
+        if x1 < r[3] then next_result[#next_result + 1] = { x1, y0, r[3], y1 } end
+      end
+    end
+    result = next_result
+  end
+  return result
+end
 local function border(rects, x, y)
   local best = -1
   for _, r in ipairs(rects) do
@@ -370,7 +394,9 @@ function M.page(g)
   local sea = ink.rng(g.seed * 7919 + 211)
   local blooms = {}                         -- the flowers, for the petals that fall in autumn
 
-  local rects, col, foot, spill, fx1, obstacle = M.regions(g, layout)
+  local rects, col, foot, spill, fx1, obstacles = M.regions(g, layout)
+  if obstacles and type(obstacles[1]) == "number" then obstacles = { obstacles } end
+  obstacles = obstacles or {}
   local fld = M.field(rects)
   local gx, gy, free, each_near, disc, free_at = fld.x, fld.y, fld.free, fld.each_near, fld.disc, fld.free_at
   local sdist = {}                          -- distance to the nearest stem point
@@ -482,8 +508,12 @@ function M.page(g)
   local terminal_bloom_clearance = 0.15
   local terminal_bloom_extent = 1.15 -- radial allowance for the full petal footprint
   local stem_step = 0.25
-  if obstacle then
-    local available_size = max(0, (col[4] + 0.3 - obstacle[4] - terminal_bloom_clearance - stem_step) / (2 * terminal_bloom_extent))
+  local obstacle_top = col[2]
+  for _, obstacle in ipairs(obstacles) do
+    obstacle_top = max(obstacle_top, obstacle[4])
+  end
+  if #obstacles > 0 then
+    local available_size = max(0, (col[4] - obstacle_top - terminal_bloom_clearance - stem_step - 0.2) / (2 * terminal_bloom_extent))
     terminal_bloom_size = min(terminal_bloom_size, available_size)
   end
   local tops = { g.ph - 2.6, g.ph * layout.range(0.6, 0.72), g.ph * layout.range(0.36, 0.48) }
@@ -497,7 +527,7 @@ function M.page(g)
       local x = cx + amp * f(y / lam + ph) + (k - 2) * 0.35
       x = lerp(x0, x, smoothstep(0, 4, y - root[2]))
       x = max(0.9, min(g.colright - 0.9, x))
-      if obstacle then
+      for _, obstacle in ipairs(obstacles) do
         local lead = 0.8
         local lane = obstacle[1] - 0.45
         local enter = smoothstep(obstacle[2] - lead, obstacle[2] - 0.2, y)
@@ -507,9 +537,9 @@ function M.page(g)
       pts[#pts + 1] = { x, y }
       y = y + 0.25
     end
-    if k == 1 and obstacle and terminal_bloom_size > 0 then
+    if k == 1 and #obstacles > 0 and terminal_bloom_size > 0 then
       local bloom_radius = terminal_bloom_extent * terminal_bloom_size
-      local bloom_top = obstacle[4] + bloom_radius + terminal_bloom_clearance - 0.2
+      local bloom_top = obstacle_top + bloom_radius + terminal_bloom_clearance - 0.2
       while pts[#pts][2] < bloom_top do
         pts[#pts + 1] = { pts[#pts][1], pts[#pts][2] + stem_step }
       end
@@ -1020,11 +1050,11 @@ function M.page(g)
     ink.circle(x2 + 0.45, e[2], 0.025) ink.fill(ink.accent(0))
   end
 
-  -- assemble: a safety clip a little outside the regions, then the layers
+  -- Keep every generated path inside the exact region union.
   ink.tag(nil)
   ink.layer(0)
   for _, r in ipairs(rects) do
-    ink.poly({ { r[1] - 0.25, r[2] - 0.3 }, { r[3] + (r == col and 0.25 or 0.3), r[2] - 0.3 }, { r[3] + (r == col and 0.25 or 0.3), r[4] + 0.3 }, { r[1] - 0.25, r[4] + 0.3 } }, true)
+    ink.poly({ { r[1], r[2] }, { r[3], r[2] }, { r[3], r[4] }, { r[1], r[4] } }, true)
   end
   ink.clip()
   ink.layer(99)
