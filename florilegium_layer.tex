@@ -16,28 +16,32 @@
   growth.regions = function(g, layout)
     local rects, col, foot, spill, fx1 = original_regions(g, layout)
     local padding = 0.2
+    local flower_row_max_x = 5.05 + 0.3
     local totoro_center_x = 0.75 + 0.17 * (g.ph - 3.0)
     local totoro_y_min = g.ph - (totoro_center_x + 2.75 / 2 + padding)
     local totoro_y_max = g.ph - (totoro_center_x - 2.75 / 2 - padding)
-    local totoro_x_min = 1.5 + 0.3 - padding
-    local totoro_x_max = 1.5 + 0.3 + 2.75 + padding
+    local row = { col[1], col[2], math.min(col[3], flower_row_max_x), col[4] }
+    local obstacle = {
+      math.max(row[1], 1.5 + 0.3 - padding),
+      math.max(row[2], totoro_y_min),
+      math.min(row[3], 1.5 + 0.3 + 2.75 + padding),
+      math.min(row[4], totoro_y_max),
+    }
     local flower_regions = {}
     local function add(rect)
       if rect[1] < rect[3] and rect[2] < rect[4] then
         table.insert(flower_regions, rect)
       end
     end
-    for _, rect in ipairs(rects) do
-      if rect == col then
-        add({ rect[1], rect[2], totoro_x_min, rect[4] })
-        add({ totoro_x_max, rect[2], rect[3], rect[4] })
-        add({ totoro_x_min, rect[2], totoro_x_max, totoro_y_min })
-        add({ totoro_x_min, totoro_y_max, totoro_x_max, rect[4] })
-      else
-        add(rect)
-      end
+    if obstacle[1] < obstacle[3] and obstacle[2] < obstacle[4] then
+      add({ row[1], row[2], obstacle[1], row[4] })
+      add({ obstacle[3], row[2], row[3], row[4] })
+      add({ obstacle[1], row[2], obstacle[3], obstacle[2] })
+      add({ obstacle[1], obstacle[4], obstacle[3], row[4] })
+    else
+      add(row)
     end
-    return flower_regions, col, foot, spill, fx1
+    return flower_regions, row, foot, nil, math.min(fx1, flower_row_max_x)
   end
 }
 
