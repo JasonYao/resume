@@ -145,12 +145,15 @@ function generate_layer_previews() {
     local index
     local layer_name
     local layer_base_file_name
+    local layer_tex_file
     local layer_options
 
     for index in "${!layer_names[@]}"; do
         layer_name="${layer_names[$index]}"
         layer_base_file_name="${base_file_name}_layer_$((index + 1))_${layer_name}"
-        layer_options="\\def\\resumeLayerPreview{${layer_name}}${latex_options}\\input{${tex_file_name}}"
+        layer_tex_file="/tmp/${base_file_name}_${layer_name}_preview.tex"
+        awk -v layer="${layer_name}" '{ print; if (index($0, "\\documentclass") == 1) printf "\\renewcommand{\\resumeLayerPreview}{%s}\n", layer }' "${tex_file_name}" > "${layer_tex_file}"
+        layer_options="${latex_options}\\input{${layer_tex_file}}"
 
         info "Build: Generating ${layer_name} layer preview"
         export PATH=/tmp/texlive/bin/x86_64-linux:$PATH

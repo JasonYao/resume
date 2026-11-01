@@ -1,16 +1,15 @@
 % Right Column
-\resumePreviewColumnBox{resumeRightColumn}{\resumeRightColumnPreviewBuffer}{%
 \begin{minipage}[t]{0.65\textwidth}
 
 %
 % Experience
 %
-\resumePreviewContentBox{resumeExperience}{\resumeExperiencePreviewBuffer}{%
 \section{Experience}
 
 \BLOCK{for employer in employers}
     \workplace{\VAR{employer.logos.short}}{\VAR{employer.company_name}}{\VAR{employer.location}}{\VAR{employer.work_duration}}
     \BLOCK{for position in employer.positions}
+        \resumePreviewContentBox{resumePosition}{\resumePositionPreviewBuffer}{%
         \position{\VAR{position.title}}{\VAR{position.start_date} – \VAR{position.end_date}}
         \vspace{\topsep} % Hacky fix for awkward extra vertical space
         \begin{tightemize}
@@ -18,10 +17,10 @@
                 \item \VAR{description_line}
             \BLOCK{endfor}
         \end{tightemize}
+        }
         \sectionsep
     \BLOCK{endfor}
 \BLOCK{endfor}
-}
 
 %\workplace{Ivy Tech Capital}{Beijing, China}{\protect\diffdates{2016}{06}{2016}{08}}
 %\position{Software Engineer Intern}{Jun. 2016 – Aug. 2016}
@@ -94,4 +93,3 @@
 
 % * Repo access available upon request
 \end{minipage}
-}

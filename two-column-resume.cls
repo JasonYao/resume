@@ -55,16 +55,16 @@
 \definecolor{primary}{HTML}{000000}
 \definecolor{headings}{HTML}{0E0E0F}
 \definecolor{subheadings}{HTML}{1A1C1E}
-\definecolor{resumeLeftColumn}{HTML}{009E73}
-\definecolor{resumeRightColumn}{HTML}{D55E00}
 \definecolor{resumeEducation}{HTML}{56B4E9}
-\definecolor{resumeSkills}{HTML}{CC79A7}
-\definecolor{resumeExperience}{HTML}{E69F00}
+\definecolor{resumeProgramming}{HTML}{009E73}
+\definecolor{resumeGeneral}{HTML}{CC79A7}
+\definecolor{resumePosition}{HTML}{E69F00}
 \providecommand{\resumeFlowerLayerPdf}{florilegium_layer.pdf}
 \def\resumeFlowerClipHeight{5.05cm}
 \def\resumeFlowerVerticalOffset{-0.3cm}
 \def\resumeFlowerSeedInset{0.3cm}
 \def\resumeFlowerSeedBoxSize{1cm}
+\def\resumeFlowerTotoroPadding{0.2cm}
 \tikzset{resumePreviewBox/.style={draw=red,line width=0.5pt}}
 \newcommand{\resumeDrawPreviewBounds}[1]{%
   \ifx\resumeLayerPreview\resumeCompositeLayer\else
@@ -115,30 +115,18 @@
     #3%
   \fi
 }
-\newcommand{\resumePreviewColumnBox}[3]{%
-  \ifx\resumeLayerPreview\resumeColumnsLayer
-    \begingroup
-      \setbox#2=\hbox{#3}%
-      \hbox{\copy#2\smash{\rlap{\tikz[baseline=0pt]{%
-        \draw[#1,line width=0.5pt] (-\wd#2,-\dp#2) rectangle (0,\ht#2);%
-      }}}}%
-    \endgroup
-  \else
-    #3%
-  \fi
-}
-
 \newsavebox{\resumeHeaderBox}
 \newsavebox{\resumeColumnsBox}
-\newsavebox{\resumeLeftColumnPreviewBuffer}
-\newsavebox{\resumeRightColumnPreviewBuffer}
+\newsavebox{\resumeTotoroBox}
 \newsavebox{\resumeEducationPreviewBuffer}
-\newsavebox{\resumeSkillsPreviewBuffer}
-\newsavebox{\resumeExperiencePreviewBuffer}
+\newsavebox{\resumeProgrammingPreviewBuffer}
+\newsavebox{\resumeGeneralPreviewBuffer}
+\newsavebox{\resumePositionPreviewBuffer}
 \newsavebox{\resumeNameContentBox}
 \newsavebox{\resumeLinksContentBox}
 \newcommand{\resumeForegroundContent}{}
 \newcommand{\resumecompose}[2]{%
+  \sbox{\resumeTotoroBox}{\includegraphics[width=2.75cm]{watermarks/totoro}}%
   \sbox{\resumeHeaderBox}{\begin{minipage}{\textwidth}#1\end{minipage}}%
   \sbox{\resumeColumnsBox}{%
     \begin{minipage}{\textwidth}%
@@ -164,9 +152,13 @@
           \node[anchor=south west,inner sep=0pt] at ([yshift=\resumeFlowerVerticalOffset]current page.south west) {
             \includegraphics[angle=90]{\resumeFlowerLayerPdf}};
         \end{scope}
+        \fill[white]
+          ([xshift=\dimexpr0.75cm+0.17\textwidth-\wd\resumeTotoroBox/2-\resumeFlowerTotoroPadding\relax,yshift=\dimexpr1.5cm-\resumeFlowerTotoroPadding\relax]current page.south west)
+          rectangle
+          ([xshift=\dimexpr0.75cm+0.17\textwidth+\wd\resumeTotoroBox/2+\resumeFlowerTotoroPadding\relax,yshift=\dimexpr1.5cm+\ht\resumeTotoroBox+\resumeFlowerTotoroPadding\relax]current page.south west);
         \resumeDrawFlowerBounds
         \node[anchor=north west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
-        \node[anchor=south,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=\dimexpr0.75cm+0.17\textwidth\relax,yshift=1.5cm]current page.south west) {\includegraphics[width=2.75cm]{watermarks/totoro}};
+        \node[anchor=south,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=\dimexpr0.75cm+0.17\textwidth\relax,yshift=1.5cm]current page.south west) {\usebox{\resumeTotoroBox}};
       }
     \end{pgfonlayer}
     \begin{pgfonlayer}{resumeColumns}
