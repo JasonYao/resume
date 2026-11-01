@@ -517,6 +517,9 @@ function M.page(g)
     terminal_bloom_size = min(terminal_bloom_size, available_size)
   end
   local tops = { g.ph - 2.6, g.ph * layout.range(0.6, 0.72), g.ph * layout.range(0.36, 0.48) }
+  local function spline_bump(t)
+    return smoothstep(0, 1, 2 * min(t, 1 - t))
+  end
   for k = 1, NSTEM do
     local f = ink.fbm1(layout, 2)
     local ph, lam = layout.range(0, 10), layout.range(6, 9)
@@ -529,7 +532,9 @@ function M.page(g)
       x = max(0.9, min(g.colright - 0.9, x))
       for _, obstacle in ipairs(obstacles) do
         local lead = 0.8
-        local lane = obstacle[1] - 0.45
+        local progress = (y - obstacle[2]) / (obstacle[4] - obstacle[2])
+        local bow = (0.25 + (k - 1) * 0.07) * spline_bump(progress)
+        local lane = max(col[1] + 0.12, obstacle[1] - 0.45 - bow)
         local enter = smoothstep(obstacle[2] - lead, obstacle[2] - 0.2, y)
         local leave = 1 - smoothstep(obstacle[4] + 0.2, obstacle[4] + lead, y)
         x = lerp(x, min(x, lane), enter * leave)
