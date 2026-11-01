@@ -58,21 +58,67 @@
 \definecolor{floralblue}{HTML}{2456C4}
 
 \newcommand{\drawfloral}[1]{%
-  \begin{scope}[scale=#1,draw=floralblue!70,fill=floralblue!18]
+  \begin{scope}[scale=#1,draw=floralblue!75,fill=floralblue!32]
     \foreach \angle in {0,72,144,216,288} {
       \fill[rotate around={\angle:(0,0.62)}] (0,0.74) ellipse [x radius=0.07cm,y radius=0.16cm];
     }
     \fill[floralblue!70] (0,0.62) circle [radius=0.045cm];
-    \draw[line width=0.3pt] (0,0) .. controls (0.03,0.15) and (-0.03,0.3) .. (0,0.5);
+    \draw[line width=0.65pt] (0,0) .. controls (0.03,0.15) and (-0.03,0.3) .. (0,0.5);
     \fill[rotate around={-35:(0,0.28)}] (0,0.28) ellipse [x radius=0.06cm,y radius=0.14cm];
     \fill[rotate around={35:(0,0.14)}] (0,0.14) ellipse [x radius=0.06cm,y radius=0.14cm];
   \end{scope}
 }
 
+\newcommand{\drawresumeLeaf}[4]{%
+  \begin{scope}[shift={(#1,#2)},rotate=#3,scale=#4]
+    \path[fill=floralblue!28,draw=floralblue!65,line width=0.45pt]
+      (0,0) .. controls (0.12,0.22) and (0.12,0.48) .. (0,0.68)
+      .. controls (-0.12,0.48) and (-0.12,0.22) .. cycle;
+    \draw[floralblue!65,line width=0.35pt] (0,0) -- (0,0.61);
+  \end{scope}
+}
+
 \newcommand{\drawresumeFlowers}{%
-  \begin{scope}[opacity=0.2]
-    \foreach \x/\y/\scale in {1.6/1.5/0.85,1.1/5/0.7,1.8/8.5/0.8,1.2/12/0.65,1.7/15.5/0.8,1.1/19/0.7,1.7/22.5/0.85} {
-      \begin{scope}[shift={([xshift=-\x cm,yshift=\y cm]current page.south east)}]
+  \begin{scope}[shift={([xshift=-1.5cm,yshift=1.2cm]current page.south east)}]
+    \draw[floralblue!70,line width=1.15pt]
+      (0,0) .. controls (-1.2,2) and (-0.5,4) .. (-2.7,5.8)
+      .. controls (-4.3,7.1) and (-2.8,9) .. (-5.6,10.6)
+      .. controls (-8.2,12.2) and (-4.6,13.2) .. (-6.2,15.2)
+      .. controls (-7.7,17.1) and (-10.2,17.2) .. (-10.8,19.1)
+      .. controls (-11.6,21) and (-10.1,22.2) .. (-12.8,23.3);
+
+    \draw[floralblue!65,line width=0.9pt] (-2.4,5.5) .. controls (-0.5,6.1) and (0.1,7.4) .. (-0.1,9.2);
+    \draw[floralblue!65,line width=0.9pt] (-2.6,6) .. controls (-4.2,5.2) and (-5.8,4.9) .. (-7.6,5.2);
+    \draw[floralblue!65,line width=0.9pt] (-4.8,9.8) .. controls (-3.1,10.9) and (-2.4,12.2) .. (-2.7,14);
+    \draw[floralblue!65,line width=0.9pt] (-5.8,10.5) .. controls (-7.4,9.1) and (-9.1,8.8) .. (-11.2,9.4);
+    \draw[floralblue!65,line width=0.9pt] (-6.2,14.9) .. controls (-4.5,15.7) and (-3.1,16.7) .. (-2.5,18.3);
+    \draw[floralblue!65,line width=0.9pt] (-7.3,16.5) .. controls (-9.2,15.9) and (-11.2,16.1) .. (-13.3,17.2);
+    \draw[floralblue!65,line width=0.9pt] (-10.7,18.8) .. controls (-9,19.1) and (-7.4,20.1) .. (-6.5,21.8);
+
+    \drawresumeLeaf{-0.5}{2.4}{-48}{1}
+    \drawresumeLeaf{-1.6}{3.5}{42}{0.9}
+    \drawresumeLeaf{-2.8}{5.9}{-55}{1.1}
+    \drawresumeLeaf{-4.3}{6.9}{40}{0.95}
+    \drawresumeLeaf{-3.9}{8.9}{-42}{1.05}
+    \drawresumeLeaf{-6.6}{10.8}{47}{1}
+    \drawresumeLeaf{-7.2}{12.3}{-50}{1.1}
+    \drawresumeLeaf{-4.9}{13.5}{40}{0.95}
+    \drawresumeLeaf{-7.8}{15.8}{-45}{1}
+    \drawresumeLeaf{-10.4}{17.1}{48}{1.1}
+    \drawresumeLeaf{-9.3}{19.8}{-45}{0.95}
+    \drawresumeLeaf{-12.1}{21.2}{42}{1.05}
+
+    \foreach \x/\y/\angle/\scale in {
+      -0.1/9.2/25/1.2,
+      -7.6/5.2/-40/1.05,
+      -2.7/14/5/1.15,
+      -11.2/9.4/-35/1.1,
+      -2.5/18.3/10/1.2,
+      -13.3/17.2/-45/1.15,
+      -6.5/21.8/15/1.05,
+      -12.8/23.3/0/1.25
+    } {
+      \begin{scope}[shift={(\x,\y)},rotate=\angle]
         \drawfloral{\scale}
       \end{scope}
     }
@@ -97,9 +143,9 @@
     \end{pgfonlayer}
     \begin{pgfonlayer}{resumeHeader}
       \resumeiflayer{\resumeHeaderLayer}{%
+        \drawresumeFlowers
         \node[anchor=north west,inner sep=0pt] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
         \node[anchor=south west,inner sep=0pt] at ([xshift=1.5cm,yshift=1.5cm]current page.south west) {\includegraphics[width=2.75cm]{watermarks/totoro}};
-        \drawresumeFlowers
       }
     \end{pgfonlayer}
     \begin{pgfonlayer}{resumeColumns}
