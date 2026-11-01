@@ -55,46 +55,54 @@
 \definecolor{primary}{HTML}{000000}
 \definecolor{headings}{HTML}{0E0E0F}
 \definecolor{subheadings}{HTML}{1A1C1E}
-% Flower configuration. Keep placement, density, color and shape tuning here.
-% Opacity range: 0.35-1.0; color tints: 0-100; line widths: 0.35pt-2pt.
+% Flower configuration, inspired by Florilegium's full-density grown garden.
+% Opacity range: 0.35-1; color tints: 0-100; stroke widths: 0.2pt-2pt.
 % Start offsets: x=0.5-3cm from the right, y=0.5-2cm from the bottom.
 % Keep vine/branch/flower placement y<=19.5cm from the start to clear the header.
-% Leaf scale range: 0.6-1.4; flower scale range: 0.75-1.4.
-% Petal width range: 0.04-0.12cm; length: 0.1-0.25cm; leaf width: 0.08-0.2cm.
-% Leaf length range: 0.4-0.9cm; center radius: 0.025-0.07cm.
+% Leaf scale range: 0.6-1.4; flower scale range: 0.35-1.6.
+% Petal radius ranges: width 0.08-0.28cm, length 0.16-0.45cm; center 0.025-0.1cm.
+% Leaf width range: 0.08-0.24cm; length: 0.4-1.2cm.
 % Petal/leaf placement rotations currently range -55 to 48 degrees; x positions -14.2 to 0.5cm.
+% Composition ranges: 1-4 main stems, 8-30 branches, 20-60 leaves, 12-40 flower heads.
 \definecolor{floralblue}{HTML}{2456C4}
-\def\resumeFlowerOpacity{0.9}
-\def\resumeFlowerPetalTint{35}
-\def\resumeFlowerLeafTint{28}
+\def\resumeFlowerOpacity{1}
+\def\resumeFlowerPetalTint{48}
+\def\resumeFlowerLeafTint{42}
 \def\resumeFlowerVineTint{70}
 \def\resumeFlowerBranchTint{65}
 \def\resumeFlowerOutlineTint{65}
 \def\resumeFlowerPetalOutlineTint{75}
 \def\resumeFlowerCenterTint{70}
-\def\resumeFlowerVineWidth{1.4pt}
-\def\resumeFlowerBranchWidth{1.05pt}
-\def\resumeFlowerOutlineWidth{0.55pt}
-\def\resumeFlowerVeinWidth{0.4pt}
+\def\resumeFlowerVineWidth{1.1pt}
+\def\resumeFlowerSecondaryVineWidth{0.8pt}
+\def\resumeFlowerBranchWidth{0.75pt}
+\def\resumeFlowerOutlineWidth{0.5pt}
+\def\resumeFlowerVeinWidth{0.3pt}
+\def\resumeFlowerHighlightWidth{0.25pt}
+\def\resumeFlowerHighlightOpacity{0.85}
 \def\resumeFlowerStartX{1.5cm}
 \def\resumeFlowerStartY{1.2cm}
-\def\resumeFlowerPetalWidth{0.07cm}
-\def\resumeFlowerPetalLength{0.16cm}
+\def\resumeFlowerPetalWidth{0.2cm}
+\def\resumeFlowerPetalLength{0.34cm}
 \def\resumeFlowerPetalCenterY{0.62}
 \def\resumeFlowerPetalY{0.74}
-\def\resumeFlowerCenterRadius{0.045cm}
+\def\resumeFlowerCenterRadius{0.07cm}
+\def\resumeFlowerPetalVeinStartY{0.66}
+\def\resumeFlowerPetalVeinControlOneY{0.7}
+\def\resumeFlowerPetalVeinControlTwoY{0.79}
+\def\resumeFlowerPetalVeinEndY{0.86}
 \def\resumeFlowerStemControlX{0.03}
 \def\resumeFlowerStemControlOneY{0.15}
 \def\resumeFlowerStemControlTwoY{0.3}
 \def\resumeFlowerStemEndY{0.5}
-\def\resumeFlowerSepalWidth{0.06cm}
-\def\resumeFlowerSepalLength{0.14cm}
+\def\resumeFlowerSepalWidth{0.08cm}
+\def\resumeFlowerSepalLength{0.2cm}
 \def\resumeFlowerSepalOneAngle{-35}
 \def\resumeFlowerSepalOneY{0.28}
 \def\resumeFlowerSepalTwoAngle{35}
 \def\resumeFlowerSepalTwoY{0.14}
-\def\resumeFlowerLeafWidth{0.12cm}
-\def\resumeFlowerLeafLength{0.68cm}
+\def\resumeFlowerLeafWidth{0.17cm}
+\def\resumeFlowerLeafLength{0.88cm}
 \def\resumeFlowerLeafControlOneY{0.22}
 \def\resumeFlowerLeafControlTwoY{0.48}
 \def\resumeFlowerLeafVeinEndY{0.61}
@@ -104,6 +112,11 @@
   \fill[rotate around={144:(0,\resumeFlowerPetalCenterY)}] (0,\resumeFlowerPetalY) ellipse [x radius=\resumeFlowerPetalWidth,y radius=\resumeFlowerPetalLength];
   \fill[rotate around={216:(0,\resumeFlowerPetalCenterY)}] (0,\resumeFlowerPetalY) ellipse [x radius=\resumeFlowerPetalWidth,y radius=\resumeFlowerPetalLength];
   \fill[rotate around={288:(0,\resumeFlowerPetalCenterY)}] (0,\resumeFlowerPetalY) ellipse [x radius=\resumeFlowerPetalWidth,y radius=\resumeFlowerPetalLength];
+  \draw[white,line width=\resumeFlowerHighlightWidth,opacity=\resumeFlowerHighlightOpacity] (0,\resumeFlowerPetalVeinStartY) .. controls (0.015,\resumeFlowerPetalVeinControlOneY) and (-0.015,\resumeFlowerPetalVeinControlTwoY) .. (0,\resumeFlowerPetalVeinEndY);
+  \draw[white,line width=\resumeFlowerHighlightWidth,opacity=\resumeFlowerHighlightOpacity,rotate around={72:(0,\resumeFlowerPetalCenterY)}] (0,\resumeFlowerPetalVeinStartY) .. controls (0.015,\resumeFlowerPetalVeinControlOneY) and (-0.015,\resumeFlowerPetalVeinControlTwoY) .. (0,\resumeFlowerPetalVeinEndY);
+  \draw[white,line width=\resumeFlowerHighlightWidth,opacity=\resumeFlowerHighlightOpacity,rotate around={144:(0,\resumeFlowerPetalCenterY)}] (0,\resumeFlowerPetalVeinStartY) .. controls (0.015,\resumeFlowerPetalVeinControlOneY) and (-0.015,\resumeFlowerPetalVeinControlTwoY) .. (0,\resumeFlowerPetalVeinEndY);
+  \draw[white,line width=\resumeFlowerHighlightWidth,opacity=\resumeFlowerHighlightOpacity,rotate around={216:(0,\resumeFlowerPetalCenterY)}] (0,\resumeFlowerPetalVeinStartY) .. controls (0.015,\resumeFlowerPetalVeinControlOneY) and (-0.015,\resumeFlowerPetalVeinControlTwoY) .. (0,\resumeFlowerPetalVeinEndY);
+  \draw[white,line width=\resumeFlowerHighlightWidth,opacity=\resumeFlowerHighlightOpacity,rotate around={288:(0,\resumeFlowerPetalCenterY)}] (0,\resumeFlowerPetalVeinStartY) .. controls (0.015,\resumeFlowerPetalVeinControlOneY) and (-0.015,\resumeFlowerPetalVeinControlTwoY) .. (0,\resumeFlowerPetalVeinEndY);
 }
 \def\resumeFlowerVinePath{%
   (0,0) .. controls (-1.2,2) and (-0.5,4) .. (-2.7,5.8)
@@ -111,6 +124,12 @@
   .. controls (-8.2,12.2) and (-4.6,13.2) .. (-6.2,15.2)
   .. controls (-7.7,17.1) and (-10.2,17.2) .. (-10.8,19.1)
   .. controls (-11.6,19.3) and (-10.1,19.4) .. (-12.8,19.5)
+}
+\def\resumeFlowerSecondaryVines{%
+  \draw[floralblue!\resumeFlowerVineTint,line width=\resumeFlowerSecondaryVineWidth] (-0.3,0.2) .. controls (-2.3,2.3) and (-0.7,4.5) .. (-3.2,6.7)
+    .. controls (-5.1,8.5) and (-2.3,10.4) .. (-4.2,12.9) .. controls (-5.4,14.5) and (-3.5,16.1) .. (-4.5,18.1);
+  \draw[floralblue!\resumeFlowerVineTint,line width=\resumeFlowerSecondaryVineWidth] (-0.8,0.1) .. controls (-3.2,2.7) and (-5.8,2.5) .. (-7.3,5.2)
+    .. controls (-8.6,7.5) and (-6.4,9.4) .. (-8.1,11.8) .. controls (-9.3,13.3) and (-7.9,15.3) .. (-9.6,18.2);
 }
 \def\resumeFlowerBranchPaths{%
   \draw[floralblue!\resumeFlowerBranchTint,line width=\resumeFlowerBranchWidth] (-2.4,5.5) .. controls (-0.5,6.1) and (0.1,7.4) .. (-0.1,9.2);
@@ -125,6 +144,14 @@
   \draw[floralblue!\resumeFlowerBranchTint,line width=\resumeFlowerBranchWidth] (-8.2,13.8) .. controls (-9.8,12.8) and (-11.7,12.7) .. (-13.2,13.4);
   \draw[floralblue!\resumeFlowerBranchTint,line width=\resumeFlowerBranchWidth] (-8.5,17.5) .. controls (-7.2,18.2) and (-6.2,18.9) .. (-5.8,19.5);
   \draw[floralblue!\resumeFlowerBranchTint,line width=\resumeFlowerBranchWidth] (-11.5,19.2) .. controls (-12.4,19.1) and (-13.5,18.9) .. (-14.2,18.4);
+  \draw[floralblue!\resumeFlowerBranchTint,line width=\resumeFlowerBranchWidth] (-1.8,4.6) .. controls (-0.4,5.3) and (-0.2,6.1) .. (-0.4,7.1);
+  \draw[floralblue!\resumeFlowerBranchTint,line width=\resumeFlowerBranchWidth] (-3.2,6.7) .. controls (-4.7,6.1) and (-6.1,6.2) .. (-7.2,7.1);
+  \draw[floralblue!\resumeFlowerBranchTint,line width=\resumeFlowerBranchWidth] (-3.4,11.8) .. controls (-2.2,12.2) and (-1.9,13.5) .. (-2.7,14.6);
+  \draw[floralblue!\resumeFlowerBranchTint,line width=\resumeFlowerBranchWidth] (-7.4,10.8) .. controls (-6.2,11.4) and (-5.4,12.1) .. (-5.1,13.1);
+  \draw[floralblue!\resumeFlowerBranchTint,line width=\resumeFlowerBranchWidth] (-8.4,14.2) .. controls (-10.2,13.8) and (-11.8,14.3) .. (-12.6,15.8);
+  \draw[floralblue!\resumeFlowerBranchTint,line width=\resumeFlowerBranchWidth] (-4.5,17.7) .. controls (-3.6,17.2) and (-2.3,17.4) .. (-1.8,18.3);
+  \draw[floralblue!\resumeFlowerBranchTint,line width=\resumeFlowerBranchWidth] (-10.1,17.7) .. controls (-11.2,17.1) and (-12.7,17.2) .. (-13.8,18.1);
+  \draw[floralblue!\resumeFlowerBranchTint,line width=\resumeFlowerBranchWidth] (-1.3,2.6) .. controls (-2.8,3.2) and (-4.1,3.0) .. (-5.2,4.2);
 }
 \def\resumeFlowerLeaves{%
   \drawresumeLeaf{-0.5}{2.4}{-48}{1}
@@ -147,6 +174,24 @@
   \drawresumeLeaf{-12.8}{17.5}{-42}{0.95}
   \drawresumeLeaf{-5.4}{17.8}{-48}{1.05}
   \drawresumeLeaf{-2.4}{17}{40}{1}
+  \drawresumeLeaf{-1.6}{5.2}{-48}{0.8}
+  \drawresumeLeaf{-2.7}{6.1}{45}{0.85}
+  \drawresumeLeaf{-3.7}{8.2}{-52}{0.9}
+  \drawresumeLeaf{-5.2}{9.1}{42}{0.85}
+  \drawresumeLeaf{-2.8}{10.8}{-48}{0.8}
+  \drawresumeLeaf{-4.5}{12.2}{46}{0.9}
+  \drawresumeLeaf{-6.2}{13.5}{-50}{0.8}
+  \drawresumeLeaf{-3.4}{15.1}{42}{0.9}
+  \drawresumeLeaf{-5.4}{16.3}{-48}{0.8}
+  \drawresumeLeaf{-7.2}{17.4}{44}{0.85}
+  \drawresumeLeaf{-6.4}{4.8}{-45}{0.85}
+  \drawresumeLeaf{-8.1}{6.2}{48}{0.8}
+  \drawresumeLeaf{-9.7}{8.1}{-46}{0.9}
+  \drawresumeLeaf{-7.2}{9.8}{44}{0.85}
+  \drawresumeLeaf{-10.5}{11.7}{-48}{0.8}
+  \drawresumeLeaf{-8.6}{13.2}{46}{0.9}
+  \drawresumeLeaf{-11.4}{15.2}{-45}{0.8}
+  \drawresumeLeaf{-9.8}{16.7}{45}{0.85}
 }
 \def\resumeFlowerHeads{%
   \begin{scope}[shift={(-0.1,6.8)},rotate=25]\drawfloral{1.2}\end{scope}
@@ -161,6 +206,20 @@
   \begin{scope}[shift={(-8.4,7.9)},rotate=35]\drawfloral{1}\end{scope}
   \begin{scope}[shift={(-13.2,13.4)},rotate=-30]\drawfloral{1.05}\end{scope}
   \begin{scope}[shift={(-5.8,19.5)},rotate=15]\drawfloral{0.95}\end{scope}
+  \begin{scope}[shift={(-3.2,6.7)},rotate=-10]\drawfloral{0.75}\end{scope}
+  \begin{scope}[shift={(-4.2,12.9)},rotate=22]\drawfloral{0.7}\end{scope}
+  \begin{scope}[shift={(-4.5,18.1)},rotate=-18]\drawfloral{0.72}\end{scope}
+  \begin{scope}[shift={(-7.3,5.2)},rotate=28]\drawfloral{0.75}\end{scope}
+  \begin{scope}[shift={(-8.1,11.8)},rotate=-32]\drawfloral{0.7}\end{scope}
+  \begin{scope}[shift={(-9.6,18.2)},rotate=18]\drawfloral{0.68}\end{scope}
+  \begin{scope}[shift={(-0.4,7.1)},rotate=36]\drawfloral{0.55}\end{scope}
+  \begin{scope}[shift={(-7.2,7.1)},rotate=-30]\drawfloral{0.5}\end{scope}
+  \begin{scope}[shift={(-2.7,14.6)},rotate=18]\drawfloral{0.55}\end{scope}
+  \begin{scope}[shift={(-5.1,13.1)},rotate=-28]\drawfloral{0.5}\end{scope}
+  \begin{scope}[shift={(-12.6,15.8)},rotate=34]\drawfloral{0.55}\end{scope}
+  \begin{scope}[shift={(-1.8,18.3)},rotate=-20]\drawfloral{0.5}\end{scope}
+  \begin{scope}[shift={(-13.8,18.1)},rotate=28]\drawfloral{0.5}\end{scope}
+  \begin{scope}[shift={(-5.2,4.2)},rotate=-35]\drawfloral{0.48}\end{scope}
 }
 
 \newcommand{\drawfloral}[1]{%
@@ -185,6 +244,7 @@
 \newcommand{\drawresumeFlowers}{%
   \begin{scope}[shift={([xshift=-\resumeFlowerStartX,yshift=\resumeFlowerStartY]current page.south east)},opacity=\resumeFlowerOpacity]
     \draw[floralblue!\resumeFlowerVineTint,line width=\resumeFlowerVineWidth] \resumeFlowerVinePath;
+    \resumeFlowerSecondaryVines
     \resumeFlowerBranchPaths
     \resumeFlowerLeaves
     \resumeFlowerHeads
