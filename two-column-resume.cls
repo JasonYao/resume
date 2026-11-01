@@ -79,7 +79,7 @@
         \begin{scope}
           \clip (current page.south west) rectangle ([yshift=\resumeFlowerClipHeight]current page.south east);
           \node[anchor=south west,inner sep=0pt] at (current page.south west) {
-            \includegraphics[width=\paperwidth,height=\paperheight]{\resumeFlowerLayerPdf}};
+            \includegraphics[angle=90]{\resumeFlowerLayerPdf}};
         \end{scope}
         \node[anchor=north west,inner sep=0pt] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
         \node[anchor=south west,inner sep=0pt] at ([xshift=1.5cm,yshift=1.5cm]current page.south west) {\includegraphics[width=2.75cm]{watermarks/totoro}};
