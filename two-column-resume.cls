@@ -56,11 +56,31 @@
 \definecolor{headings}{HTML}{0E0E0F}
 \definecolor{subheadings}{HTML}{1A1C1E}
 \providecommand{\resumeFlowerLayerPdf}{florilegium_layer.pdf}
-\def\resumeFlowerClipHeight{22.1cm}
+\def\resumeFlowerClipHeight{10.1cm}
+\def\resumeFlowerVerticalOffset{-12cm}
 \tikzset{resumePreviewBox/.style={draw=red,line width=0.5pt}}
 \newcommand{\resumeDrawPreviewBounds}[1]{%
   \ifx\resumeLayerPreview\resumeCompositeLayer\else
     \draw[red,line width=0.5pt] #1;
+  \fi
+}
+\newcommand{\resumeDrawFlowerBounds}{%
+  \ifx\resumeLayerPreview\resumeCompositeLayer\else
+    \draw[orange,line width=0.5pt] (current page.south west) rectangle ([yshift=\resumeFlowerClipHeight]current page.south east);
+  \fi
+}
+\newcommand{\resumePreviewName}[1]{%
+  \ifx\resumeLayerPreview\resumeCompositeLayer
+    #1%
+  \else
+    \tikz[baseline=(resumeName.base)]\node[draw=green,line width=0.5pt,inner sep=0pt,outer sep=0pt] (resumeName) {#1};
+  \fi
+}
+\newcommand{\resumePreviewLinks}[1]{%
+  \ifx\resumeLayerPreview\resumeCompositeLayer
+    #1%
+  \else
+    \tikz[baseline=(resumeLinks.base)]\node[draw=blue,line width=0.5pt,inner sep=0pt,outer sep=0pt] (resumeLinks) {#1};
   \fi
 }
 
@@ -90,11 +110,11 @@
       \resumeiflayer{\resumeHeaderLayer}{%
         \begin{scope}
           \clip (current page.south west) rectangle ([yshift=\resumeFlowerClipHeight]current page.south east);
-          \node[anchor=south west,inner sep=0pt] at (current page.south west) {
+          \node[anchor=south west,inner sep=0pt] at ([yshift=\resumeFlowerVerticalOffset]current page.south west) {
             \includegraphics[angle=90]{\resumeFlowerLayerPdf}};
         \end{scope}
-        \resumeDrawPreviewBounds{(current page.south west) rectangle ([yshift=\resumeFlowerClipHeight]current page.south east)}%
-        \node[anchor=north west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
+        \resumeDrawFlowerBounds
+        \node[anchor=north west,inner sep=0pt] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
         \node[anchor=south west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=1.5cm]current page.south west) {\includegraphics[width=2.75cm]{watermarks/totoro}};
       }
     \end{pgfonlayer}
@@ -131,10 +151,10 @@
 
 % Name command
 \newcommand{\namesection}[2]{
-	\hspace{-1.7em}\raggedright{\parbox[b]{30em}{\fontspec[Path = fonts/IM_Fell_French_Canon_SC/]{IMFeFCsc28P}\fontsize{58pt}{0cm}\selectfont \MakeUppercase{#1}}}
+    \raggedright{\parbox[b]{30em}{\resumePreviewName{\fontspec[Path = fonts/IM_Fell_French_Canon_SC/]{IMFeFCsc28P}\fontsize{58pt}{0cm}\selectfont \MakeUppercase{#1}}}}
     \hfill
 	% To increase the amount of space available for the links, increment the below's em value
-    \raggedleft{\parbox[b]{15em}{\color{headings}\fontspec[Path = fonts/IM_Fell_Great_Primer/]{IMFeGPrm28P}\fontsize{11pt}{14pt}\selectfont #2}}
+    \raggedleft{\resumePreviewLinks{\parbox[b]{15em}{\color{headings}\fontspec[Path = fonts/IM_Fell_Great_Primer/]{IMFeGPrm28P}\fontsize{11pt}{14pt}\selectfont #2}}}
     \vspace{1em}
 }
 
