@@ -13,8 +13,7 @@ source "$(dirname "$0")/utils.sh"
 base_file_name="Resume_Jason_Yao"
 tex_file_name="${base_file_name}.tex"
 dev_mode=false
-florilegium_commit="5c9bd05ad7ad0ed7b0bfb0cfa2adc1720406e63b"
-florilegium_source_dir="/tmp/florilegium-${florilegium_commit}"
+florilegium_source_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../venders/florilegium" && pwd)"
 
 build_mode="${1:-default}"
 case "${build_mode}" in
@@ -50,39 +49,6 @@ function start() {
 }
 
 function generate_florilegium_layer() {
-    local source file checksum destination florilegium_seed
-    local -a sources=(
-        "LICENSE 678586fc6cb4e118639751cf9a9c816731a05ddc03b7a4ba2e51f28c314edbe3"
-        "authored.lua d8bf84b8e3de5421d164bc9358e9049d2de4065c1563564304a3304e5e1665ca"
-        "flora.lua 44605dbc87579cca3c2c3c499a992e2dac0f0c420147c0e0d37c9758688472d9"
-        "florilegium.lua 62b7c5455c864ff001227facf48244723d22c6964098054d39d76db4d177ae04"
-        "florilegium.sty 7f1eda0d14d92a2e5dca9c2d23329970a850c738b4647524c7d672c549441e91"
-        "grow.lua 8c1b12a89eeff22f0a75ee26fb36eb1336c36881e563e8284e190eab1d50c230"
-        "ink.lua 697dc474e9cf64eb0e7d884b3a72d9abfb5b0599ec21c7ced1599850f9766f31"
-    )
-
-    mkdir -p "${florilegium_source_dir}"
-    for source in "${sources[@]}"; do
-        read -r file checksum <<< "${source}"
-        destination="${florilegium_source_dir}/${file}"
-        if [[ -f "${destination}" ]] && printf '%s  %s\n' "${checksum}" "${destination}" | sha256sum --check --status; then
-            continue
-        fi
-
-        info "Downloading pinned Florilegium source: ${file}"
-        if ! curl --fail --location --silent --show-error \
-            "https://raw.githubusercontent.com/kevinraymond/florilegium/${florilegium_commit}/${file}" \
-            --output "${destination}.tmp"; then
-            rm -f "${destination}.tmp"
-            fail "Failed to download Florilegium source: ${file}"
-        fi
-        if ! printf '%s  %s\n' "${checksum}" "${destination}.tmp" | sha256sum --check --status; then
-            rm -f "${destination}.tmp"
-            fail "Florilegium source checksum mismatch: ${file}"
-        fi
-        mv "${destination}.tmp" "${destination}"
-    done
-
     export PATH=/tmp/texlive/bin/x86_64-linux:$PATH
     export TEXINPUTS="${florilegium_source_dir}//:${TEXINPUTS:-}"
     export LUAINPUTS="${florilegium_source_dir}//:${LUAINPUTS:-}"

@@ -33,7 +33,9 @@
         table.insert(flower_regions, rect)
       end
     end
+    local stem_obstacle
     if obstacle[1] < obstacle[3] and obstacle[2] < obstacle[4] then
+      stem_obstacle = obstacle
       add({ row[1], row[2], obstacle[1], row[4] })
       add({ obstacle[3], row[2], row[3], row[4] })
       add({ obstacle[1], row[2], obstacle[3], obstacle[2] })
@@ -41,7 +43,7 @@
     else
       add(row)
     end
-    return flower_regions, row, foot, nil, math.min(fx1, flower_row_max_x)
+    return flower_regions, row, foot, nil, math.min(fx1, flower_row_max_x), stem_obstacle
   end
 }
 
