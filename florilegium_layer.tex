@@ -1,0 +1,41 @@
+% Generated with Florilegium's grown composition:
+% https://github.com/kevinraymond/florilegium/tree/5c9bd05ad7ad0ed7b0bfb0cfa2adc1720406e63b
+\documentclass[10pt]{article}
+\usepackage[letterpaper,landscape,left=57.5mm,right=15mm,top=45mm,bottom=15mm,headsep=8mm]{geometry}
+\pagestyle{empty}
+
+% bin/build supplies a time-based seed; density is 0.05-1; intensity is 0-1.
+% The 57.5 mm left margin gives Florilegium a ~5 cm growth column. Rotating it
+% counterclockwise places the seeded, greedily filled garden along the page bottom.
+\providecommand{\florilegiumseed}{}
+\usepackage[grown,density=1,intensity=0.8]{florilegium}
+\directlua{florilegium.head = function() end}
+\directlua{
+  local growth = require("grow")
+  local original_regions = growth.regions
+  growth.regions = function(g, layout)
+    local rects, col, foot, spill, fx1 = original_regions(g, layout)
+    local padding = 0.2
+    local flower_row_max_x = 5.05
+    local totoro_center_x = 0.75 + 0.17 * (g.ph - 3.0)
+    local totoro_y_min = g.ph - (totoro_center_x + 2.75 / 2 + padding)
+    local totoro_y_max = g.ph - (totoro_center_x - 2.75 / 2 - padding)
+    local row = { col[1], col[2], math.min(col[3], flower_row_max_x), col[4] }
+    local obstacle = {
+      math.max(row[1], 1.5 + 0.3 - padding),
+      math.max(row[2], totoro_y_min),
+      math.min(row[3], 1.5 + 0.3 + 2.75 + padding),
+      math.min(row[4], totoro_y_max),
+    }
+    local masks = {}
+    if obstacle[1] < obstacle[3] and obstacle[2] < obstacle[4] then
+      masks[1] = obstacle
+    end
+    local flower_regions = growth.subtract_regions({ row }, masks)
+    return flower_regions, row, foot, nil, math.min(fx1, flower_row_max_x), masks
+  end
+}
+
+\begin{document}
+\null
+\end{document}

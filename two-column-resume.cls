@@ -29,6 +29,25 @@
 \pagestyle{empty}
 \usepackage{datetime2}
 \usepackage{graphicx} % Used to render company logos
+\usepackage{tikz}
+\pgfdeclarelayer{resumeBackground}
+\pgfdeclarelayer{resumeHeader}
+\pgfdeclarelayer{resumeColumns}
+\pgfdeclarelayer{resumeForeground}
+\pgfsetlayers{resumeBackground,resumeHeader,resumeColumns,main,resumeForeground}
+\providecommand{\resumeLayerPreview}{composite}
+\def\resumeCompositeLayer{composite}
+\def\resumeBackgroundLayer{background}
+\def\resumeHeaderLayer{header}
+\def\resumeColumnsLayer{columns}
+\def\resumeForegroundLayer{foreground}
+\newcommand{\resumeiflayer}[2]{%
+  \ifx\resumeLayerPreview\resumeCompositeLayer
+    #2%
+  \else
+    \ifx\resumeLayerPreview#1 #2\fi
+  \fi
+}
 \graphicspath{{assets}}
 
 % Color definitions
@@ -36,6 +55,105 @@
 \definecolor{primary}{HTML}{000000}
 \definecolor{headings}{HTML}{0E0E0F}
 \definecolor{subheadings}{HTML}{1A1C1E}
+\providecommand{\resumeFlowerLayerPdf}{florilegium_layer.pdf}
+\def\resumeFlowerClipHeight{5.05cm}
+\def\resumeFlowerVerticalOffset{-0.3cm}
+\def\resumeFlowerSeedInset{0.3cm}
+\def\resumeFlowerSeedBoxSize{1cm}
+\tikzset{resumePreviewBox/.style={draw=red,line width=0.5pt}}
+\newcommand{\resumeDrawPreviewBounds}[1]{%
+  \ifx\resumeLayerPreview\resumeCompositeLayer\else
+    \draw[red,line width=0.5pt] #1;
+  \fi
+}
+\newcommand{\resumeDrawFlowerBounds}{%
+  \ifx\resumeLayerPreview\resumeCompositeLayer\else
+    \draw[orange,line width=0.5pt] (current page.south west) rectangle ([yshift=\resumeFlowerClipHeight]current page.south east);
+    \draw[orange,line width=0.75pt]
+      ([xshift=-\dimexpr\resumeFlowerSeedInset+\resumeFlowerSeedBoxSize\relax,yshift=\resumeFlowerSeedInset]current page.south east)
+      rectangle
+      ([xshift=-\resumeFlowerSeedInset,yshift=\dimexpr\resumeFlowerSeedInset+\resumeFlowerSeedBoxSize\relax]current page.south east);
+    \coordinate (resumeFlowerCenter) at ([xshift=\dimexpr\paperwidth/2\relax,yshift=\dimexpr\resumeFlowerClipHeight/2\relax]current page.south west);
+    \foreach \corner in {
+      (current page.south west),
+      (current page.south east),
+      ([yshift=\resumeFlowerClipHeight]current page.south west),
+      ([yshift=\resumeFlowerClipHeight]current page.south east)
+    } {
+      \draw[orange,->] (resumeFlowerCenter) -- node[midway,fill=white,inner sep=1pt,font=\scriptsize,text=orange] {11.1 cm} \corner;
+    }
+  \fi
+}
+\newcommand{\resumePreviewName}[1]{%
+  \ifx\resumeLayerPreview\resumeCompositeLayer
+    #1%
+  \else
+    \tikz[baseline=(resumeName.base)]\node[draw=green,line width=0.5pt,inner sep=0pt,outer sep=0pt] (resumeName) {#1};
+  \fi
+}
+\newcommand{\resumePreviewLinks}[1]{%
+  \ifx\resumeLayerPreview\resumeCompositeLayer
+    #1%
+  \else
+    \tikz[baseline=(resumeLinks.base)]\node[draw=blue,line width=0.5pt,inner sep=0pt,outer sep=0pt] (resumeLinks) {#1};
+  \fi
+}
+\newsavebox{\resumeHeaderBox}
+\newsavebox{\resumeColumnsBox}
+\newsavebox{\resumeTotoroBox}
+\newsavebox{\resumeNameContentBox}
+\newsavebox{\resumeLinksContentBox}
+\newcommand{\resumeForegroundContent}{}
+\newcommand{\resumecompose}[2]{%
+  \sbox{\resumeTotoroBox}{\includegraphics[width=2.75cm]{watermarks/totoro}}%
+  \sbox{\resumeHeaderBox}{\begin{minipage}{\textwidth}#1\end{minipage}}%
+  \sbox{\resumeColumnsBox}{%
+    \begin{minipage}{\textwidth}%
+      \vspace*{\dimexpr\ht\resumeHeaderBox+\dp\resumeHeaderBox+1em\relax}%
+      \noindent#2%
+    \end{minipage}%
+  }%
+  \ifx\resumeLayerPreview\resumeCompositeLayer
+    \def\resumePreviewBoxStyle{}%
+  \else
+    \ifx\resumeLayerPreview\resumeColumnsLayer
+      \def\resumePreviewBoxStyle{}%
+    \else
+      \def\resumePreviewBoxStyle{resumePreviewBox}%
+    \fi
+  \fi
+  \begin{tikzpicture}[remember picture,overlay]
+    \begin{pgfonlayer}{resumeBackground}
+      \resumeiflayer{\resumeBackgroundLayer}{%
+        \resumeDrawPreviewBounds{(current page.south west) rectangle (current page.north east)}%
+      }
+    \end{pgfonlayer}
+    \begin{pgfonlayer}{resumeHeader}
+      \resumeiflayer{\resumeHeaderLayer}{%
+        \begin{scope}
+          \clip (current page.south west) rectangle ([yshift=\resumeFlowerClipHeight]current page.south east);
+          \node[anchor=south west,inner sep=0pt] at ([yshift=\resumeFlowerVerticalOffset]current page.south west) {
+            \includegraphics[angle=90]{\resumeFlowerLayerPdf}};
+        \end{scope}
+        \resumeDrawFlowerBounds
+        \node[anchor=north west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
+        \node[anchor=south,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=\dimexpr0.75cm+0.17\textwidth\relax,yshift=1.5cm]current page.south west) {\usebox{\resumeTotoroBox}};
+      }
+    \end{pgfonlayer}
+    \begin{pgfonlayer}{resumeColumns}
+      \resumeiflayer{\resumeColumnsLayer}{%
+        \node[anchor=north west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeColumnsBox}};
+      }
+    \end{pgfonlayer}
+    \begin{pgfonlayer}{resumeForeground}
+      \resumeiflayer{\resumeForegroundLayer}{%
+        \resumeForegroundContent
+        \resumeDrawPreviewBounds{(current page.south west) rectangle (current page.north east)}%
+      }
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  \null\vfill\clearpage
+}
 
 % Set main fonts
 \defaultfontfeatures{Mapping=tex-text}
@@ -54,12 +172,16 @@
 }
 
 % Name command
-\newcommand{\namesection}[2]{
-	\hspace{-1.7em}\raggedright{\parbox[b]{30em}{\fontspec[Path = fonts/IM_Fell_French_Canon_SC/]{IMFeFCsc28P}\fontsize{58pt}{0cm}\selectfont \MakeUppercase{#1}}}
-    \hfill
+\newcommand{\namesection}[2]{%
+    \sbox{\resumeNameContentBox}{\resumePreviewName{\fontspec[Path = fonts/IM_Fell_French_Canon_SC/]{IMFeFCsc28P}\fontsize{58pt}{0cm}\selectfont \MakeUppercase{#1}}}%
+    \sbox{\resumeLinksContentBox}{%
 	% To increase the amount of space available for the links, increment the below's em value
-    \raggedleft{\parbox[b]{15em}{\color{headings}\fontspec[Path = fonts/IM_Fell_Great_Primer/]{IMFeGPrm28P}\fontsize{11pt}{14pt}\selectfont #2}}
-    \vspace{1em}
+    \raggedleft{\resumePreviewLinks{\parbox[b]{15em}{\color{headings}\fontspec[Path = fonts/IM_Fell_Great_Primer/]{IMFeGPrm28P}\fontsize{11pt}{14pt}\selectfont #2}}}}%
+    \vspace*{0.5em}%
+    \noindent\hspace*{\dimexpr(\textwidth-\wd\resumeLinksContentBox-\wd\resumeNameContentBox-1.5cm)/2\relax}%
+    \raisebox{\dimexpr(\ht\resumeLinksContentBox+\dp\resumeLinksContentBox-\ht\resumeNameContentBox-\dp\resumeNameContentBox)/2+0.4em\relax}{\usebox{\resumeNameContentBox}}%
+    \hfill\usebox{\resumeLinksContentBox}%
+    \vspace{0.5em}%
 }
 
 % Section formatting
@@ -149,7 +271,9 @@
 \newcommand{\location}[1]{\color{primary}\raggedright\fontspec[Path = fonts/IM_Fell_Great_Primer/]{IMFeGPrm28P}\fontsize{11pt}{12pt}\selectfont {#1\\} \normalfont}
 
 % Section seperators command
-\newcommand{\sectionsep}[0]{\vspace{8pt}}
+\newcommand{\sectionsep}[0]{%
+  \vspace{8pt}
+}
 
 % Bullet Lists with fewer gaps command
 \newenvironment{tightemize}{\vspace{-\topsep}\begin{itemize}\raggedright\itemsep1pt \parskip0pt \parsep0pt}{\end{itemize}\vspace{-\topsep}}

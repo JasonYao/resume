@@ -89,6 +89,14 @@ bin/build
 xelatex Resume_Jason_Yao.tex
 ```
 
+To generate previews of each resume layer for development:
+
+```sh
+bin/build dev
+```
+
+The floral decoration is part of the header layer, beginning at the bottom right. The development build uses the default filenames and also writes `Resume_Jason_Yao_layer_*.png` for the four composition layers.
+
 ## Testing
 
 To run the automated tests:
