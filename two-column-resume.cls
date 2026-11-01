@@ -39,6 +39,19 @@
 \pgfdeclarelayer{resumeColumns}
 \pgfdeclarelayer{resumeForeground}
 \pgfsetlayers{resumeBackground,resumeHeader,resumeColumns,main,resumeForeground}
+\providecommand{\resumeLayerPreview}{composite}
+\def\resumeCompositeLayer{composite}
+\def\resumeBackgroundLayer{background}
+\def\resumeHeaderLayer{header}
+\def\resumeColumnsLayer{columns}
+\def\resumeForegroundLayer{foreground}
+\newcommand{\resumeiflayer}[2]{%
+  \ifx\resumeLayerPreview\resumeCompositeLayer
+    #2%
+  \else
+    \ifx\resumeLayerPreview#1 #2\fi
+  \fi
+}
 \graphicspath{{assets}}
 
 % Color definitions
@@ -95,19 +108,25 @@
   }%
   \begin{tikzpicture}[remember picture,overlay]
     \begin{pgfonlayer}{resumeBackground}
-      \if@cv@floralwatermark
-        \drawfloralwatermark
-      \fi
+      \resumeiflayer{\resumeBackgroundLayer}{%
+        \if@cv@floralwatermark
+          \drawfloralwatermark
+        \fi
+      }
     \end{pgfonlayer}
     \begin{pgfonlayer}{resumeHeader}
-      \node[anchor=north west,inner sep=0pt] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
-      \node[anchor=south west,inner sep=0pt] at ([xshift=1.5cm,yshift=1.5cm]current page.south west) {\includegraphics[width=2.75cm]{watermarks/totoro}};
+      \resumeiflayer{\resumeHeaderLayer}{%
+        \node[anchor=north west,inner sep=0pt] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
+        \node[anchor=south west,inner sep=0pt] at ([xshift=1.5cm,yshift=1.5cm]current page.south west) {\includegraphics[width=2.75cm]{watermarks/totoro}};
+      }
     \end{pgfonlayer}
     \begin{pgfonlayer}{resumeColumns}
-      \node[anchor=north west,inner sep=0pt] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeColumnsBox}};
+      \resumeiflayer{\resumeColumnsLayer}{%
+        \node[anchor=north west,inner sep=0pt] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeColumnsBox}};
+      }
     \end{pgfonlayer}
     \begin{pgfonlayer}{resumeForeground}
-      \resumeForegroundContent
+      \resumeiflayer{\resumeForegroundLayer}{\resumeForegroundContent}
     \end{pgfonlayer}
   \end{tikzpicture}
   \null\vfill\clearpage

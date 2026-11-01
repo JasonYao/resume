@@ -12,6 +12,7 @@ source "$(dirname "$0")/utils.sh"
 
 base_file_name="Resume_Jason_Yao"
 tex_file_name="${base_file_name}.tex"
+dev_mode=false
 
 floral_variant="${1:-default}"
 case "${floral_variant}" in
@@ -19,12 +20,17 @@ case "${floral_variant}" in
         output_file_name="${base_file_name}"
         latex_options="\\PassOptionsToClass{floral-inline}{two-column-resume}"
         ;;
+    dev)
+        output_file_name="${base_file_name}"
+        latex_options="\\PassOptionsToClass{floral-inline}{two-column-resume}"
+        dev_mode=true
+        ;;
     inline|watermark)
         output_file_name="${base_file_name}_${floral_variant}"
         latex_options="\\PassOptionsToClass{floral-${floral_variant}}{two-column-resume}"
         ;;
     *)
-        fail "Usage: $0 [inline|watermark]"
+        fail "Usage: $0 [dev|inline|watermark]"
         ;;
 esac
 
@@ -37,6 +43,10 @@ function start() {
     # imagemagick 6 throws exceptions with a
     # relative path
     generate_thumbnail "$(pwd)/${output_file_name}"
+
+    if [[ "${dev_mode}" == true ]]; then
+        generate_layer_previews
+    fi
 }
 
 function generate_outputs() {
@@ -82,6 +92,32 @@ function generate_thumbnail() {
     else
         fail "Thumbnail Build: Failed to generate the new image thumbnail"
     fi
+}
+
+function generate_layer_previews() {
+    local layer_names=(background header columns foreground)
+    local index
+    local layer_name
+    local layer_base_file_name
+    local layer_options
+
+    for index in "${!layer_names[@]}"; do
+        layer_name="${layer_names[$index]}"
+        layer_base_file_name="${base_file_name}_layer_$((index + 1))_${layer_name}"
+        layer_options="\\def\\resumeLayerPreview{${layer_name}}${latex_options}\\input{${tex_file_name}}"
+
+        info "Build: Generating ${layer_name} layer preview"
+        export PATH=/tmp/texlive/bin/x86_64-linux:$PATH
+        if ! xelatex -interaction=nonstopmode -halt-on-error -jobname="${layer_base_file_name}" "${layer_options}" ; then
+            fail "Build: Failed to generate ${layer_name} layer preview"
+        fi
+
+        if ! magick -density 300 "${layer_base_file_name}.pdf[0]" -flatten "${layer_base_file_name}.png" ; then
+            fail "Build: Failed to generate ${layer_name} layer PNG"
+        fi
+        rm -f "${layer_base_file_name}.pdf"
+        success "Build: Generated ${layer_base_file_name}.png"
+    done
 }
 
 start

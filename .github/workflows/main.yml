@@ -96,7 +96,12 @@ jobs:
         run: bin/test
 
       - name: Build
-        run: bin/build
+        run: |
+          if [[ "${GITHUB_REF}" == "refs/heads/source" ]]; then
+            bin/build
+          else
+            bin/build dev
+          fi
 
       # Deployment of source to master happens in the deploy job below, which is the only place SOURCE_DEPLOY_PAT is available
       - name: Stage build output for deployment
@@ -123,6 +128,7 @@ jobs:
           path: |
             Resume_Jason_Yao.pdf
             Resume_Jason_Yao.png
+            Resume_Jason_Yao_layer_*.png
           if-no-files-found: error
 
       - name: Comment generated resume on pull request

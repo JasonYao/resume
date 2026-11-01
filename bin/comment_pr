@@ -52,19 +52,31 @@ function upload_attachment() {
     jq -er '.url' <<< "${response}"
 }
 
-png_url=""
+layer_names=(1-background 2-header-totoro 3-columns 4-foreground 5-composite)
+layer_files=(
+    Resume_Jason_Yao_layer_1_background.png
+    Resume_Jason_Yao_layer_2_header.png
+    Resume_Jason_Yao_layer_3_columns.png
+    Resume_Jason_Yao_layer_4_foreground.png
+    Resume_Jason_Yao.png
+)
+table_rows=()
 notices=()
 
-if ! png_url="$(upload_attachment Resume_Jason_Yao.png image/png)"; then
-    echo "::warning::Could not upload the resume preview image; check that DEPLOY_ACCESS_TOKEN is a valid repository-scoped personal access token."
-    notices+=("The preview image attachment could not be uploaded. Download the generated files from the workflow artifact.")
-fi
+for index in "${!layer_names[@]}"; do
+    layer_name="${layer_names[$index]}"
+    file_name="${layer_files[$index]}"
 
-if [[ -n "${png_url}" ]]; then
-    preview_markdown="![Generated resume preview](${png_url})"
-else
-    preview_markdown="[Download the generated resume PDF and PNG from this workflow](${ARTIFACT_URL})"
-fi
+    if image_url="$(upload_attachment "${file_name}" image/png)"; then
+        table_rows+=("| ${layer_name} | ![${layer_name}](${image_url}) |")
+    else
+        echo "::warning::Could not upload ${file_name}; check that DEPLOY_ACCESS_TOKEN is a valid repository-scoped personal access token."
+        table_rows+=("| ${layer_name} | [Download from workflow artifact](${ARTIFACT_URL}) |")
+        notices+=("The ${layer_name} preview could not be uploaded; it is available in the workflow artifact.")
+    fi
+done
+
+preview_markdown="$(printf '| Layer Name | Image |\n|---|---|\n%s' "$(printf '%s\n' "${table_rows[@]}")")"
 
 pdf_markdown="[Download the generated PDF from the workflow artifact](${ARTIFACT_URL})"
 notices+=("GitHub does not allow PDF attachments here, so the PDF is available in the workflow artifact.")

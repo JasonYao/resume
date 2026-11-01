@@ -94,9 +94,10 @@ To generate either floral variant instead:
 ```sh
 bin/build inline     # Delft-blue ornaments between sections
 bin/build watermark  # faint floral watermark, clear of the first-page header
+bin/build dev        # default resume plus individual layer PNGs for debugging
 ```
 
-Each variant writes its own PDF and thumbnail, leaving the default output unchanged.
+The inline and watermark variants write separately named PDFs and thumbnails. The development build uses the default filenames and also writes `Resume_Jason_Yao_layer_*.png` for the four composition layers.
 
 ## Testing
 
