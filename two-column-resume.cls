@@ -60,7 +60,6 @@
 \def\resumeFlowerVerticalOffset{-0.3cm}
 \def\resumeFlowerSeedInset{0.3cm}
 \def\resumeFlowerSeedBoxSize{1cm}
-\def\resumeFlowerTotoroPadding{0.2cm}
 \tikzset{resumePreviewBox/.style={draw=red,line width=0.5pt}}
 \newcommand{\resumeDrawPreviewBounds}[1]{%
   \ifx\resumeLayerPreview\resumeCompositeLayer\else
@@ -136,10 +135,6 @@
           \node[anchor=south west,inner sep=0pt] at ([yshift=\resumeFlowerVerticalOffset]current page.south west) {
             \includegraphics[angle=90]{\resumeFlowerLayerPdf}};
         \end{scope}
-        \fill[white]
-          ([xshift=\dimexpr0.75cm+0.17\textwidth-\wd\resumeTotoroBox/2-\resumeFlowerTotoroPadding\relax,yshift=\dimexpr1.5cm-\resumeFlowerTotoroPadding\relax]current page.south west)
-          rectangle
-          ([xshift=\dimexpr0.75cm+0.17\textwidth+\wd\resumeTotoroBox/2+\resumeFlowerTotoroPadding\relax,yshift=\dimexpr1.5cm+\ht\resumeTotoroBox+\resumeFlowerTotoroPadding\relax]current page.south west);
         \resumeDrawFlowerBounds
         \node[anchor=north west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
         \node[anchor=south,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=\dimexpr0.75cm+0.17\textwidth\relax,yshift=1.5cm]current page.south west) {\usebox{\resumeTotoroBox}};
