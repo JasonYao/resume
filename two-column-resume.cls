@@ -67,6 +67,15 @@
 \newcommand{\resumeDrawFlowerBounds}{%
   \ifx\resumeLayerPreview\resumeCompositeLayer\else
     \draw[orange,line width=0.5pt] (current page.south west) rectangle ([yshift=\resumeFlowerClipHeight]current page.south east);
+    \coordinate (resumeFlowerCenter) at ([xshift=\dimexpr\paperwidth/2\relax,yshift=\dimexpr\resumeFlowerClipHeight/2\relax]current page.south west);
+    \foreach \corner in {
+      (current page.south west),
+      (current page.south east),
+      ([yshift=\resumeFlowerClipHeight]current page.south west),
+      ([yshift=\resumeFlowerClipHeight]current page.south east)
+    } {
+      \draw[orange,->] (resumeFlowerCenter) -- node[midway,fill=white,inner sep=1pt,font=\scriptsize,text=orange] {11.9 cm} \corner;
+    }
   \fi
 }
 \newcommand{\resumePreviewName}[1]{%
@@ -86,6 +95,8 @@
 
 \newsavebox{\resumeHeaderBox}
 \newsavebox{\resumeColumnsBox}
+\newsavebox{\resumeNameContentBox}
+\newsavebox{\resumeLinksContentBox}
 \newcommand{\resumeForegroundContent}{}
 \newcommand{\resumecompose}[2]{%
   \sbox{\resumeHeaderBox}{\begin{minipage}{\textwidth}#1\end{minipage}}%
@@ -114,7 +125,7 @@
             \includegraphics[angle=90]{\resumeFlowerLayerPdf}};
         \end{scope}
         \resumeDrawFlowerBounds
-        \node[anchor=north west,inner sep=0pt] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
+        \node[anchor=north west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
         \node[anchor=south west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=1.5cm]current page.south west) {\includegraphics[width=2.75cm]{watermarks/totoro}};
       }
     \end{pgfonlayer}
@@ -150,12 +161,15 @@
 }
 
 % Name command
-\newcommand{\namesection}[2]{
-    \raggedright{\parbox[b]{30em}{\resumePreviewName{\fontspec[Path = fonts/IM_Fell_French_Canon_SC/]{IMFeFCsc28P}\fontsize{58pt}{0cm}\selectfont \MakeUppercase{#1}}}}
-    \hfill
+\newcommand{\namesection}[2]{%
+    \sbox{\resumeNameContentBox}{\resumePreviewName{\fontspec[Path = fonts/IM_Fell_French_Canon_SC/]{IMFeFCsc28P}\fontsize{58pt}{0cm}\selectfont \MakeUppercase{#1}}}%
+    \sbox{\resumeLinksContentBox}{%
 	% To increase the amount of space available for the links, increment the below's em value
-    \raggedleft{\resumePreviewLinks{\parbox[b]{15em}{\color{headings}\fontspec[Path = fonts/IM_Fell_Great_Primer/]{IMFeGPrm28P}\fontsize{11pt}{14pt}\selectfont #2}}}
-    \vspace{1em}
+    \raggedleft{\resumePreviewLinks{\parbox[b]{15em}{\color{headings}\fontspec[Path = fonts/IM_Fell_Great_Primer/]{IMFeGPrm28P}\fontsize{11pt}{14pt}\selectfont #2}}}}%
+    \noindent\hspace*{\dimexpr(\textwidth-\wd\resumeLinksContentBox-\wd\resumeNameContentBox-1.5cm)/2\relax}%
+    \raisebox{\dimexpr(\ht\resumeLinksContentBox+\dp\resumeLinksContentBox-\ht\resumeNameContentBox-\dp\resumeNameContentBox)/2+0.4em\relax}{\usebox{\resumeNameContentBox}}%
+    \hfill\usebox{\resumeLinksContentBox}%
+    \vspace{1em}%
 }
 
 % Section formatting
