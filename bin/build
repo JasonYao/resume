@@ -108,9 +108,11 @@ function generate_layer_previews() {
 
         info "Build: Generating ${layer_name} layer preview"
         export PATH=/tmp/texlive/bin/x86_64-linux:$PATH
-        if ! xelatex -interaction=nonstopmode -halt-on-error -jobname="${layer_base_file_name}" "${layer_options}" ; then
-            fail "Build: Failed to generate ${layer_name} layer preview"
-        fi
+        for count in {1..3}; do
+            if ! xelatex -interaction=nonstopmode -halt-on-error -jobname="${layer_base_file_name}" "${layer_options}" ; then
+                fail "Build: Failed to generate ${layer_name} layer preview"
+            fi
+        done
 
         if ! magick -density 300 "${layer_base_file_name}.pdf[0]" -flatten "${layer_base_file_name}.png" ; then
             fail "Build: Failed to generate ${layer_name} layer PNG"
