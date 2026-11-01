@@ -63,6 +63,8 @@
 \providecommand{\resumeFlowerLayerPdf}{florilegium_layer.pdf}
 \def\resumeFlowerClipHeight{5.05cm}
 \def\resumeFlowerVerticalOffset{0cm}
+\def\resumeFlowerSeedInset{0.3cm}
+\def\resumeFlowerSeedBoxSize{1cm}
 \tikzset{resumePreviewBox/.style={draw=red,line width=0.5pt}}
 \newcommand{\resumeDrawPreviewBounds}[1]{%
   \ifx\resumeLayerPreview\resumeCompositeLayer\else
@@ -72,6 +74,10 @@
 \newcommand{\resumeDrawFlowerBounds}{%
   \ifx\resumeLayerPreview\resumeCompositeLayer\else
     \draw[orange,line width=0.5pt] (current page.south west) rectangle ([yshift=\resumeFlowerClipHeight]current page.south east);
+    \draw[orange,line width=0.75pt]
+      ([xshift=-\dimexpr\resumeFlowerSeedInset+\resumeFlowerSeedBoxSize\relax,yshift=\resumeFlowerSeedInset]current page.south east)
+      rectangle
+      ([xshift=-\resumeFlowerSeedInset,yshift=\dimexpr\resumeFlowerSeedInset+\resumeFlowerSeedBoxSize\relax]current page.south east);
     \coordinate (resumeFlowerCenter) at ([xshift=\dimexpr\paperwidth/2\relax,yshift=\dimexpr\resumeFlowerClipHeight/2\relax]current page.south west);
     \foreach \corner in {
       (current page.south west),
@@ -97,20 +103,26 @@
     \tikz[baseline=(resumeLinks.base)]\node[draw=blue,line width=0.5pt,inner sep=0pt,outer sep=0pt] (resumeLinks) {#1};
   \fi
 }
-\newcommand{\resumePreviewContentBox}[2]{%
+\newcommand{\resumePreviewContentBox}[3]{%
   \ifx\resumeLayerPreview\resumeColumnsLayer
     \begingroup
-      \setlength{\fboxsep}{0pt}%
-      \setlength{\fboxrule}{0.5pt}%
-      \color{#1}\fbox{\vbox{\hsize=\dimexpr\linewidth-1pt\relax\color{primary}#2}}%
+      \setbox#2=\vbox{\hsize=\linewidth\color{primary}#3}%
+      \hbox{\copy#2\smash{\rlap{\tikz[baseline=0pt]{%
+        \draw[#1,line width=0.5pt] (-\wd#2,-\dp#2) rectangle (0,\ht#2);%
+      }}}}%
     \endgroup
   \else
-    #2%
+    #3%
   \fi
 }
 
 \newsavebox{\resumeHeaderBox}
 \newsavebox{\resumeColumnsBox}
+\newsavebox{\resumeLeftColumnPreviewBuffer}
+\newsavebox{\resumeRightColumnPreviewBuffer}
+\newsavebox{\resumeEducationPreviewBuffer}
+\newsavebox{\resumeSkillsPreviewBuffer}
+\newsavebox{\resumeExperiencePreviewBuffer}
 \newsavebox{\resumeNameContentBox}
 \newsavebox{\resumeLinksContentBox}
 \newcommand{\resumeForegroundContent}{}
