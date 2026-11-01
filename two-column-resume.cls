@@ -62,7 +62,7 @@
 \definecolor{resumeExperience}{HTML}{E69F00}
 \providecommand{\resumeFlowerLayerPdf}{florilegium_layer.pdf}
 \def\resumeFlowerClipHeight{5.05cm}
-\def\resumeFlowerVerticalOffset{0cm}
+\def\resumeFlowerVerticalOffset{-0.3cm}
 \def\resumeFlowerSeedInset{0.3cm}
 \def\resumeFlowerSeedBoxSize{1cm}
 \tikzset{resumePreviewBox/.style={draw=red,line width=0.5pt}}
@@ -107,6 +107,18 @@
   \ifx\resumeLayerPreview\resumeColumnsLayer
     \begingroup
       \setbox#2=\vbox{\hsize=\linewidth\color{primary}#3}%
+      \hbox{\copy#2\smash{\rlap{\tikz[baseline=0pt]{%
+        \draw[#1,line width=0.5pt] (-\wd#2,-\dp#2) rectangle (0,\ht#2);%
+      }}}}%
+    \endgroup
+  \else
+    #3%
+  \fi
+}
+\newcommand{\resumePreviewColumnBox}[3]{%
+  \ifx\resumeLayerPreview\resumeColumnsLayer
+    \begingroup
+      \setbox#2=\hbox{#3}%
       \hbox{\copy#2\smash{\rlap{\tikz[baseline=0pt]{%
         \draw[#1,line width=0.5pt] (-\wd#2,-\dp#2) rectangle (0,\ht#2);%
       }}}}%
