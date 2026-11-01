@@ -55,10 +55,6 @@
 \definecolor{primary}{HTML}{000000}
 \definecolor{headings}{HTML}{0E0E0F}
 \definecolor{subheadings}{HTML}{1A1C1E}
-\definecolor{resumeEducation}{HTML}{56B4E9}
-\definecolor{resumeProgramming}{HTML}{009E73}
-\definecolor{resumeGeneral}{HTML}{CC79A7}
-\definecolor{resumePosition}{HTML}{E69F00}
 \providecommand{\resumeFlowerLayerPdf}{florilegium_layer.pdf}
 \def\resumeFlowerClipHeight{5.05cm}
 \def\resumeFlowerVerticalOffset{-0.3cm}
@@ -103,25 +99,9 @@
     \tikz[baseline=(resumeLinks.base)]\node[draw=blue,line width=0.5pt,inner sep=0pt,outer sep=0pt] (resumeLinks) {#1};
   \fi
 }
-\newcommand{\resumePreviewContentBox}[3]{%
-  \ifx\resumeLayerPreview\resumeColumnsLayer
-    \begingroup
-      \setbox#2=\vbox{\hsize=\linewidth\color{primary}#3}%
-      \hbox{\copy#2\smash{\rlap{\tikz[baseline=0pt]{%
-        \draw[#1,line width=0.5pt] (-\wd#2,-\dp#2) rectangle (0,\ht#2);%
-      }}}}%
-    \endgroup
-  \else
-    #3%
-  \fi
-}
 \newsavebox{\resumeHeaderBox}
 \newsavebox{\resumeColumnsBox}
 \newsavebox{\resumeTotoroBox}
-\newsavebox{\resumeEducationPreviewBuffer}
-\newsavebox{\resumeProgrammingPreviewBuffer}
-\newsavebox{\resumeGeneralPreviewBuffer}
-\newsavebox{\resumePositionPreviewBuffer}
 \newsavebox{\resumeNameContentBox}
 \newsavebox{\resumeLinksContentBox}
 \newcommand{\resumeForegroundContent}{}
@@ -137,7 +117,11 @@
   \ifx\resumeLayerPreview\resumeCompositeLayer
     \def\resumePreviewBoxStyle{}%
   \else
-    \def\resumePreviewBoxStyle{resumePreviewBox}%
+    \ifx\resumeLayerPreview\resumeColumnsLayer
+      \def\resumePreviewBoxStyle{}%
+    \else
+      \def\resumePreviewBoxStyle{resumePreviewBox}%
+    \fi
   \fi
   \begin{tikzpicture}[remember picture,overlay]
     \begin{pgfonlayer}{resumeBackground}

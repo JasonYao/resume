@@ -50,7 +50,7 @@ function start() {
 }
 
 function generate_florilegium_layer() {
-    local source file checksum destination
+    local source file checksum destination florilegium_seed
     local -a sources=(
         "LICENSE 678586fc6cb4e118639751cf9a9c816731a05ddc03b7a4ba2e51f28c314edbe3"
         "authored.lua d8bf84b8e3de5421d164bc9358e9049d2de4065c1563564304a3304e5e1665ca"
@@ -87,8 +87,10 @@ function generate_florilegium_layer() {
     export TEXINPUTS="${florilegium_source_dir}//:${TEXINPUTS:-}"
     export LUAINPUTS="${florilegium_source_dir}//:${LUAINPUTS:-}"
 
+    florilegium_seed="$(date +%s%N | cksum | cut -d ' ' -f 1)"
     info "Generating Florilegium garden layer"
-    if lualatex -interaction=nonstopmode -halt-on-error -jobname=florilegium_layer florilegium_layer.tex; then
+    if lualatex -interaction=nonstopmode -halt-on-error -jobname=florilegium_layer \
+        "\\def\\florilegiumseed{${florilegium_seed}}\\input{florilegium_layer.tex}"; then
         success "Generated Florilegium garden layer"
     else
         fail "Failed to generate Florilegium garden layer"

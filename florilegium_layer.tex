@@ -4,12 +4,42 @@
 \usepackage[letterpaper,landscape,left=57.5mm,right=15mm,top=45mm,bottom=15mm,headsep=8mm]{geometry}
 \pagestyle{empty}
 
-% Seed is a positive integer; density is 0.05-1; intensity is 0-1.
+% bin/build supplies a time-based seed; density is 0.05-1; intensity is 0-1.
 % The 57.5 mm left margin gives Florilegium a ~5 cm growth column. Rotating it
 % counterclockwise places the seeded, greedily filled garden along the page bottom.
-\def\florilegiumseed{1}
+\providecommand{\florilegiumseed}{}
 \usepackage[grown,density=1,intensity=0.8]{florilegium}
 \directlua{florilegium.head = function() end}
+\directlua{
+  local growth = require("grow")
+  local original_regions = growth.regions
+  growth.regions = function(g, layout)
+    local rects, col, foot, spill, fx1 = original_regions(g, layout)
+    local padding = 0.2
+    local totoro_center_x = 0.75 + 0.17 * (g.ph - 3.0)
+    local totoro_left = g.ph - (totoro_center_x + 2.75 / 2 + padding)
+    local totoro_right = g.ph - (totoro_center_x - 2.75 / 2 - padding)
+    local totoro_bottom = 1.5 + 0.3 - padding
+    local totoro_top = 1.5 + 0.3 + 2.75 + padding
+    local flower_regions = {}
+    local function add(rect)
+      if rect[1] < rect[3] and rect[2] < rect[4] then
+        table.insert(flower_regions, rect)
+      end
+    end
+    for _, rect in ipairs(rects) do
+      if rect == col then
+        add({ rect[1], rect[2], rect[3], totoro_bottom })
+        add({ rect[1], totoro_top, rect[3], rect[4] })
+        add({ rect[1], totoro_bottom, totoro_left, totoro_top })
+        add({ totoro_right, totoro_bottom, rect[3], totoro_top })
+      else
+        add(rect)
+      end
+    end
+    return flower_regions, col, foot, spill, fx1
+  end
+}
 
 \begin{document}
 \null

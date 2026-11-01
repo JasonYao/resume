@@ -9,7 +9,6 @@
 \BLOCK{for employer in employers}
     \workplace{\VAR{employer.logos.short}}{\VAR{employer.company_name}}{\VAR{employer.location}}{\VAR{employer.work_duration}}
     \BLOCK{for position in employer.positions}
-        \resumePreviewContentBox{resumePosition}{\resumePositionPreviewBuffer}{%
         \position{\VAR{position.title}}{\VAR{position.start_date} – \VAR{position.end_date}}
         \vspace{\topsep} % Hacky fix for awkward extra vertical space
         \begin{tightemize}
@@ -17,7 +16,6 @@
                 \item \VAR{description_line}
             \BLOCK{endfor}
         \end{tightemize}
-        }
         \sectionsep
     \BLOCK{endfor}
 \BLOCK{endfor}
