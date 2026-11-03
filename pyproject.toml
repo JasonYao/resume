@@ -20,5 +20,10 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "pdfplumber",
     "pytest",
+]
+ats = [
+    "docling",
+    "unstructured[pdf]",
 ]

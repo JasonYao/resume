@@ -89,6 +89,30 @@ bin/build
 xelatex Resume_Jason_Yao.tex
 ```
 
+## ATS Parsing Checks
+
+After building the PDF, run the lightweight text-extraction baselines and compare
+their text against expected fields in `raw-data.json`:
+
+```sh
+bin/ats_score --pdf Resume_Jason_Yao.pdf --ground-truth raw-data.json
+```
+
+The report is written to `ats-report.json`. The score is weighted coverage of
+expected contact, employment, education, and skill values in each parser's
+extracted text; it does not measure whether a parser assigned those values to
+the correct JSON fields. These checks are a layout/readability signal, not a
+replacement for testing with real ATS services.
+
+The scheduled and manually triggered CI builds also run Docling and Unstructured.
+They have much larger dependencies and may download models on first use. To run
+them locally, install the `ats` dependency group and pass `--include-tier1`:
+
+```sh
+uv sync --locked --group ats
+bin/ats_score --pdf Resume_Jason_Yao.pdf --ground-truth raw-data.json --include-tier1
+```
+
 ## Testing
 
 To run the automated tests:

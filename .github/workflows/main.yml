@@ -81,9 +81,10 @@ jobs:
       # Attempting to directly install texlive-xetex doesn't work and clashes with the TexLive package manager, since it installs
       # an older version which clashes in the PATH
       # Shellcheck is a dependency in our testing step, and used to be included by default in previous *nix CI/CD environments, but as
-      # of the bump to v4 of these GitHub Action steps, now needs to be installed separately
+      # of the bump to v4 of these GitHub Action steps, now needs to be installed separately.
+      # poppler-utils provides pdftotext for the baseline PDF text extraction.
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get -y install fonts-font-awesome ghostscript shellcheck
+        run: sudo apt-get update && sudo apt-get -y install fonts-font-awesome ghostscript poppler-utils shellcheck
 
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
 
@@ -97,6 +98,24 @@ jobs:
 
       - name: Build
         run: bin/build
+
+      - name: Score PDF parsing
+        run: bin/ats_score --pdf Resume_Jason_Yao.pdf --ground-truth raw-data.json
+
+      - name: Install structured ATS parsers
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: uv sync --locked --all-extras --dev --group ats
+
+      - name: Score with structured ATS parsers
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: bin/ats_score --pdf Resume_Jason_Yao.pdf --ground-truth raw-data.json --include-tier1
+
+      - name: Upload ATS parsing report
+        uses: actions/upload-artifact@v7
+        with:
+          name: ats-report
+          path: ats-report.json
+          if-no-files-found: error
 
       # Deployment of source to master happens in the deploy job below, which is the only place SOURCE_DEPLOY_PAT is available
       - name: Stage build output for deployment
