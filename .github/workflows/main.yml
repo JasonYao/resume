@@ -102,6 +102,7 @@ jobs:
       - name: Score PDF parsing
         # Tier 0 took about 1 second in CI run 230; tier 1 has not yet been measured in CI.
         env:
+          # Suppress the notice from Unstructured in the ats-1-local-ml-based group.
           UNSTRUCTURED_DISABLE_NOTICE: "1"
         run: bin/ats_score
 
