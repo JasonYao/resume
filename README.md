@@ -99,7 +99,8 @@ bin/ats_score
 ```
 
 The full report is written to `ats-report.json`; `ats-summary.json` contains
-only each parser's version and top-line score. The score is weighted coverage of
+each parser's version, top-line score, and text-extraction time in seconds.
+The score is weighted coverage of
 expected contact, employment, education, and skill values in each parser's
 extracted text; it does not measure whether a parser assigned those values to
 the correct JSON fields. These checks are a layout/readability signal, not a

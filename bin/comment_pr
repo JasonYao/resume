@@ -23,8 +23,8 @@ if [[ -z "${pull_number}" ]]; then
 fi
 
 summary_table="$(jq -er '
-    ["| Parser | Version | Score |", "|---|---|---|"] +
-    [.parsers[] | "| \(.parser) | \(.version) | \((.score * 1000 | round) / 10)% |"] |
+    ["| Parser | Version | Score | Parse time |", "|---|---|---|---|"] +
+    [.parsers[] | "| \(.parser) | \(.version) | \((.score * 1000 | round) / 10)% | \(.duration_seconds) s |"] |
     join("\n")
 ' ats-summary.json)"
 

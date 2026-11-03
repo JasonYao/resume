@@ -5,9 +5,11 @@ from difflib import SequenceMatcher
 from importlib.metadata import version as package_version
 from io import BytesIO
 import json
+import math
 from pathlib import Path
 import re
 import subprocess
+import time
 import unicodedata
 
 from dateutil.parser import isoparse
@@ -66,6 +68,8 @@ class ParserAnalysis:
     version: str
     # Weighted expected-field coverage in [0.0, 1.0].
     score: float
+    # Time spent extracting text, in seconds; nonnegative, e.g. 0.125.
+    duration_seconds: float
     # Per-dimension results, e.g. (GroupAnalysis("contact", ...),).
     groups: tuple[GroupAnalysis, ...]
 
@@ -74,6 +78,8 @@ class ParserAnalysis:
             raise ValueError("Parser tier must be 0 or 1")
         if not 0.0 <= self.score <= 1.0:
             raise ValueError("Parser score must be between 0 and 1")
+        if not math.isfinite(self.duration_seconds) or self.duration_seconds < 0.0:
+            raise ValueError("Parser duration must be finite and nonnegative")
         if not self.groups:
             raise ValueError("A parser result must contain at least one group")
 
@@ -150,13 +156,16 @@ def analyze(
     for name, tier, extractor, get_version in parsers:
         if tier not in active_tiers:
             continue
+        start = time.perf_counter()
         text = extractor(pdf)
+        duration_seconds = round(time.perf_counter() - start, 3)
         score = score_text(text, ground_truth)
         results.append(ParserAnalysis(
             name=name,
             tier=tier,
             version=get_version(),
             score=score["score"],
+            duration_seconds=duration_seconds,
             groups=tuple(
                 GroupAnalysis(
                     name=group_name,
@@ -187,6 +196,7 @@ def build_report(
                 "tier": parser.tier,
                 "version": parser.version,
                 "score": parser.score,
+                "duration_seconds": parser.duration_seconds,
                 "groups": {
                     group.name: {
                         "matched": group.matched,
@@ -212,6 +222,7 @@ def build_summary(report: dict) -> dict:
                 "parser": parser["name"],
                 "version": parser["version"],
                 "score": parser["score"],
+                "duration_seconds": parser["duration_seconds"],
             }
             for parser in report["parsers"]
         ],
