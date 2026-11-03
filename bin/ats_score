@@ -2,4 +2,7 @@
 
 set -e
 
-uv run python -m pyresume.ats_scoring "$@"
+uv run python -m pyresume.ats_scoring \
+    --pdf Resume_Jason_Yao.pdf \
+    --ground-truth raw-data.json \
+    "$@"

@@ -48,6 +48,7 @@ jobs:
           version: "0.13.6"
 
       - name: Set up Python
+        # requires-python is a lower bound (>=3.14); ATS parser dependencies do not yet support 3.15.
         run: uv python install 3.14
 
       # The baseline ATS parser group includes dev tools needed by the tests.
@@ -99,7 +100,8 @@ jobs:
         run: bin/build
 
       - name: Score PDF parsing
-        run: bin/ats_score --pdf Resume_Jason_Yao.pdf --ground-truth raw-data.json
+        # Took about 1 second in the previous CI run.
+        run: bin/ats_score
 
       - name: Install structured ATS parsers
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
@@ -107,7 +109,7 @@ jobs:
 
       - name: Score with structured ATS parsers
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-        run: bin/ats_score --pdf Resume_Jason_Yao.pdf --ground-truth raw-data.json --include-tier1
+        run: bin/ats_score --included-tiers 0 1
 
       - name: Test structured ATS report selection
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'

@@ -95,7 +95,7 @@ After building the PDF, run the lightweight text-extraction baselines and compar
 their text against expected fields in `raw-data.json`:
 
 ```sh
-bin/ats_score --pdf Resume_Jason_Yao.pdf --ground-truth raw-data.json
+bin/ats_score
 ```
 
 The report is written to `ats-report.json`. The score is weighted coverage of
@@ -113,7 +113,7 @@ uv run pytest data/tests/test_ats_0_local_light.py
 # The heavier local ML-based parsers may download models on first use.
 uv sync --locked --group ats-1-local-ml-based
 uv run pytest data/tests/test_ats_1_local_ml_based.py
-bin/ats_score --pdf Resume_Jason_Yao.pdf --ground-truth raw-data.json --include-tier1
+bin/ats_score --included-tiers 0 1
 ```
 
 The scheduled and manually triggered CI builds also run Docling and Unstructured.

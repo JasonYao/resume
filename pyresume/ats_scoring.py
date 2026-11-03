@@ -2,6 +2,7 @@ import argparse
 from collections.abc import Callable
 from dataclasses import dataclass
 from difflib import SequenceMatcher
+from io import BytesIO
 import json
 from pathlib import Path
 import re
@@ -17,6 +18,7 @@ GROUP_WEIGHTS = {
     "education": 0.2,
     "skills": 0.1,
 }
+DEFAULT_OUTPUT_PATH = Path("ats-report.json")
 
 
 @dataclass
@@ -30,59 +32,77 @@ class GroupAnalysis:
 @dataclass
 class ParserAnalysis:
     name: str
-    tier: str
+    tier: int
     score: float
     groups: dict[str, GroupAnalysis]
 
 
 @dataclass
 class ATSAnalysis:
-    pdf_path: Path
-    ground_truth_path: Path
     parsers: list[ParserAnalysis]
 
 
 def main() -> None:
     pdf_path, ground_truth_path, active_tiers, output_path = parse_args()
-    analysis = analyze(pdf_path, ground_truth_path, active_tiers)
-    report = build_report(analysis)
+    pdf, ground_truth = load_preconditions(pdf_path, ground_truth_path)
+    analysis = analyze(pdf, ground_truth, active_tiers)
+    report = build_report(analysis, pdf_path, ground_truth_path)
     dump(report, output_path)
 
 
-def parse_args() -> tuple[Path, Path, tuple[str, ...], Path]:
+def parse_args(
+    argv: list[str] | None = None,
+) -> tuple[Path, Path, tuple[int, ...], Path]:
     parser = argparse.ArgumentParser(
         description="Score PDF text extraction against the resume source JSON."
     )
     parser.add_argument("--pdf", type=Path, required=True)
     parser.add_argument("--ground-truth", type=Path, required=True)
-    parser.add_argument("--output", type=Path, default=Path("ats-report.json"))
     parser.add_argument(
-        "--include-tier1",
-        action="store_true",
-        help="Also run the heavyweight Docling and Unstructured parsers.",
+        "--included-tiers",
+        nargs="+",
+        type=int,
+        choices=(0, 1),
+        default=(0,),
+        help="Parser tiers to run (0: lightweight, 1: local ML-based).",
     )
-    args = parser.parse_args()
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT_PATH)
+    args = parser.parse_args(argv)
 
-    if not args.pdf.is_file():
-        parser.error(f"PDF does not exist: {args.pdf}")
-    if not args.ground_truth.is_file():
-        parser.error(f"Ground-truth JSON does not exist: {args.ground_truth}")
+    return (
+        args.pdf,
+        args.ground_truth,
+        tuple(args.included_tiers),
+        args.output,
+    )
 
-    active_tiers = ("tier0", "tier1") if args.include_tier1 else ("tier0",)
-    return args.pdf, args.ground_truth, active_tiers, args.output
+
+def load_preconditions(
+    pdf_path: Path, ground_truth_path: Path
+) -> tuple[bytes, dict]:
+    if not pdf_path.is_file():
+        raise FileNotFoundError(f"PDF does not exist: {pdf_path}")
+    if not ground_truth_path.is_file():
+        raise FileNotFoundError(f"Ground-truth JSON does not exist: {ground_truth_path}")
+    return pdf_path.read_bytes(), json.loads(ground_truth_path.read_text())
 
 
 def analyze(
-    pdf_path: Path, ground_truth_path: Path, active_tiers: tuple[str, ...]
+    pdf: bytes,
+    ground_truth: dict,
+    active_tiers: tuple[int, ...],
+    parsers: list[tuple[str, int, Callable[[bytes], str]]] | None = None,
 ) -> ATSAnalysis:
-    ground_truth = json.loads(ground_truth_path.read_text())
-    parsers = []
-    for name, tier, extractor in [*TIER0_PARSERS, *TIER1_PARSERS]:
+    parser_functions = (
+        parsers if parsers is not None else [*TIER0_PARSERS, *TIER1_PARSERS]
+    )
+    results = []
+    for name, tier, extractor in parser_functions:
         if tier not in active_tiers:
             continue
-        text = extractor(pdf_path)
+        text = extractor(pdf)
         score = score_text(text, ground_truth)
-        parsers.append(ParserAnalysis(
+        results.append(ParserAnalysis(
             name=name,
             tier=tier,
             score=score["score"],
@@ -91,13 +111,15 @@ def analyze(
                 for name, result in score["groups"].items()
             },
         ))
-    return ATSAnalysis(pdf_path, ground_truth_path, parsers)
+    return ATSAnalysis(results)
 
 
-def build_report(analysis: ATSAnalysis) -> dict:
+def build_report(
+    analysis: ATSAnalysis, pdf_path: Path, ground_truth_path: Path
+) -> dict:
     return {
-        "pdf": str(analysis.pdf_path),
-        "ground_truth": str(analysis.ground_truth_path),
+        "pdf": str(pdf_path),
+        "ground_truth": str(ground_truth_path),
         "metric": "weighted expected-field text coverage (not field extraction precision)",
         "weights": GROUP_WEIGHTS,
         "parsers": [
@@ -265,44 +287,48 @@ def score_text(text: str, ground_truth: dict) -> dict:
     return {"score": weighted_score, "groups": groups}
 
 
-def _extract_pdftotext(pdf_path: Path) -> str:
+def _extract_pdftotext(pdf: bytes) -> str:
     result = subprocess.run(
-        ["pdftotext", "-layout", str(pdf_path), "-"],
+        ["pdftotext", "-layout", "-", "-"],
         check=True,
         capture_output=True,
-        text=True,
+        input=pdf,
     )
-    return result.stdout
+    return result.stdout.decode("utf-8", errors="replace")
 
 
-def _extract_pdfplumber(pdf_path: Path) -> str:
+def _extract_pdfplumber(pdf: bytes) -> str:
     import pdfplumber
 
-    with pdfplumber.open(pdf_path) as pdf:
-        return "\n".join(page.extract_text(layout=True) or "" for page in pdf.pages)
+    with pdfplumber.open(BytesIO(pdf)) as document:
+        return "\n".join(
+            page.extract_text(layout=True) or "" for page in document.pages
+        )
 
 
-def _extract_docling(pdf_path: Path) -> str:
+def _extract_docling(pdf: bytes) -> str:
     from docling.document_converter import DocumentConverter
+    from docling.datamodel.base_models import DocumentStream
 
-    document = DocumentConverter().convert(str(pdf_path)).document
+    source = DocumentStream(name="resume.pdf", stream=BytesIO(pdf))
+    document = DocumentConverter().convert(source).document
     return document.export_to_markdown()
 
 
-def _extract_unstructured(pdf_path: Path) -> str:
+def _extract_unstructured(pdf: bytes) -> str:
     from unstructured.partition.pdf import partition_pdf
 
-    elements = partition_pdf(filename=str(pdf_path), strategy="fast")
+    elements = partition_pdf(file=BytesIO(pdf), strategy="fast")
     return "\n".join(str(element) for element in elements)
 
 
-TIER0_PARSERS: list[tuple[str, str, Callable[[Path], str]]] = [
-    ("pdftotext-layout", "tier0", _extract_pdftotext),
-    ("pdfplumber-layout", "tier0", _extract_pdfplumber),
+TIER0_PARSERS: list[tuple[str, int, Callable[[bytes], str]]] = [
+    ("pdftotext-layout", 0, _extract_pdftotext),
+    ("pdfplumber-layout", 0, _extract_pdfplumber),
 ]
-TIER1_PARSERS: list[tuple[str, str, Callable[[Path], str]]] = [
-    ("docling", "tier1", _extract_docling),
-    ("unstructured", "tier1", _extract_unstructured),
+TIER1_PARSERS: list[tuple[str, int, Callable[[bytes], str]]] = [
+    ("docling", 1, _extract_docling),
+    ("unstructured", 1, _extract_unstructured),
 ]
 if __name__ == "__main__":
     main()
