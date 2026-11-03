@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.14"
 resolution-markers = [
     "sys_platform == 'win32'",
@@ -2870,12 +2870,17 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
-ats = [
+ats-0-local-light = [
+    { name = "pdfplumber" },
+    { name = "pytest" },
+]
+ats-1-local-ml-based = [
     { name = "docling" },
+    { name = "pdfplumber" },
+    { name = "pytest" },
     { name = "unstructured", extra = ["pdf"] },
 ]
 dev = [
-    { name = "pdfplumber" },
     { name = "pytest" },
 ]
 
@@ -2888,14 +2893,17 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-ats = [
-    { name = "docling" },
-    { name = "unstructured", extras = ["pdf"] },
-]
-dev = [
+ats-0-local-light = [
     { name = "pdfplumber" },
     { name = "pytest" },
 ]
+ats-1-local-ml-based = [
+    { name = "docling" },
+    { name = "pdfplumber" },
+    { name = "pytest" },
+    { name = "unstructured", extras = ["pdf"] },
+]
+dev = [{ name = "pytest" }]
 
 [[package]]
 name = "rich"

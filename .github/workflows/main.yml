@@ -48,12 +48,11 @@ jobs:
           version: "0.13.6"
 
       - name: Set up Python
-        run: uv python install
+        run: uv python install 3.14
 
-      # We install dev since we're running tests- if we're on our
-      # local and don't need to run tests, we can just do uv sync
+      # The baseline ATS parser group includes dev tools needed by the tests.
       - name: Install Python dependencies
-        run: uv sync --locked --all-extras --dev
+        run: uv sync --locked --group ats-0-local-light
 
       # certifi bundles are per python install (e.g. pip's vendored copy inside each uv-managed python), so they only
       # exist once python is installed, and uv itself ships no cert files. Neutralize them now, so they are safe
@@ -104,11 +103,15 @@ jobs:
 
       - name: Install structured ATS parsers
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-        run: uv sync --locked --all-extras --dev --group ats
+        run: uv sync --locked --group ats-1-local-ml-based
 
       - name: Score with structured ATS parsers
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: bin/ats_score --pdf Resume_Jason_Yao.pdf --ground-truth raw-data.json --include-tier1
+
+      - name: Test structured ATS report selection
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: uv run pytest data/tests/test_ats_1_local_ml_based.py
 
       - name: Upload ATS parsing report
         uses: actions/upload-artifact@v7
