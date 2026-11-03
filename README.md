@@ -91,8 +91,8 @@ xelatex Resume_Jason_Yao.tex
 
 ## ATS Parsing Checks
 
-After building the PDF, run the lightweight text-extraction baselines and compare
-their text against expected fields in `raw-data.json`:
+After building the PDF, run all configured text extractors and compare their
+text against expected fields in `raw-data.json`:
 
 ```sh
 bin/ats_score
@@ -104,7 +104,8 @@ extracted text; it does not measure whether a parser assigned those values to
 the correct JSON fields. These checks are a layout/readability signal, not a
 replacement for testing with real ATS services.
 
-ATS tests are split by parser tier and can be run independently:
+ATS tests are split by parser tier and can be run independently. The scoring
+command runs both tiers by default; pass `--included-tiers` to select tiers:
 
 ```sh
 uv sync --locked --group ats-0-local-light
@@ -113,12 +114,10 @@ uv run pytest data/tests/test_ats_0_local_light.py
 # The heavier local ML-based parsers may download models on first use.
 uv sync --locked --group ats-1-local-ml-based
 uv run pytest data/tests/test_ats_1_local_ml_based.py
-bin/ats_score --included-tiers 0 1
+bin/ats_score --included-tiers 1
 ```
 
-The scheduled and manually triggered CI builds also run Docling and Unstructured.
-Both parser groups can be installed together by selecting the `ats-1-local-ml-based`
-group.
+CI installs the `ats-1-local-ml-based` group and runs both tiers on every build.
 
 ## Testing
 

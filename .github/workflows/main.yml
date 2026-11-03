@@ -48,12 +48,12 @@ jobs:
           version: "0.13.6"
 
       - name: Set up Python
-        # requires-python is a lower bound (>=3.14); ATS parser dependencies do not yet support 3.15.
+        # onnxruntime==1.31.1 (locked via Docling) has CPython 3.14 wheels but no CPython 3.15 wheel.
         run: uv python install 3.14
 
-      # The baseline ATS parser group includes dev tools needed by the tests.
+      # Includes both ATS tiers and dev tools; this workflow runs all ATS parsers.
       - name: Install Python dependencies
-        run: uv sync --locked --group ats-0-local-light
+        run: uv sync --locked --group ats-1-local-ml-based
 
       # certifi bundles are per python install (e.g. pip's vendored copy inside each uv-managed python), so they only
       # exist once python is installed, and uv itself ships no cert files. Neutralize them now, so they are safe
@@ -100,20 +100,8 @@ jobs:
         run: bin/build
 
       - name: Score PDF parsing
-        # Took about 1 second in the previous CI run.
+        # Tier 0 took about 1 second in CI run 230; tier 1 has not yet been measured in CI.
         run: bin/ats_score
-
-      - name: Install structured ATS parsers
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-        run: uv sync --locked --group ats-1-local-ml-based
-
-      - name: Score with structured ATS parsers
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-        run: bin/ats_score --included-tiers 0 1
-
-      - name: Test structured ATS report selection
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-        run: uv run pytest data/tests/test_ats_1_local_ml_based.py
 
       - name: Upload ATS parsing report
         uses: actions/upload-artifact@v7

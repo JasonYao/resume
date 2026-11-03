@@ -21,31 +21,75 @@ GROUP_WEIGHTS = {
 DEFAULT_OUTPUT_PATH = Path("ats-report.json")
 
 
-@dataclass
+@dataclass(frozen=True)
+class MissingField:
+    # Ground-truth field label, such as "email".
+    field: str
+    # Expected value that was not found, such as "person@example.com".
+    value: str
+
+
+@dataclass(frozen=True)
 class GroupAnalysis:
-    matched: int
-    total: int
-    coverage: float | None
-    missing: list[dict[str, str]]
-
-
-@dataclass
-class ParserAnalysis:
+    # Dimension being scored, such as "contact".
     name: str
+    # Number of expected values found; integer range is 0 through total.
+    matched: int
+    # Number of expected values; nonnegative integer.
+    total: int
+    # Matched / total in [0.0, 1.0]; zero when total is zero (no fields).
+    coverage: float
+    # Expected values not found, e.g. (MissingField("email", "..."),); empty means none.
+    missing: tuple[MissingField, ...]
+
+    def __post_init__(self) -> None:
+        if self.total < 0 or not 0 <= self.matched <= self.total:
+            raise ValueError("Group counts must satisfy 0 <= matched <= total")
+        if len(self.missing) != self.total - self.matched:
+            raise ValueError("Missing values must account for unmatched fields")
+        if not 0.0 <= self.coverage <= 1.0:
+            raise ValueError("Group coverage must be between 0 and 1")
+        expected_coverage = self.matched / self.total if self.total else 0.0
+        if self.coverage != expected_coverage:
+            raise ValueError("Group coverage must match its counts")
+
+
+@dataclass(frozen=True)
+class ParserAnalysis:
+    # Parser identifier, such as "pdftotext-layout".
+    name: str
+    # Parser tier: 0 (lightweight) or 1 (local ML-based).
     tier: int
+    # Weighted expected-field coverage in [0.0, 1.0].
     score: float
-    groups: dict[str, GroupAnalysis]
+    # Per-dimension results, e.g. (GroupAnalysis("contact", ...),).
+    groups: tuple[GroupAnalysis, ...]
+
+    def __post_init__(self) -> None:
+        if self.tier not in (0, 1):
+            raise ValueError("Parser tier must be 0 or 1")
+        if not 0.0 <= self.score <= 1.0:
+            raise ValueError("Parser score must be between 0 and 1")
+        if not self.groups:
+            raise ValueError("A parser result must contain at least one group")
 
 
-@dataclass
+@dataclass(frozen=True)
 class ATSAnalysis:
-    parsers: list[ParserAnalysis]
+    # Per-parser results, e.g. (ParserAnalysis("pdftotext-layout", ...),).
+    parsers: tuple[ParserAnalysis, ...]
+
+    def __post_init__(self) -> None:
+        if not self.parsers:
+            raise ValueError("An analysis must contain at least one parser")
 
 
 def main() -> None:
     pdf_path, ground_truth_path, active_tiers, output_path = parse_args()
     pdf, ground_truth = load_preconditions(pdf_path, ground_truth_path)
-    analysis = analyze(pdf, ground_truth, active_tiers)
+    analysis = analyze(
+        pdf, ground_truth, active_tiers, [*TIER0_PARSERS, *TIER1_PARSERS]
+    )
     report = build_report(analysis, pdf_path, ground_truth_path)
     dump(report, output_path)
 
@@ -63,7 +107,7 @@ def parse_args(
         nargs="+",
         type=int,
         choices=(0, 1),
-        default=(0,),
+        default=(0, 1),
         help="Parser tiers to run (0: lightweight, 1: local ML-based).",
     )
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT_PATH)
@@ -91,13 +135,12 @@ def analyze(
     pdf: bytes,
     ground_truth: dict,
     active_tiers: tuple[int, ...],
-    parsers: list[tuple[str, int, Callable[[bytes], str]]] | None = None,
+    parsers: list[tuple[str, int, Callable[[bytes], str]]],
 ) -> ATSAnalysis:
-    parser_functions = (
-        parsers if parsers is not None else [*TIER0_PARSERS, *TIER1_PARSERS]
-    )
+    if len(parsers) < 1:
+        raise ValueError("At least one parser must be configured")
     results = []
-    for name, tier, extractor in parser_functions:
+    for name, tier, extractor in parsers:
         if tier not in active_tiers:
             continue
         text = extractor(pdf)
@@ -106,12 +149,20 @@ def analyze(
             name=name,
             tier=tier,
             score=score["score"],
-            groups={
-                name: GroupAnalysis(**result)
-                for name, result in score["groups"].items()
-            },
+            groups=tuple(
+                GroupAnalysis(
+                    name=group_name,
+                    matched=result["matched"],
+                    total=result["total"],
+                    coverage=result["coverage"],
+                    missing=tuple(
+                        MissingField(**item) for item in result["missing"]
+                    ),
+                )
+                for group_name, result in score["groups"].items()
+            ),
         ))
-    return ATSAnalysis(results)
+    return ATSAnalysis(tuple(results))
 
 
 def build_report(
@@ -128,13 +179,16 @@ def build_report(
                 "tier": parser.tier,
                 "score": parser.score,
                 "groups": {
-                    name: {
+                    group.name: {
                         "matched": group.matched,
                         "total": group.total,
                         "coverage": group.coverage,
-                        "missing": group.missing,
+                        "missing": [
+                            {"field": item.field, "value": item.value}
+                            for item in group.missing
+                        ],
                     }
-                    for name, group in parser.groups.items()
+                    for group in parser.groups
                 },
             }
             for parser in analysis.parsers
@@ -143,7 +197,8 @@ def build_report(
 
 
 def dump(report: dict, output_path: Path) -> None:
-    output_path.write_text(json.dumps(report, indent=2) + "\n")
+    output_path.write_text(json.dumps(report, indent=4) + "\n")
+    # CI logs show concise scores for quick comparison; the file retains full details.
     for result in report["parsers"]:
         print(f'{result["name"]}: {result["score"]:.1%}')
 
@@ -204,6 +259,9 @@ def _expected_fields(ground_truth: dict) -> dict[str, list[dict[str, str]]]:
 
 
 def _normalized_tokens(value: str) -> list[str]:
+    # NFKD decomposes compatibility forms and accents so they tokenize consistently.
+    # Unlike NFC/NFKC, it exposes combining marks for removal; it also decomposes
+    # compatibility forms (such as ligatures) that can differ in PDF extraction.
     normalized = unicodedata.normalize("NFKD", value).casefold()
     normalized = "".join(
         character for character in normalized
@@ -266,7 +324,7 @@ def score_text(text: str, ground_truth: dict) -> dict:
         groups[group_name] = {
             "matched": len(matched),
             "total": total,
-            "coverage": len(matched) / total if total else None,
+            "coverage": len(matched) / total if total else 0.0,
             "missing": missing,
         }
 

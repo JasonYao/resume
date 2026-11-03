@@ -26,7 +26,10 @@ def test_analyze_includes_local_ml_based_tier_when_requested(ats_ground_truth):
         b"pdf data", ats_ground_truth, (0, 1), parser_functions
     )
 
-    assert [parser.name for parser in analysis.parsers] == ["baseline", "structured"]
+    assert [parser.name for parser in analysis.parsers] == [
+        "baseline",
+        "structured",
+    ]
     report = ats_scoring.build_report(
         analysis, Path("resume.pdf"), Path("raw-data.json")
     )

@@ -46,4 +46,4 @@ def test_score_text_ignores_empty_groups(ats_ground_truth):
     )
 
     assert result["score"] == 1.0
-    assert result["groups"]["employment"]["coverage"] is None
+    assert result["groups"]["employment"]["coverage"] == 0.0
