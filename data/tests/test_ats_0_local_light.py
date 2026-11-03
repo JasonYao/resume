@@ -21,6 +21,9 @@ def test_build_report_uses_local_light_parsers_by_default(
         [("structured", "tier1", lambda _: "Google")],
     )
 
-    report = ats_scoring.build_report(pdf_path, ground_truth_path)
+    analysis = ats_scoring.analyze(pdf_path, ground_truth_path, ("tier0",))
 
+    assert [parser.name for parser in analysis.parsers] == ["baseline"]
+    assert analysis.parsers[0].groups["contact"].matched == 1
+    report = ats_scoring.build_report(analysis)
     assert [parser["name"] for parser in report["parsers"]] == ["baseline"]

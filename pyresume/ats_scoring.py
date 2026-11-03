@@ -1,5 +1,6 @@
 import argparse
 from collections.abc import Callable
+from dataclasses import dataclass
 from difflib import SequenceMatcher
 import json
 from pathlib import Path
@@ -16,6 +17,113 @@ GROUP_WEIGHTS = {
     "education": 0.2,
     "skills": 0.1,
 }
+
+
+@dataclass
+class GroupAnalysis:
+    matched: int
+    total: int
+    coverage: float | None
+    missing: list[dict[str, str]]
+
+
+@dataclass
+class ParserAnalysis:
+    name: str
+    tier: str
+    score: float
+    groups: dict[str, GroupAnalysis]
+
+
+@dataclass
+class ATSAnalysis:
+    pdf_path: Path
+    ground_truth_path: Path
+    parsers: list[ParserAnalysis]
+
+
+def main() -> None:
+    pdf_path, ground_truth_path, active_tiers, output_path = parse_args()
+    analysis = analyze(pdf_path, ground_truth_path, active_tiers)
+    report = build_report(analysis)
+    dump(report, output_path)
+
+
+def parse_args() -> tuple[Path, Path, tuple[str, ...], Path]:
+    parser = argparse.ArgumentParser(
+        description="Score PDF text extraction against the resume source JSON."
+    )
+    parser.add_argument("--pdf", type=Path, required=True)
+    parser.add_argument("--ground-truth", type=Path, required=True)
+    parser.add_argument("--output", type=Path, default=Path("ats-report.json"))
+    parser.add_argument(
+        "--include-tier1",
+        action="store_true",
+        help="Also run the heavyweight Docling and Unstructured parsers.",
+    )
+    args = parser.parse_args()
+
+    if not args.pdf.is_file():
+        parser.error(f"PDF does not exist: {args.pdf}")
+    if not args.ground_truth.is_file():
+        parser.error(f"Ground-truth JSON does not exist: {args.ground_truth}")
+
+    active_tiers = ("tier0", "tier1") if args.include_tier1 else ("tier0",)
+    return args.pdf, args.ground_truth, active_tiers, args.output
+
+
+def analyze(
+    pdf_path: Path, ground_truth_path: Path, active_tiers: tuple[str, ...]
+) -> ATSAnalysis:
+    ground_truth = json.loads(ground_truth_path.read_text())
+    parsers = []
+    for name, tier, extractor in [*TIER0_PARSERS, *TIER1_PARSERS]:
+        if tier not in active_tiers:
+            continue
+        text = extractor(pdf_path)
+        score = score_text(text, ground_truth)
+        parsers.append(ParserAnalysis(
+            name=name,
+            tier=tier,
+            score=score["score"],
+            groups={
+                name: GroupAnalysis(**result)
+                for name, result in score["groups"].items()
+            },
+        ))
+    return ATSAnalysis(pdf_path, ground_truth_path, parsers)
+
+
+def build_report(analysis: ATSAnalysis) -> dict:
+    return {
+        "pdf": str(analysis.pdf_path),
+        "ground_truth": str(analysis.ground_truth_path),
+        "metric": "weighted expected-field text coverage (not field extraction precision)",
+        "weights": GROUP_WEIGHTS,
+        "parsers": [
+            {
+                "name": parser.name,
+                "tier": parser.tier,
+                "score": parser.score,
+                "groups": {
+                    name: {
+                        "matched": group.matched,
+                        "total": group.total,
+                        "coverage": group.coverage,
+                        "missing": group.missing,
+                    }
+                    for name, group in parser.groups.items()
+                },
+            }
+            for parser in analysis.parsers
+        ],
+    }
+
+
+def dump(report: dict, output_path: Path) -> None:
+    output_path.write_text(json.dumps(report, indent=2) + "\n")
+    for result in report["parsers"]:
+        print(f'{result["name"]}: {result["score"]:.1%}')
 
 
 def _expected_fields(ground_truth: dict) -> dict[str, list[dict[str, str]]]:
@@ -196,57 +304,5 @@ TIER1_PARSERS: list[tuple[str, str, Callable[[Path], str]]] = [
     ("docling", "tier1", _extract_docling),
     ("unstructured", "tier1", _extract_unstructured),
 ]
-
-
-def build_report(
-    pdf_path: Path, ground_truth_path: Path, include_tier1: bool = False
-) -> dict:
-    ground_truth = json.loads(ground_truth_path.read_text())
-    parsers = []
-    selected_parsers = [*TIER0_PARSERS]
-    if include_tier1:
-        selected_parsers.extend(TIER1_PARSERS)
-    for name, tier, extractor in selected_parsers:
-        text = extractor(pdf_path)
-        score = score_text(text, ground_truth)
-        parsers.append({
-            "name": name,
-            "tier": tier,
-            **score,
-        })
-    return {
-        "pdf": str(pdf_path),
-        "ground_truth": str(ground_truth_path),
-        "metric": "weighted expected-field text coverage (not field extraction precision)",
-        "weights": GROUP_WEIGHTS,
-        "parsers": parsers,
-    }
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Score PDF text extraction against the resume source JSON."
-    )
-    parser.add_argument("--pdf", type=Path, required=True)
-    parser.add_argument("--ground-truth", type=Path, required=True)
-    parser.add_argument("--output", type=Path, default=Path("ats-report.json"))
-    parser.add_argument(
-        "--include-tier1",
-        action="store_true",
-        help="Also run the heavyweight Docling and Unstructured parsers.",
-    )
-    args = parser.parse_args()
-
-    if not args.pdf.is_file():
-        parser.error(f"PDF does not exist: {args.pdf}")
-    if not args.ground_truth.is_file():
-        parser.error(f"Ground-truth JSON does not exist: {args.ground_truth}")
-
-    report = build_report(args.pdf, args.ground_truth, args.include_tier1)
-    args.output.write_text(json.dumps(report, indent=2) + "\n")
-    for result in report["parsers"]:
-        print(f'{result["name"]}: {result["score"]:.1%}')
-
-
 if __name__ == "__main__":
     main()

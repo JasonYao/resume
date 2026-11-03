@@ -81,7 +81,7 @@ jobs:
       # an older version which clashes in the PATH
       # Shellcheck is a dependency in our testing step, and used to be included by default in previous *nix CI/CD environments, but as
       # of the bump to v4 of these GitHub Action steps, now needs to be installed separately.
-      # poppler-utils provides pdftotext for the baseline PDF text extraction.
+      # poppler-utils provides pdftotext for the ats-0-local-light tier.
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get -y install fonts-font-awesome ghostscript poppler-utils shellcheck
 

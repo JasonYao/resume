@@ -21,10 +21,12 @@ def test_build_report_includes_local_ml_based_parsers_when_requested(
         [("structured", "tier1", lambda _: "Google")],
     )
 
-    report = ats_scoring.build_report(
-        pdf_path, ground_truth_path, include_tier1=True
+    analysis = ats_scoring.analyze(
+        pdf_path, ground_truth_path, ("tier0", "tier1")
     )
 
+    assert [parser.name for parser in analysis.parsers] == ["baseline", "structured"]
+    report = ats_scoring.build_report(analysis)
     assert [parser["name"] for parser in report["parsers"]] == [
         "baseline",
         "structured",
