@@ -101,13 +101,17 @@ jobs:
 
       - name: Score PDF parsing
         # Tier 0 took about 1 second in CI run 230; tier 1 has not yet been measured in CI.
+        env:
+          UNSTRUCTURED_DISABLE_NOTICE: "1"
         run: bin/ats_score
 
       - name: Upload ATS parsing report
         uses: actions/upload-artifact@v7
         with:
           name: ats-report
-          path: ats-report.json
+          path: |
+            ats-report.json
+            ats-summary.json
           if-no-files-found: error
 
       # Deployment of source to master happens in the deploy job below, which is the only place SOURCE_DEPLOY_PAT is available

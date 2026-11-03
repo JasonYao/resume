@@ -28,13 +28,14 @@ def test_parse_args_defaults_to_all_tiers():
         Path("raw-data.json"),
         (0, 1),
         ats_scoring.DEFAULT_OUTPUT_PATH,
+        ats_scoring.DEFAULT_SUMMARY_PATH,
     )
 
 
 def test_analyze_selects_light_tier_and_returns_data(ats_ground_truth):
     parser_functions = [
-        ("baseline", 0, lambda _: "Jason Yao"),
-        ("structured", 1, lambda _: "Google"),
+        ("baseline", 0, lambda _: "Jason Yao", lambda: "1.0"),
+        ("structured", 1, lambda _: "Google", lambda: "2.0"),
     ]
 
     analysis = ats_scoring.analyze(
@@ -49,6 +50,12 @@ def test_analyze_selects_light_tier_and_returns_data(ats_ground_truth):
         analysis, Path("resume.pdf"), Path("raw-data.json")
     )
     assert [parser["name"] for parser in report["parsers"]] == ["baseline"]
+    assert report["parsers"][0]["version"] == "1.0"
+    assert ats_scoring.build_summary(report) == {
+        "parsers": [
+            {"parser": "baseline", "version": "1.0", "score": report["parsers"][0]["score"]}
+        ],
+    }
 
 
 def test_analyze_requires_at_least_one_parser(ats_ground_truth):
@@ -64,20 +71,15 @@ def test_group_analysis_uses_zero_coverage_when_empty():
         group.coverage = 1.0
 
 
-def test_dump_uses_four_space_json_indentation(tmp_path, capsys):
+def test_dump_writes_detailed_and_top_line_json(tmp_path, capsys):
     output_path = tmp_path / "report.json"
+    summary_path = tmp_path / "summary.json"
     report = {"parsers": [{"name": "baseline", "score": 1.0}]}
+    summary = {"parsers": [{"parser": "baseline", "version": "1.0", "score": 1.0}]}
 
-    ats_scoring.dump(report, output_path)
+    ats_scoring.dump(report, summary, output_path, summary_path)
 
-    assert output_path.read_text() == (
-        '{\n'
-        '    "parsers": [\n'
-        '        {\n'
-        '            "name": "baseline",\n'
-        '            "score": 1.0\n'
-        '        }\n'
-        '    ]\n'
-        '}\n'
-    )
-    assert capsys.readouterr().out == "baseline: 100.0%\n"
+    assert json.loads(output_path.read_text()) == report
+    assert json.loads(summary_path.read_text()) == summary
+    assert output_path.read_text().startswith('{\n    "parsers"')
+    assert capsys.readouterr().out == ""

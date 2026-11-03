@@ -22,6 +22,12 @@ if [[ -z "${pull_number}" ]]; then
     exit 0
 fi
 
+summary_table="$(jq -er '
+    ["| Parser | Version | Score |", "|---|---|---|"] +
+    [.parsers[] | "| \(.parser) | \(.version) | \((.score * 1000 | round) / 10)% |"] |
+    join("\n")
+' ats-summary.json)"
+
 function upload_attachment() {
     local file_name="$1"
     local content_type="$2"
@@ -74,7 +80,7 @@ if [[ "${#notices[@]}" -gt 0 ]]; then
     notice_markdown="$(printf '\n\n> %s' "${notices[@]}")"
 fi
 
-comment_body="$(printf '<!-- resume-preview -->\n%s\n\n%s%s' "${preview_markdown}" "${pdf_markdown}" "${notice_markdown}")"
+comment_body="$(printf '<!-- resume-preview -->\n## TL;DR\n\n%s\n\n%s\n\n%s%s' "${summary_table}" "${preview_markdown}" "${pdf_markdown}" "${notice_markdown}")"
 comment_payload="$(jq -n --arg body "${comment_body}" '{body: $body}')"
 
 echo "Creating a new preview comment on pull request #${pull_number}."

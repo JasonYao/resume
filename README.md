@@ -98,7 +98,8 @@ text against expected fields in `raw-data.json`:
 bin/ats_score
 ```
 
-The report is written to `ats-report.json`. The score is weighted coverage of
+The full report is written to `ats-report.json`; `ats-summary.json` contains
+only each parser's version and top-line score. The score is weighted coverage of
 expected contact, employment, education, and skill values in each parser's
 extracted text; it does not measure whether a parser assigned those values to
 the correct JSON fields. These checks are a layout/readability signal, not a

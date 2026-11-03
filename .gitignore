@@ -23,3 +23,4 @@ __pycache__/
 
 # ATS parser report
 ats-report.json
+ats-summary.json

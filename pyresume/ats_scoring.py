@@ -2,6 +2,7 @@ import argparse
 from collections.abc import Callable
 from dataclasses import dataclass
 from difflib import SequenceMatcher
+from importlib.metadata import version as package_version
 from io import BytesIO
 import json
 from pathlib import Path
@@ -19,6 +20,7 @@ GROUP_WEIGHTS = {
     "skills": 0.1,
 }
 DEFAULT_OUTPUT_PATH = Path("ats-report.json")
+DEFAULT_SUMMARY_PATH = Path("ats-summary.json")
 
 
 @dataclass(frozen=True)
@@ -60,6 +62,8 @@ class ParserAnalysis:
     name: str
     # Parser tier: 0 (lightweight) or 1 (local ML-based).
     tier: int
+    # Installed parser version, such as "25.02.0".
+    version: str
     # Weighted expected-field coverage in [0.0, 1.0].
     score: float
     # Per-dimension results, e.g. (GroupAnalysis("contact", ...),).
@@ -85,18 +89,19 @@ class ATSAnalysis:
 
 
 def main() -> None:
-    pdf_path, ground_truth_path, active_tiers, output_path = parse_args()
+    pdf_path, ground_truth_path, active_tiers, output_path, summary_path = parse_args()
     pdf, ground_truth = load_preconditions(pdf_path, ground_truth_path)
     analysis = analyze(
         pdf, ground_truth, active_tiers, [*TIER0_PARSERS, *TIER1_PARSERS]
     )
     report = build_report(analysis, pdf_path, ground_truth_path)
-    dump(report, output_path)
+    summary = build_summary(report)
+    dump(report, summary, output_path, summary_path)
 
 
 def parse_args(
     argv: list[str] | None = None,
-) -> tuple[Path, Path, tuple[int, ...], Path]:
+) -> tuple[Path, Path, tuple[int, ...], Path, Path]:
     parser = argparse.ArgumentParser(
         description="Score PDF text extraction against the resume source JSON."
     )
@@ -111,6 +116,7 @@ def parse_args(
         help="Parser tiers to run (0: lightweight, 1: local ML-based).",
     )
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT_PATH)
+    parser.add_argument("--summary-output", type=Path, default=DEFAULT_SUMMARY_PATH)
     args = parser.parse_args(argv)
 
     return (
@@ -118,6 +124,7 @@ def parse_args(
         args.ground_truth,
         tuple(args.included_tiers),
         args.output,
+        args.summary_output,
     )
 
 
@@ -135,12 +142,12 @@ def analyze(
     pdf: bytes,
     ground_truth: dict,
     active_tiers: tuple[int, ...],
-    parsers: list[tuple[str, int, Callable[[bytes], str]]],
+    parsers: list[tuple[str, int, Callable[[bytes], str], Callable[[], str]]],
 ) -> ATSAnalysis:
     if len(parsers) < 1:
         raise ValueError("At least one parser must be configured")
     results = []
-    for name, tier, extractor in parsers:
+    for name, tier, extractor, get_version in parsers:
         if tier not in active_tiers:
             continue
         text = extractor(pdf)
@@ -148,6 +155,7 @@ def analyze(
         results.append(ParserAnalysis(
             name=name,
             tier=tier,
+            version=get_version(),
             score=score["score"],
             groups=tuple(
                 GroupAnalysis(
@@ -177,6 +185,7 @@ def build_report(
             {
                 "name": parser.name,
                 "tier": parser.tier,
+                "version": parser.version,
                 "score": parser.score,
                 "groups": {
                     group.name: {
@@ -196,11 +205,24 @@ def build_report(
     }
 
 
-def dump(report: dict, output_path: Path) -> None:
+def build_summary(report: dict) -> dict:
+    return {
+        "parsers": [
+            {
+                "parser": parser["name"],
+                "version": parser["version"],
+                "score": parser["score"],
+            }
+            for parser in report["parsers"]
+        ],
+    }
+
+
+def dump(
+    report: dict, summary: dict, output_path: Path, summary_path: Path
+) -> None:
     output_path.write_text(json.dumps(report, indent=4) + "\n")
-    # CI logs show concise scores for quick comparison; the file retains full details.
-    for result in report["parsers"]:
-        print(f'{result["name"]}: {result["score"]:.1%}')
+    summary_path.write_text(json.dumps(summary, indent=4) + "\n")
 
 
 def _expected_fields(ground_truth: dict) -> dict[str, list[dict[str, str]]]:
@@ -345,6 +367,20 @@ def score_text(text: str, ground_truth: dict) -> dict:
     return {"score": weighted_score, "groups": groups}
 
 
+def _pdftotext_version() -> str:
+    result = subprocess.run(
+        ["pdftotext", "-v"], capture_output=True, text=True, check=True
+    )
+    match = re.search(r"version\s+([^\s]+)", result.stderr + result.stdout)
+    if not match:
+        raise RuntimeError("Could not determine pdftotext version")
+    return match.group(1)
+
+
+def _package_version(package_name: str) -> Callable[[], str]:
+    return lambda: package_version(package_name)
+
+
 def _extract_pdftotext(pdf: bytes) -> str:
     result = subprocess.run(
         ["pdftotext", "-layout", "-", "-"],
@@ -380,13 +416,17 @@ def _extract_unstructured(pdf: bytes) -> str:
     return "\n".join(str(element) for element in elements)
 
 
-TIER0_PARSERS: list[tuple[str, int, Callable[[bytes], str]]] = [
-    ("pdftotext-layout", 0, _extract_pdftotext),
-    ("pdfplumber-layout", 0, _extract_pdfplumber),
+TIER0_PARSERS: list[
+    tuple[str, int, Callable[[bytes], str], Callable[[], str]]
+] = [
+    ("pdftotext-layout", 0, _extract_pdftotext, _pdftotext_version),
+    ("pdfplumber-layout", 0, _extract_pdfplumber, _package_version("pdfplumber")),
 ]
-TIER1_PARSERS: list[tuple[str, int, Callable[[bytes], str]]] = [
-    ("docling", 1, _extract_docling),
-    ("unstructured", 1, _extract_unstructured),
+TIER1_PARSERS: list[
+    tuple[str, int, Callable[[bytes], str], Callable[[], str]]
+] = [
+    ("docling", 1, _extract_docling, _package_version("docling")),
+    ("unstructured", 1, _extract_unstructured, _package_version("unstructured")),
 ]
 if __name__ == "__main__":
     main()
