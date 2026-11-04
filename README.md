@@ -89,6 +89,38 @@ bin/build
 xelatex Resume_Jason_Yao.tex
 ```
 
+## ATS Parsing Checks
+
+After building the PDF, run all configured text extractors and compare their
+text against expected fields in `raw-data.json`:
+
+```sh
+bin/ats_score
+```
+
+The full report is written to `ats-report.json`; `ats-summary.json` contains
+each parser's version, top-line score, and text-extraction time in seconds.
+The score is weighted coverage of
+expected contact, employment, education, and skill values in each parser's
+extracted text; it does not measure whether a parser assigned those values to
+the correct JSON fields. These checks are a layout/readability signal, not a
+replacement for testing with real ATS services.
+
+ATS tests are split by parser tier and can be run independently. The scoring
+command runs both tiers by default; pass `--included-tiers` to select tiers:
+
+```sh
+uv sync --locked --group ats-0-local-light
+uv run pytest data/tests/test_ats_0_local_light.py
+
+# The heavier local ML-based parsers may download models on first use.
+uv sync --locked --group ats-1-local-ml-based
+uv run pytest data/tests/test_ats_1_local_ml_based.py
+bin/ats_score --included-tiers 1
+```
+
+CI installs the `ats-1-local-ml-based` group and runs both tiers on every build.
+
 ## Testing
 
 To run the automated tests:

@@ -21,3 +21,6 @@ install-tl-unx.tar.gz
 # Build cache ignores
 __pycache__/
 
+# ATS parser report
+ats-report.json
+ats-summary.json

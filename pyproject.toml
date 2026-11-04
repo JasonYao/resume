@@ -22,3 +22,12 @@ dependencies = [
 dev = [
     "pytest",
 ]
+ats-0-local-light = [
+    { include-group = "dev" },
+    "pdfplumber",
+]
+ats-1-local-ml-based = [
+    { include-group = "ats-0-local-light" },
+    "docling",
+    "unstructured[pdf]",
+]
