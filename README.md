@@ -76,12 +76,16 @@ curl https://www.jasonyao.com/resume/biography.txt
     - Run `uv venv --python 3.14.4`
 - [ ] Installs all python dependencies
     - Run `uv sync`
+- [ ] Pulls in the Florilegium flower generator (a git submodule of
+  [our fork](https://github.com/JasonYao/florilegium) in `vendors/florilegium`), checking out only the files
+  the build needs (`florilegium.sty` and `florilegium*.lua`) instead of the whole repo
+    - Run `bin/fetch_florilegium`
 - [ ] (Optional) Installs a good pdf viewer and IDE
     - Run `brew install --cask texmaker`
 
 ## Usage
 
-To generate the pdf from the command-line:
+### To generate the pdf from the command-line
 
 ```sh
 bin/build
@@ -89,7 +93,7 @@ bin/build
 xelatex Resume_Jason_Yao.tex
 ```
 
-## ATS Parsing Checks
+### ATS Parsing Checks
 
 After building the PDF, run all configured text extractors and compare their
 text against expected fields in `raw-data.json`:
@@ -120,6 +124,17 @@ bin/ats_score --included-tiers 1
 ```
 
 CI installs the `ats-1-local-ml-based` group and runs both tiers on every build.
+
+### To generate previews of each resume layer for development:
+
+```sh
+bin/build dev
+```
+
+With no argument, `bin/build` picks the mode itself: CI builds of any ref other than `source` are dev builds,
+everything else (including local runs) is the default build.
+
+The floral decoration is part of the header layer, beginning at the bottom right. For now the final output (`Resume_Jason_Yao.pdf`/`.png`) is built with the flowers disabled; set `final_flowers_enabled=true` in `bin/build` to bring them back. The development build additionally writes `Resume_Jason_Yao_flowers.png` (the composite with flowers enabled) and `Resume_Jason_Yao_layer_*.png` for the four composition layers, also with flowers enabled.
 
 ## Testing
 
