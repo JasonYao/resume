@@ -56,6 +56,10 @@
 \definecolor{headings}{HTML}{0E0E0F}
 \definecolor{subheadings}{HTML}{1A1C1E}
 \providecommand{\resumeFlowerLayerPdf}{florilegium_layer.pdf}
+% Flowers are off unless the build passes \def\resumeEnableFlowers{} before the document (see
+% final_flowers_enabled in bin/build to re-enable them in the final output)
+\newif\ifresumeflowers
+\ifdefined\resumeEnableFlowers\resumeflowerstrue\fi
 \def\resumeFlowerSeedInset{0.3cm}
 \def\resumeFlowerSeedBoxSize{1cm}
 \tikzset{resumePreviewBox/.style={draw=red,line width=0.5pt}}
@@ -99,10 +103,12 @@
 \newsavebox{\resumeHeaderBox}
 \newsavebox{\resumeColumnsBox}
 \newsavebox{\resumeTotoroBox}
+\newsavebox{\resumeTimestampBox}
 \newsavebox{\resumeNameContentBox}
 \newsavebox{\resumeLinksContentBox}
 \newcommand{\resumeForegroundContent}{}
-\newcommand{\resumecompose}[2]{%
+\newcommand{\resumecompose}[3]{%
+  \sbox{\resumeTimestampBox}{#3}%
   \sbox{\resumeTotoroBox}{\includegraphics[width=2.75cm]{watermarks/totoro}}%
   \sbox{\resumeHeaderBox}{\begin{minipage}{\textwidth}#1\end{minipage}}%
   \sbox{\resumeColumnsBox}{%
@@ -128,11 +134,14 @@
     \end{pgfonlayer}
     \begin{pgfonlayer}{resumeHeader}
       \resumeiflayer{\resumeHeaderLayer}{%
-        \node[anchor=south west,inner sep=0pt] at (current page.south west) {
-          \includegraphics[width=\paperwidth,height=\paperheight]{\resumeFlowerLayerPdf}};
-        \resumeDrawFlowerBounds
+        \ifresumeflowers
+          \node[anchor=south west,inner sep=0pt] at (current page.south west) {
+            \includegraphics[width=\paperwidth,height=\paperheight]{\resumeFlowerLayerPdf}};
+          \resumeDrawFlowerBounds
+        \fi
         \node[anchor=north west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
         \node[anchor=south,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=\dimexpr0.75cm+0.17\textwidth\relax,yshift=1.5cm]current page.south west) {\usebox{\resumeTotoroBox}};
+        \node[anchor=south west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=1.5cm]current page.south west) {\usebox{\resumeTimestampBox}};
       }
     \end{pgfonlayer}
     \begin{pgfonlayer}{resumeColumns}

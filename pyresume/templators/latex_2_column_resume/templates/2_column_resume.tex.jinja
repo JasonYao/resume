@@ -9,5 +9,9 @@
         \BLOCK{include 'left_column/template.tex.jinja'}
         \hfill%
         \BLOCK{include 'right_column/template.tex.jinja'}
+    }{
+        % Timestamp of resume generation, drawn on the header layer (with the totoro sprite)
+        \DTMsetdatestyle{mylastupdate}%
+        \DTMdisplaydate{\the\year}{\the\month}{\the\day}{-1}%
     }
 \end{document}

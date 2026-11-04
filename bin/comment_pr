@@ -59,8 +59,10 @@ function upload_attachment() {
     jq -er '.url' <<< "${response}"
 }
 
-# The composite is shown in full, the individual layers go in a collapsed breakdown
-composite_file="Resume_Jason_Yao.png"
+# The final output (which currently has the flowers disabled) and the flowers-enabled composite are shown
+# in full, the individual flowers-enabled layers go in a collapsed breakdown
+final_file="Resume_Jason_Yao.png"
+composite_file="Resume_Jason_Yao_flowers.png"
 layer_names=(1-background 2-header-totoro 3-columns 4-foreground)
 layer_files=(
     Resume_Jason_Yao_layer_1_background.png
@@ -71,6 +73,8 @@ layer_files=(
 table_rows=()
 
 # A failed upload fails the build, since the previews are the point of this comment
+final_url="$(upload_attachment "${final_file}" image/png)"
+final_markdown="![final output](${final_url})"
 composite_url="$(upload_attachment "${composite_file}" image/png)"
 composite_markdown="![5-composite](${composite_url})"
 
@@ -84,11 +88,13 @@ done
 
 layer_table="$(printf '| Layer Name | Image |\n|---|---|\n%s' "$(printf '%s\n' "${table_rows[@]}")")"
 
+final_and_composite_markdown="$(printf '## Final output\n\n%s\n\n## Composite with flowers\n\n%s' "${final_markdown}" "${composite_markdown}")"
+
 pdf_markdown="[Download the generated PDF from the workflow artifact](${ARTIFACT_URL})"
 notice_markdown="GitHub does not allow PDF attachments here, so the PDF is available in the workflow artifact."
 
 comment_body="$(printf '<!-- resume-preview -->\n## TL;DR\n\n%s\n\n%s\n\n## Detailed layer breakdown\n\n<details>\n\n%s\n\n</details>\n\n%s\n\n> %s' \
-    "${summary_table}" "${composite_markdown}" "${layer_table}" "${pdf_markdown}" "${notice_markdown}")"
+    "${summary_table}" "${final_and_composite_markdown}" "${layer_table}" "${pdf_markdown}" "${notice_markdown}")"
 comment_payload="$(jq -n --arg body "${comment_body}" '{body: $body}')"
 
 info "Creating a new preview comment on pull request #${pull_number}."

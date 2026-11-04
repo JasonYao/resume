@@ -144,6 +144,7 @@ jobs:
           path: |
             Resume_Jason_Yao.pdf
             Resume_Jason_Yao.png
+            Resume_Jason_Yao_flowers.png
             Resume_Jason_Yao_layer_*.png
           if-no-files-found: error
 
