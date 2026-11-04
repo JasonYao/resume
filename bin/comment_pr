@@ -63,12 +63,13 @@ function upload_attachment() {
 # in full, the individual flowers-enabled layers go in a collapsed breakdown
 final_file="Resume_Jason_Yao.png"
 composite_file="Resume_Jason_Yao_flowers.png"
-layer_names=(1-background 2-header-totoro 3-columns 4-foreground)
+layer_names=(1-background 2-flowers 3-top-section-and-totoro 4-columns 5-foreground)
 layer_files=(
     Resume_Jason_Yao_layer_1_background.png
-    Resume_Jason_Yao_layer_2_header.png
-    Resume_Jason_Yao_layer_3_columns.png
-    Resume_Jason_Yao_layer_4_foreground.png
+    Resume_Jason_Yao_layer_2_flowers.png
+    Resume_Jason_Yao_layer_3_top-section-and-totoro.png
+    Resume_Jason_Yao_layer_4_columns.png
+    Resume_Jason_Yao_layer_5_foreground.png
 )
 table_rows=()
 

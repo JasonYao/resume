@@ -134,7 +134,7 @@ bin/build dev
 With no argument, `bin/build` picks the mode itself: CI builds of any ref other than `source` are dev builds,
 everything else (including local runs) is the default build.
 
-The floral decoration is part of the header layer, beginning at the bottom right. For now the final output (`Resume_Jason_Yao.pdf`/`.png`) is built with the flowers disabled; set `final_flowers_enabled=true` in `bin/build` to bring them back. The development build additionally writes `Resume_Jason_Yao_flowers.png` (the composite with flowers enabled) and `Resume_Jason_Yao_layer_*.png` for the four composition layers, also with flowers enabled.
+The floral decoration is its own layer (drawn at 10% opacity), beginning at the bottom right. For now the final output (`Resume_Jason_Yao.pdf`/`.png`) is built with the flowers disabled; set `final_flowers_enabled=true` in `bin/build` to bring them back. The development build additionally writes `Resume_Jason_Yao_flowers.png` (the composite with flowers enabled) and `Resume_Jason_Yao_layer_*.png` for the five composition layers, also with flowers enabled.
 
 ## Testing
 

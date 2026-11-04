@@ -143,9 +143,10 @@ function generate_thumbnail() {
 
 function generate_layer_previews() {
     generate_layer 1 background
-    generate_layer 2 header
-    generate_layer 3 columns
-    generate_layer 4 foreground
+    generate_layer 2 flowers
+    generate_layer 3 top-section-and-totoro
+    generate_layer 4 columns
+    generate_layer 5 foreground
 }
 
 # Generates the standalone pdf-derived png of a single resume layer
