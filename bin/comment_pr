@@ -59,31 +59,36 @@ function upload_attachment() {
     jq -er '.url' <<< "${response}"
 }
 
-layer_names=(1-background 2-header-totoro 3-columns 4-foreground 5-composite)
+# The composite is shown in full, the individual layers go in a collapsed breakdown
+composite_file="Resume_Jason_Yao.png"
+layer_names=(1-background 2-header-totoro 3-columns 4-foreground)
 layer_files=(
     Resume_Jason_Yao_layer_1_background.png
     Resume_Jason_Yao_layer_2_header.png
     Resume_Jason_Yao_layer_3_columns.png
     Resume_Jason_Yao_layer_4_foreground.png
-    Resume_Jason_Yao.png
 )
 table_rows=()
+
+# A failed upload fails the build, since the previews are the point of this comment
+composite_url="$(upload_attachment "${composite_file}" image/png)"
+composite_markdown="![5-composite](${composite_url})"
 
 for index in "${!layer_names[@]}"; do
     layer_name="${layer_names[$index]}"
     file_name="${layer_files[$index]}"
 
-    # A failed upload fails the build, since the previews are the point of this comment
     image_url="$(upload_attachment "${file_name}" image/png)"
     table_rows+=("| ${layer_name} | ![${layer_name}](${image_url}) |")
 done
 
-preview_markdown="$(printf '| Layer Name | Image |\n|---|---|\n%s' "$(printf '%s\n' "${table_rows[@]}")")"
+layer_table="$(printf '| Layer Name | Image |\n|---|---|\n%s' "$(printf '%s\n' "${table_rows[@]}")")"
 
 pdf_markdown="[Download the generated PDF from the workflow artifact](${ARTIFACT_URL})"
 notice_markdown="GitHub does not allow PDF attachments here, so the PDF is available in the workflow artifact."
 
-comment_body="$(printf '<!-- resume-preview -->\n## TL;DR\n\n%s\n\n%s\n\n%s\n\n> %s' "${summary_table}" "${preview_markdown}" "${pdf_markdown}" "${notice_markdown}")"
+comment_body="$(printf '<!-- resume-preview -->\n## TL;DR\n\n%s\n\n%s\n\n## Detailed layer breakdown\n\n<details>\n\n%s\n\n</details>\n\n%s\n\n> %s' \
+    "${summary_table}" "${composite_markdown}" "${layer_table}" "${pdf_markdown}" "${notice_markdown}")"
 comment_payload="$(jq -n --arg body "${comment_body}" '{body: $body}')"
 
 info "Creating a new preview comment on pull request #${pull_number}."
