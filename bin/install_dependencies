@@ -283,6 +283,7 @@ function install_tex_dependency_packages() {
         pgf                         \
         titlesec                    \
         textpos                     \
+        eso-pic                     \
         everyshi                    \
         substr                      \
         isodate                     \
@@ -299,7 +300,7 @@ function install_tex_dependency_packages() {
         letltxmacro                 \
         bitset                      \
         xetex \
-        && verify_tex_files keyval.sty fontspec.sty metalogo.sty xunicode.sty ; then
+        && verify_tex_files keyval.sty fontspec.sty metalogo.sty xunicode.sty eso-pic.sty ; then
         success "TexLive: All dependencies installed"
     else
         warn "TexLive: Failed to install dependencies, dumping out debug info"
