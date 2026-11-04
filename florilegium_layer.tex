@@ -1,0 +1,40 @@
+% Generated with the grown composition of our Florilegium fork (vendors/florilegium submodule):
+% https://github.com/JasonYao/florilegium
+\documentclass[10pt]{article}
+\usepackage[letterpaper,left=15mm,right=45mm,top=15mm,bottom=15mm]{geometry}
+\pagestyle{empty}
+
+% bin/build supplies a time-based seed; density is 0.05-1; intensity is 0-1.
+% The wider right margin mirrors the garden so its root begins at page bottom-right.
+\providecommand{\florilegiumseed}{}
+\usepackage[grown,density=1,intensity=0.35]{florilegium}
+\directlua{florilegium.head = function() end}
+\directlua{
+  local growth = require("florilegium-grow")
+  growth.regions = function(g, layout)
+    local padding = 0.2
+    g.colright = g.pw - 0.3
+    local page = { 0.3, 0.3, g.pw - 0.3, g.ph - 0.3 }
+    local resume_totoro_center_x = 0.75 + 0.17 * (g.pw - 3.0)
+    local totoro_center_x = g.pw - resume_totoro_center_x
+    local obstacles = {
+      {
+        1.2, g.ph - 4.5,
+        g.pw - 1.2, g.ph - 0.9,
+      },
+      {
+        totoro_center_x - 2.75 / 2 - padding,
+        1.5 - padding,
+        totoro_center_x + 2.75 / 2 + padding,
+        1.5 + 2.75 + padding,
+      },
+    }
+    local flower_regions = growth.subtract_regions({ page }, obstacles)
+    local foot = { page[1], page[2], page[3], page[2] + 1.0 }
+    return flower_regions, page, foot, nil, page[3], obstacles
+  end
+}
+
+\begin{document}
+\null
+\end{document}

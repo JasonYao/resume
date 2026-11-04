@@ -11,7 +11,7 @@ on:
 
 jobs:
   copilot-setup-steps:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     permissions:
       contents: read
@@ -56,6 +56,10 @@ jobs:
       - name: Install TexLive and ImageMagick dependencies
         run: source bin/install_dependencies
 
+      # Only the files the build needs are checked out from the Florilegium submodule, see bin/fetch_florilegium
+      - name: Fetch Florilegium
+        run: bin/fetch_florilegium
+
       - name: Add TexLive to PATH
         run: echo "/tmp/texlive/bin/x86_64-linux" >> "$GITHUB_PATH"
 
@@ -64,4 +68,5 @@ jobs:
           xelatex --version
           magick --version
           kpsewhich keyval.sty
+          test -f vendors/florilegium/florilegium.sty
           uv run python -c "import pyresume"

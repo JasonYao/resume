@@ -93,6 +93,10 @@ jobs:
         # We source here since texlive manager state is required
         run: source bin/install_dependencies
 
+      # Only the files the build needs are checked out from the Florilegium submodule, see bin/fetch_florilegium
+      - name: Fetch Florilegium
+        run: bin/fetch_florilegium
+
       - name: Test
         run: bin/test
 
@@ -100,7 +104,7 @@ jobs:
         run: bin/build
 
       - name: Score PDF parsing
-        # Tier 0 took about 1 second in CI run 230; tier 1 has not yet been measured in CI.
+        # Tier 0 takes about 1s in CI, and Tier 1 takes ~40s
         env:
           # Suppress the notice from Unstructured in the ats-1-local-ml-based group.
           UNSTRUCTURED_DISABLE_NOTICE: "1"
@@ -140,6 +144,8 @@ jobs:
           path: |
             Resume_Jason_Yao.pdf
             Resume_Jason_Yao.png
+            Resume_Jason_Yao_flowers.png
+            Resume_Jason_Yao_layer_*.png
           if-no-files-found: error
 
       - name: Comment generated resume on pull request

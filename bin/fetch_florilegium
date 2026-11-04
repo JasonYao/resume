@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+set -e # Fails on the first error
+
+##
+# Pulls in the Florilegium submodule (our fork of the floral margin generator),
+# checking out only the files the resume build needs rather than the whole repo
+##
+
+# shellcheck source=bin/utils.sh
+source "$(dirname "$0")/utils.sh"
+
+florilegium_path="vendors/florilegium"
+
+# Anchored so that only the top-level package and its lua modules are materialized
+sparse_patterns=(
+    "/florilegium.sty"
+    "/florilegium*.lua"
+)
+
+function start() {
+    cd "$(dirname "$0")/.."
+
+    info "Fetching the Florilegium submodule"
+    if ! git submodule update --init --depth 1 --filter=blob:none -- "${florilegium_path}"; then
+        fail "Failed to fetch the Florilegium submodule"
+    fi
+
+    info "Restricting the Florilegium checkout to: ${sparse_patterns[*]}"
+    if ! git -C "${florilegium_path}" sparse-checkout set --no-cone "${sparse_patterns[@]}"; then
+        fail "Failed to sparse checkout the Florilegium submodule"
+    fi
+    success "Florilegium is ready in ${florilegium_path}"
+}
+
+start
