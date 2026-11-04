@@ -1,3 +1,3 @@
 [submodule "vendors/florilegium"]
 	path = vendors/florilegium
-	url = git@github.com:JasonYao/florilegium.git
+	url = https://github.com/JasonYao/florilegium.git

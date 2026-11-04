@@ -264,6 +264,9 @@ function install_tex_dependency_packages() {
     #   - Package `collection-fontsrecommended` contains a lot of fonts,
     #     but we really just need `EU` and a few others
     #   - Package `fontawesome5` and the binary from apt are both required
+    #   - Package `pgf` provides TikZ/PGF, which is required since two-column-resume.cls
+    #     uses it to draw the resume layers (`\pgfdeclarelayer`) and the Florilegium
+    #     package loads it to draw the flowers
     #
     # Changelog:
     # - 2026/10/30: Swapped from fontawesome (which pulled in 4.6.3.1 from 2016/05/15)

@@ -2,7 +2,10 @@
 
 set -euo pipefail
 
-echo "Looking up the open pull request for ${GITHUB_REF_NAME}."
+# shellcheck source=bin/utils.sh
+source "$(dirname "$0")/utils.sh"
+
+info "Looking up the open pull request for ${GITHUB_REF_NAME}."
 pulls="$(curl --silent --show-error --fail-with-body \
     --oauth2-bearer "${GITHUB_TOKEN}" \
     --header "Accept: application/vnd.github+json" \
@@ -18,7 +21,7 @@ pull_number="$(jq -r \
     <<< "${pulls}")"
 
 if [[ -z "${pull_number}" ]]; then
-    echo "No open pull request found for ${GITHUB_REF_NAME}; skipping preview comment."
+    info "No open pull request found for ${GITHUB_REF_NAME}; skipping preview comment."
     exit 0
 fi
 
@@ -34,7 +37,7 @@ function upload_attachment() {
     local response
     local status
 
-    echo "Uploading ${file_name} as a pull request attachment." >&2
+    info "Uploading ${file_name} as a pull request attachment." >&2
     if ! response="$(curl --silent --show-error \
         --request POST \
         --header "Authorization: token ${GITHUB_UPLOAD_TOKEN}" \
@@ -44,15 +47,13 @@ function upload_attachment() {
         --data-binary "@${file_name}" \
         --write-out $'\n%{http_code}' \
         "https://uploads.github.com/user-attachments/assets?name=${file_name}&content_type=${content_type}&repository_id=${GITHUB_REPOSITORY_ID}")"; then
-        echo "Attachment upload failed for ${file_name}: ${response}" >&2
-        return 1
+        fail "Attachment upload failed for ${file_name}, check that DEPLOY_ACCESS_TOKEN is a valid repository-scoped personal access token: ${response}" >&2
     fi
 
     status="${response##*$'\n'}"
     response="${response%$'\n'*}"
     if [[ "${status}" != 201 ]]; then
-        echo "Attachment upload failed for ${file_name} (HTTP ${status}): ${response}" >&2
-        return 1
+        fail "Attachment upload failed for ${file_name} (HTTP ${status}), check that DEPLOY_ACCESS_TOKEN is a valid repository-scoped personal access token: ${response}" >&2
     fi
 
     jq -er '.url' <<< "${response}"
@@ -67,35 +68,25 @@ layer_files=(
     Resume_Jason_Yao.png
 )
 table_rows=()
-notices=()
 
 for index in "${!layer_names[@]}"; do
     layer_name="${layer_names[$index]}"
     file_name="${layer_files[$index]}"
 
-    if image_url="$(upload_attachment "${file_name}" image/png)"; then
-        table_rows+=("| ${layer_name} | ![${layer_name}](${image_url}) |")
-    else
-        echo "::warning::Could not upload ${file_name}; check that DEPLOY_ACCESS_TOKEN is a valid repository-scoped personal access token."
-        table_rows+=("| ${layer_name} | [Download from workflow artifact](${ARTIFACT_URL}) |")
-        notices+=("The ${layer_name} preview could not be uploaded; it is available in the workflow artifact.")
-    fi
+    # A failed upload fails the build, since the previews are the point of this comment
+    image_url="$(upload_attachment "${file_name}" image/png)"
+    table_rows+=("| ${layer_name} | ![${layer_name}](${image_url}) |")
 done
 
 preview_markdown="$(printf '| Layer Name | Image |\n|---|---|\n%s' "$(printf '%s\n' "${table_rows[@]}")")"
 
 pdf_markdown="[Download the generated PDF from the workflow artifact](${ARTIFACT_URL})"
-notices+=("GitHub does not allow PDF attachments here, so the PDF is available in the workflow artifact.")
+notice_markdown="GitHub does not allow PDF attachments here, so the PDF is available in the workflow artifact."
 
-notice_markdown=""
-if [[ "${#notices[@]}" -gt 0 ]]; then
-    notice_markdown="$(printf '\n\n> %s' "${notices[@]}")"
-fi
-
-comment_body="$(printf '<!-- resume-preview -->\n## TL;DR\n\n%s\n\n%s\n\n%s%s' "${summary_table}" "${preview_markdown}" "${pdf_markdown}" "${notice_markdown}")"
+comment_body="$(printf '<!-- resume-preview -->\n## TL;DR\n\n%s\n\n%s\n\n%s\n\n> %s' "${summary_table}" "${preview_markdown}" "${pdf_markdown}" "${notice_markdown}")"
 comment_payload="$(jq -n --arg body "${comment_body}" '{body: $body}')"
 
-echo "Creating a new preview comment on pull request #${pull_number}."
+info "Creating a new preview comment on pull request #${pull_number}."
 curl --silent --show-error --fail-with-body \
     --request POST \
     --oauth2-bearer "${GITHUB_TOKEN}" \

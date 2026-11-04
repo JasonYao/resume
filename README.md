@@ -76,6 +76,10 @@ curl https://www.jasonyao.com/resume/biography.txt
     - Run `uv venv --python 3.14.4`
 - [ ] Installs all python dependencies
     - Run `uv sync`
+- [ ] Pulls in the Florilegium flower generator (a git submodule of
+  [our fork](https://github.com/JasonYao/florilegium) in `vendors/florilegium`), checking out only the files
+  the build needs (`florilegium.sty` and `florilegium*.lua`) instead of the whole repo
+    - Run `bin/fetch_florilegium`
 - [ ] (Optional) Installs a good pdf viewer and IDE
     - Run `brew install --cask texmaker`
 
@@ -126,6 +130,9 @@ CI installs the `ats-1-local-ml-based` group and runs both tiers on every build.
 ```sh
 bin/build dev
 ```
+
+With no argument, `bin/build` picks the mode itself: CI builds of any ref other than `source` are dev builds,
+everything else (including local runs) is the default build.
 
 The floral decoration is part of the header layer, beginning at the bottom right. The development build uses the default filenames and also writes `Resume_Jason_Yao_layer_*.png` for the four composition layers.
 

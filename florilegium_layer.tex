@@ -1,5 +1,5 @@
-% Generated with Florilegium's grown composition:
-% https://github.com/kevinraymond/florilegium/tree/5c9bd05ad7ad0ed7b0bfb0cfa2adc1720406e63b
+% Generated with the grown composition of our Florilegium fork (vendors/florilegium submodule):
+% https://github.com/JasonYao/florilegium
 \documentclass[10pt]{article}
 \usepackage[letterpaper,left=15mm,right=45mm,top=15mm,bottom=15mm]{geometry}
 \pagestyle{empty}
@@ -10,7 +10,7 @@
 \usepackage[grown,density=1,intensity=0.35]{florilegium}
 \directlua{florilegium.head = function() end}
 \directlua{
-  local growth = require("grow")
+  local growth = require("florilegium-grow")
   growth.regions = function(g, layout)
     local padding = 0.2
     g.colright = g.pw - 0.3
