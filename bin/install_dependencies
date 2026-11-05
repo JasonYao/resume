@@ -269,9 +269,10 @@ function install_tex_dependency_packages() {
     #     package loads it to draw the flowers
     #
     # Changelog:
-    # - 2026/10/30: Swapped from fontawesome (which pulled in 4.6.3.1 from 2016/05/15)
+    # - 2026-10-30: Swapped from fontawesome (which pulled in 4.6.3.1 from 2016/05/15)
     #   to fontawesome7
-    # - Added eso-pic on 2026-11-03; Florilegium uses its shipout hooks to draw the floral page background.
+    # - 2026-11-03: Added eso-pic so Florilegium uses its shipout hooks to draw the floral page background.
+    # - 2026-11-03: Added nameref for failing builds
     info "TexLive: Installing dependencies"
     if tlmgr_install_missing_packages \
         graphics                    \
@@ -282,6 +283,7 @@ function install_tex_dependency_packages() {
         xcolor                      \
         fontawesome7                \
         pgf                         \
+        nameref                     \
         titlesec                    \
         textpos                     \
         eso-pic                     \
