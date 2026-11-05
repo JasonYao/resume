@@ -88,6 +88,15 @@
     }
   \fi
 }
+\newcommand{\resumeFlowerMaskBox}[4]{%
+  \fill[red,opacity=0.35]
+    ([xshift=#1,yshift=#2]current page.south west)
+    rectangle
+    ([xshift=#3,yshift=#4]current page.south west);%
+}
+\newcommand{\resumeDrawFlowerMasks}{%
+  \IfFileExists{resume_flower_masks_preview.tex}{\input{resume_flower_masks_preview.tex}}{}%
+}
 \newcommand{\resumePreviewName}[1]{%
   \ifx\resumeLayerPreview\resumeCompositeLayer
     #1%
@@ -155,6 +164,9 @@
     \begin{pgfonlayer}{resumeColumns}
       \resumeiflayer{\resumeColumnsLayer}{%
         \node[anchor=north west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeColumnsBox}};
+        \ifx\resumeLayerPreview\resumeColumnsLayer
+          \resumeDrawFlowerMasks
+        \fi
       }
     \end{pgfonlayer}
     \begin{pgfonlayer}{resumeForeground}

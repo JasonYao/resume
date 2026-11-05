@@ -52,8 +52,9 @@ function start() {
     generate_outputs
 
     if [[ "${final_flowers_enabled}" == true || "${dev_mode}" == true ]]; then
-        # Measures the content regions the flowers must avoid (written to resume_flower_masks.txt)
+        # Measures text bounds for the flowers layer masks
         generate_pdf_once 0 "${tex_file_name}" "${base_file_name}_measure" ""
+        generate_flower_masks "${base_file_name}_measure.pdf"
         generate_florilegium_layer
     fi
 
@@ -90,6 +91,15 @@ function generate_florilegium_layer() {
         success "Generated Florilegium garden layer with seed ${florilegium_seed}"
     else
         fail "Failed to generate Florilegium garden layer"
+    fi
+}
+
+function generate_flower_masks() {
+    info "Measuring resume text regions for flower masks"
+    if uv run python -m pyresume.flower_masks "$1"; then
+        success "Measured resume text regions for flower masks"
+    else
+        fail "Failed to measure resume text regions for flower masks"
     fi
 }
 
