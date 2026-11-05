@@ -12,10 +12,38 @@
 \directlua{
   local growth = require("florilegium-grow")
   growth.regions = function(g, layout)
+    local padding = 0.2
     g.colright = g.pw - 0.3
     local page = { 0.3, 0.3, g.pw - 0.3, g.ph - 0.3 }
     local resume_totoro_center_x = 0.75 + 0.17 * (g.pw - 3.0)
+    local totoro_center_x = g.pw - resume_totoro_center_x
     local obstacles = dofile("flower_masks.lua")(g.pw, resume_totoro_center_x)
+    if not obstacles then
+      obstacles = {
+        {
+          1.2, g.ph - 4.5,
+          g.pw - 1.2, g.ph - 0.9,
+        },
+        {
+          totoro_center_x - 2.75 / 2 - padding,
+          1.5 - padding,
+          totoro_center_x + 2.75 / 2 + padding,
+          1.5 + 2.75 + padding,
+        },
+        {
+          g.pw - 1.5 - 4.0 - padding,
+          1.5 - padding,
+          g.pw - 1.5 + padding,
+          1.5 + 1.0 + padding,
+        },
+        {
+          1.5,
+          1.5,
+          g.pw - 1.5,
+          g.ph - 4.5,
+        },
+      }
+    end
     local flower_regions = growth.subtract_regions({ page }, obstacles)
     local foot = { page[1], page[2], page[3], page[2] + 1.0 }
     return flower_regions, page, foot, nil, page[3], obstacles
