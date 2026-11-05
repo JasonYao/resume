@@ -180,7 +180,11 @@ function generate_layer() {
         fi
     done
 
-    if ! magick -density 300 "${layer_base_file_name}.pdf[0]" -flatten "${layer_base_file_name}.png" ; then
+    if [[ "${layer_name}" == flowers ]]; then
+        if ! magick -density 300 -background none "${layer_base_file_name}.pdf[0]" "${layer_base_file_name}.png" ; then
+            fail "Build: Failed to generate ${layer_name} layer PNG"
+        fi
+    elif ! magick -density 300 "${layer_base_file_name}.pdf[0]" -flatten "${layer_base_file_name}.png" ; then
         fail "Build: Failed to generate ${layer_name} layer PNG"
     fi
     rm -f "${layer_base_file_name}.pdf"
