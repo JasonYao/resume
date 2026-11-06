@@ -31,14 +31,16 @@
 \usepackage{graphicx} % Used to render company logos
 \usepackage{tikz}
 \pgfdeclarelayer{resumeBackground}
-\pgfdeclarelayer{resumeHeader}
+\pgfdeclarelayer{resumeFlowers}
+\pgfdeclarelayer{resumeTopSection}
 \pgfdeclarelayer{resumeColumns}
 \pgfdeclarelayer{resumeForeground}
-\pgfsetlayers{resumeBackground,resumeHeader,resumeColumns,main,resumeForeground}
+\pgfsetlayers{resumeBackground,resumeFlowers,resumeTopSection,resumeColumns,main,resumeForeground}
 \providecommand{\resumeLayerPreview}{composite}
 \def\resumeCompositeLayer{composite}
 \def\resumeBackgroundLayer{background}
-\def\resumeHeaderLayer{header}
+\def\resumeFlowersLayer{flowers}
+\def\resumeTopSectionLayer{top-section-and-totoro}
 \def\resumeColumnsLayer{columns}
 \def\resumeForegroundLayer{foreground}
 \newcommand{\resumeiflayer}[2]{%
@@ -86,6 +88,15 @@
     }
   \fi
 }
+\newcommand{\resumeFlowerMaskBox}[4]{%
+  \fill[red,opacity=0.35]
+    ([xshift=#1,yshift=#2]current page.south west)
+    rectangle
+    ([xshift=#3,yshift=#4]current page.south west);%
+}
+\newcommand{\resumeDrawFlowerMasks}{%
+  \IfFileExists{resume_flower_masks_preview.tex}{\input{resume_flower_masks_preview.tex}}{}%
+}
 \newcommand{\resumePreviewName}[1]{%
   \ifx\resumeLayerPreview\resumeCompositeLayer
     #1%
@@ -132,13 +143,19 @@
         \resumeDrawPreviewBounds{(current page.south west) rectangle (current page.north east)}%
       }
     \end{pgfonlayer}
-    \begin{pgfonlayer}{resumeHeader}
-      \resumeiflayer{\resumeHeaderLayer}{%
+    \begin{pgfonlayer}{resumeFlowers}
+      \resumeiflayer{\resumeFlowersLayer}{%
         \ifresumeflowers
-          \node[anchor=south west,inner sep=0pt] at (current page.south west) {
-            \includegraphics[width=\paperwidth,height=\paperheight]{\resumeFlowerLayerPdf}};
+          \begin{scope}[opacity=0.1]
+            \node[anchor=south west,inner sep=0pt] at (current page.south west) {
+              \includegraphics[width=\paperwidth,height=\paperheight]{\resumeFlowerLayerPdf}};
+          \end{scope}
           \resumeDrawFlowerBounds
         \fi
+      }
+    \end{pgfonlayer}
+    \begin{pgfonlayer}{resumeTopSection}
+      \resumeiflayer{\resumeTopSectionLayer}{%
         \node[anchor=north west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeHeaderBox}};
         \node[anchor=south,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=\dimexpr0.75cm+0.17\textwidth\relax,yshift=1.5cm]current page.south west) {\usebox{\resumeTotoroBox}};
         \node[anchor=south west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=1.5cm]current page.south west) {\usebox{\resumeTimestampBox}};
@@ -147,6 +164,9 @@
     \begin{pgfonlayer}{resumeColumns}
       \resumeiflayer{\resumeColumnsLayer}{%
         \node[anchor=north west,inner sep=0pt,\resumePreviewBoxStyle] at ([xshift=1.5cm,yshift=-1.5cm]current page.north west) {\usebox{\resumeColumnsBox}};
+        \ifx\resumeLayerPreview\resumeColumnsLayer
+          \resumeDrawFlowerMasks
+        \fi
       }
     \end{pgfonlayer}
     \begin{pgfonlayer}{resumeForeground}
