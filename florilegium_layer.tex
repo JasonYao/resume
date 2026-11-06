@@ -7,7 +7,7 @@
 % bin/build supplies a time-based seed; density is 0.05-1; intensity is 0-1.
 % The wider right margin mirrors the garden so its root begins at page bottom-right.
 \providecommand{\florilegiumseed}{}
-\usepackage[grown,density=0.59,intensity=1]{florilegium}
+\usepackage[grown,density=1,intensity=1]{florilegium}
 \directlua{florilegium.head = function() end}
 \directlua{
   local growth = require("florilegium-grow")
