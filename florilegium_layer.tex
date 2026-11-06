@@ -12,7 +12,6 @@
 \directlua{
   local growth = require("florilegium-grow")
   growth.regions = function(g, layout)
-    g.colright = g.pw - 0.3
     local page = { 0.3, 0.3, g.pw - 0.3, g.ph - 0.3 }
     local resume_totoro_center_x = 0.75 + 0.17 * (g.pw - 3.0)
     local totoro_center_x = g.pw - resume_totoro_center_x
