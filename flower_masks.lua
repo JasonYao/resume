@@ -8,7 +8,12 @@ return function(page_width, resume_totoro_center_x)
 
   local obstacles = {}
   for _, mask in ipairs(dofile("resume_flower_masks.lua")) do
-    obstacles[#obstacles + 1] = { page_width - mask[3], mask[2], page_width - mask[1], mask[4] }
+    obstacles[#obstacles + 1] = {
+      { page_width - mask[3], mask[2] },
+      { page_width - mask[1], mask[2] },
+      { page_width - mask[1], mask[4] },
+      { page_width - mask[3], mask[4] },
+    }
   end
   if #obstacles == 0 then return nil end
 

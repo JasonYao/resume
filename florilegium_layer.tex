@@ -12,7 +12,6 @@
 \directlua{
   local growth = require("florilegium-grow")
   growth.regions = function(g, layout)
-    local padding = 0.2
     g.colright = g.pw - 0.3
     local page = { 0.3, 0.3, g.pw - 0.3, g.ph - 0.3 }
     local resume_totoro_center_x = 0.75 + 0.17 * (g.pw - 3.0)
@@ -21,26 +20,28 @@
     if not obstacles then
       obstacles = {
         {
-          1.2, g.ph - 4.5,
-          g.pw - 1.2, g.ph - 0.9,
+          { 1.2, g.ph - 4.5 },
+          { g.pw - 1.2, g.ph - 4.5 },
+          { g.pw - 1.2, g.ph - 0.9 },
+          { 1.2, g.ph - 0.9 },
         },
         {
-          totoro_center_x - 2.75 / 2 - padding,
-          1.5 - padding,
-          totoro_center_x + 2.75 / 2 + padding,
-          1.5 + 2.75 + padding,
+          { totoro_center_x - 2.75 / 2 - 0.2, 1.5 - 0.2 },
+          { totoro_center_x + 2.75 / 2 + 0.2, 1.5 - 0.2 },
+          { totoro_center_x + 2.75 / 2 + 0.2, 1.5 + 2.75 + 0.2 },
+          { totoro_center_x - 2.75 / 2 - 0.2, 1.5 + 2.75 + 0.2 },
         },
         {
-          g.pw - 1.5 - 4.0 - padding,
-          1.5 - padding,
-          g.pw - 1.5 + padding,
-          1.5 + 1.0 + padding,
+          { g.pw - 1.5 - 4.0 - 0.2, 1.5 - 0.2 },
+          { g.pw - 1.5 + 0.2, 1.5 - 0.2 },
+          { g.pw - 1.5 + 0.2, 1.5 + 1.0 + 0.2 },
+          { g.pw - 1.5 - 4.0 - 0.2, 1.5 + 1.0 + 0.2 },
         },
         {
-          1.5,
-          1.5,
-          g.pw - 1.5,
-          g.ph - 4.5,
+          { 1.5, 1.5 },
+          { g.pw - 1.5, 1.5 },
+          { g.pw - 1.5, g.ph - 4.5 },
+          { 1.5, g.ph - 4.5 },
         },
       }
     end

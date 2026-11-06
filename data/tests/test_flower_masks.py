@@ -1,6 +1,10 @@
 import pytest
 
-from pyresume.flower_masks import _format_regions, mask_regions_from_bbox
+from pyresume.flower_masks import (
+    MeasuredRegions,
+    dump,
+    mask_regions_from_bbox,
+)
 
 
 def test_mask_regions_from_bbox_uses_line_bounds_and_page_coordinates():
@@ -18,7 +22,9 @@ def test_mask_regions_from_bbox_uses_line_bounds_and_page_coordinates():
 
     regions = mask_regions_from_bbox(bbox_html, padding=0)
 
-    assert regions == [(0.353, 26.529, 3.528, 27.234)]
+    assert regions.page_width_cm == 21.59
+    assert regions.page_height_cm == 27.94
+    assert regions.regions == ((0.353, 26.529, 3.528, 27.234),)
 
 
 def test_mask_regions_from_bbox_rejects_multiple_pages():
@@ -40,8 +46,20 @@ def test_mask_regions_from_bbox_rejects_empty_text():
         mask_regions_from_bbox(bbox_html)
 
 
-def test_format_regions_writes_lua_masks_and_preview_boxes():
-    lua_content, tex_content = _format_regions([(1.0, 2.0, 3.0, 4.0)])
+def test_measured_regions_reject_out_of_page_bounds():
+    with pytest.raises(ValueError, match="fit within the page width"):
+        MeasuredRegions(10.0, 10.0, ((1.0, 2.0, 11.0, 4.0),))
 
-    assert lua_content == "return {\n  { 1.000, 2.000, 3.000, 4.000 },\n}\n"
-    assert tex_content == "\\resumeFlowerMaskBox{1.000cm}{2.000cm}{3.000cm}{4.000cm}\n"
+
+def test_dump_writes_lua_masks_and_preview_boxes(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    regions = MeasuredRegions(10.0, 10.0, ((1.0, 2.0, 3.0, 4.0),))
+
+    dump(regions)
+
+    assert (tmp_path / "resume_flower_masks.lua").read_text() == (
+        "return {\n  { 1.000, 2.000, 3.000, 4.000 },\n}\n"
+    )
+    assert (tmp_path / "resume_flower_masks_preview.tex").read_text() == (
+        "\\resumeFlowerMaskBox{1.000cm}{2.000cm}{3.000cm}{4.000cm}\n"
+    )
