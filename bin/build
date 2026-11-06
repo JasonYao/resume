@@ -16,7 +16,7 @@ dev_mode=false
 
 # The flowers are still being tuned, so the final output is built without them. Set this to true to
 # bring them back into the final output (dev builds always also produce a flowers-enabled version)
-final_flowers_enabled=false
+final_flowers_enabled=true
 flowers_option="\\def\\resumeEnableFlowers{}"
 flowers_file_name="${base_file_name}_flowers"
 florilegium_source_dir="$(dirname "${BASH_SOURCE[0]}")/../vendors/florilegium"
@@ -52,6 +52,9 @@ function start() {
     generate_outputs
 
     if [[ "${final_flowers_enabled}" == true || "${dev_mode}" == true ]]; then
+        # Complete all TeX passes so text bounds are available to pdftotext
+        generate_pdf "${tex_file_name}" "${base_file_name}_measure" ""
+        generate_flower_masks "${base_file_name}_measure.pdf"
         generate_florilegium_layer
     fi
 
@@ -88,6 +91,15 @@ function generate_florilegium_layer() {
         success "Generated Florilegium garden layer with seed ${florilegium_seed}"
     else
         fail "Failed to generate Florilegium garden layer"
+    fi
+}
+
+function generate_flower_masks() {
+    info "Measuring resume text regions for flower masks"
+    if uv run python -m pyresume.flower_masks "$1"; then
+        success "Measured resume text regions for flower masks"
+    else
+        fail "Failed to measure resume text regions for flower masks"
     fi
 }
 
@@ -143,9 +155,10 @@ function generate_thumbnail() {
 
 function generate_layer_previews() {
     generate_layer 1 background
-    generate_layer 2 header
-    generate_layer 3 columns
-    generate_layer 4 foreground
+    generate_layer 2 flowers
+    generate_layer 3 top-section-and-totoro
+    generate_layer 4 columns
+    generate_layer 5 foreground
 }
 
 # Generates the standalone pdf-derived png of a single resume layer
@@ -167,7 +180,11 @@ function generate_layer() {
         fi
     done
 
-    if ! magick -density 300 "${layer_base_file_name}.pdf[0]" -flatten "${layer_base_file_name}.png" ; then
+    if [[ "${layer_name}" == flowers ]]; then
+        if ! magick -density 300 -background none "${layer_base_file_name}.pdf[0]" "${layer_base_file_name}.png" ; then
+            fail "Build: Failed to generate ${layer_name} layer PNG"
+        fi
+    elif ! magick -density 300 "${layer_base_file_name}.pdf[0]" -flatten "${layer_base_file_name}.png" ; then
         fail "Build: Failed to generate ${layer_name} layer PNG"
     fi
     rm -f "${layer_base_file_name}.pdf"

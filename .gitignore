@@ -28,3 +28,7 @@ ats-summary.json
 # Generated Florilegium layer
 florilegium_layer.pdf
 
+
+# Measured flower mask regions
+resume_flower_masks.lua
+resume_flower_masks_preview.tex
