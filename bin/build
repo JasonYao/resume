@@ -16,7 +16,7 @@ dev_mode=false
 
 # The flowers are still being tuned, so the final output is built without them. Set this to true to
 # bring them back into the final output (dev builds always also produce a flowers-enabled version)
-final_flowers_enabled=false
+final_flowers_enabled=true
 flowers_option="\\def\\resumeEnableFlowers{}"
 flowers_file_name="${base_file_name}_flowers"
 florilegium_source_dir="$(dirname "${BASH_SOURCE[0]}")/../vendors/florilegium"
