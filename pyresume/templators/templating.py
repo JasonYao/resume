@@ -83,7 +83,7 @@ class Address:
     }
 
     if self.postal_code is not None:
-      val_dict['postal_code'] = self.address_line_1
+      val_dict['postal_code'] = self.postal_code
 
     if self.address_line_1 is not None:
       val_dict['address_line_1'] = self.address_line_1
@@ -211,7 +211,6 @@ class Education:
 @dataclass(frozen=True, order=True)
 class HigherEducation(Education):
   college: str
-  degree: str
   degree: Degree
 
 
