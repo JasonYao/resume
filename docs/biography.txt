@@ -1,5 +1,5 @@
 Hey there!
-My name is Jason, a Senior Software Engineer working on the Google Search team, helping to design and build world-class debugging and introspection tools for 20k+ Search engineers.
+My name is Jason, a Staff Software Engineer and Tech Lead on the Google Search team, leading a 13-engineer team building debugging, distributed tracing, and developer productivity infrastructure for thousands of Search engineer.
 
 I got my BA in Computer Science from New York University, and am Canadian-born, Hong Kong-raised, and American-educated.
 

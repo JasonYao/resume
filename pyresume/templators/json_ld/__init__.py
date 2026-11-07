@@ -20,8 +20,10 @@ def convert_address(data: Address) -> dict:
         "@type": "PostalAddress",
         "addressLocality": address_locality,
         "addressRegion": address_region,
-        "postalCode": postal_code,
     }
+
+    if postal_code is not None:
+        val_dict["postalCode"] = postal_code
 
     if data.address_line_1 is not None and data.address_line_2 is not None:
         street_address = f"{data.address_line_1}, {data.address_line_2}"
