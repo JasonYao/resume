@@ -29,6 +29,7 @@
 \pagestyle{empty}
 \usepackage{datetime2}
 \usepackage{graphicx} % Used to render company logos
+\DeclareGraphicsRule{.ai}{pdf}{.ai}{}
 \usepackage{tikz}
 \pgfdeclarelayer{resumeBackground}
 \pgfdeclarelayer{resumeFlowers}
@@ -120,7 +121,7 @@
 \newcommand{\resumeForegroundContent}{}
 \newcommand{\resumecompose}[3]{%
   \sbox{\resumeTimestampBox}{#3}%
-  \sbox{\resumeTotoroBox}{\includegraphics[width=2.75cm]{watermarks/totoro}}%
+  \sbox{\resumeTotoroBox}{\includegraphics[width=2.75cm]{watermarks/totoro.ai}}%
   \sbox{\resumeHeaderBox}{\begin{minipage}{\textwidth}#1\end{minipage}}%
   \sbox{\resumeColumnsBox}{%
     \begin{minipage}{\textwidth}%
